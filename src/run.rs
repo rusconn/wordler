@@ -26,6 +26,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 fn wordle(mut candidates: BTreeSet<String>) {
+    let five_len_words = candidates.clone();
     let mut char_infos = CharInfos::new(5);
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
@@ -82,18 +83,20 @@ fn wordle(mut candidates: BTreeSet<String>) {
             }
         }
 
-        let v = histogram
-            .into_iter()
-            .sorted_unstable_by_key(|&(_, n)| Reverse(n))
+        let recommend = five_len_words
+            .iter()
+            .sorted_by_key(|word| {
+                Reverse(
+                    word.chars()
+                        .unique()
+                        .map(|c| histogram.get(&c).unwrap_or(&0))
+                        .sum::<i32>(),
+                )
+            })
             .take(5)
-            .map(|(c, _)| c)
-            .collect_vec();
+            .collect::<Vec<_>>();
 
-        if !v.is_empty() {
-            println!("Recommend: {}\n", v.iter().join(""));
-        } else {
-            println!("Recommend: -");
-        }
+        println!("Recommend: [{}]\n", recommend.iter().join(","));
     }
 }
 

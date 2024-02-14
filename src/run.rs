@@ -1,17 +1,19 @@
 use std::{
-    cmp::Reverse,
-    collections::{HashMap, HashSet},
+    collections::HashSet,
     io::{self, Stdin},
 };
 
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{dict::WORDS, hint::Hint, io_util::get_line, letter_infos::LetterInfos, word::Word};
+use crate::{
+    dict::WORDS, hint::Hint, io_util::get_line, letter_infos::LetterInfos, recommends::Recommends,
+    word::Word,
+};
 
 pub fn run() {
     let mut candidates = WORDS.map(Word::from).to_vec();
-    let mut recommends = WORDS.map(Word::from).to_vec();
+    let mut recommends = Recommends::from(&WORDS);
     let mut letter_infos = LetterInfos::new(5);
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
@@ -26,22 +28,12 @@ pub fn run() {
             n => println!("Remaining: Too many, didn't print: {}", n),
         }
 
-        let mut histogram = HashMap::new();
+        recommends.update(&candidates, &unuseds);
 
-        for word in &candidates {
-            for letter in word.unique_letters() {
-                if unuseds.contains(letter) {
-                    *histogram.entry(letter).or_insert(0) += 1;
-                }
-            }
-        }
-
-        recommends.sort_unstable_by_key(|word| Reverse(word.score(&histogram)));
-
-        if recommends[0].is_disjoint(&unuseds) {
+        if recommends.is_empty() {
             println!("Recommend: -");
         } else {
-            println!("Recommend: [{}]", &recommends[..5].iter().join(","));
+            println!("Recommend: [{}]", recommends.take(5).join(","));
         }
 
         let word = get_word(&stdin);

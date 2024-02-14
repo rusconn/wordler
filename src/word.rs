@@ -27,19 +27,15 @@ impl<'a> fmt::Display for Word<'a> {
 }
 
 impl<'a> Word<'a> {
-    pub fn score(&self, histogram: &HashMap<&char, i32>) -> i32 {
+    pub fn score(&self, unused_letter_histogram: &HashMap<char, i32>) -> i32 {
         self.chars
             .iter()
-            .map(|c| histogram.get(&c).unwrap_or(&0))
+            .map(|c| unused_letter_histogram.get(&c).unwrap_or(&0))
             .sum()
     }
 
     pub fn unique_letters(&self) -> impl Iterator<Item = &char> {
         self.chars.iter()
-    }
-
-    pub fn is_disjoint(&self, other: &HashSet<char>) -> bool {
-        self.chars.is_disjoint(other)
     }
 
     pub fn is_match(

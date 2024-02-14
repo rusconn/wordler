@@ -45,7 +45,11 @@ pub fn run() {
             )
         });
 
-        println!("Recommend: [{}]", &recommend[..5].join(","));
+        if HashSet::from_iter(recommend[0].chars()).is_disjoint(&unuseds) {
+            println!("Recommend: -");
+        } else {
+            println!("Recommend: [{}]", &recommend[..5].join(","));
+        }
 
         let word = get_word(&stdin);
         let hints = get_hints(&stdin);

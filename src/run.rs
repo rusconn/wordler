@@ -19,6 +19,34 @@ pub fn run() {
     let stdin = io::stdin();
 
     loop {
+        match candidates.len() {
+            0 => return println!("Woops, there are no more words"),
+            1 => return println!("Found: {}", candidates[0]),
+            n if n <= 50 => println!("Remaining: [{}]", &candidates.join(",")),
+            n => println!("Remaining: Too many, didn't print: {}", n),
+        }
+
+        let mut histogram = HashMap::new();
+
+        for chars in candidates.iter().map(|word| word.chars().unique()) {
+            for ch in chars {
+                if unuseds.contains(&ch) {
+                    *histogram.entry(ch).or_insert(0) += 1;
+                }
+            }
+        }
+
+        recommend.sort_unstable_by_key(|word| {
+            Reverse(
+                word.chars()
+                    .unique()
+                    .map(|c| histogram.get(&c).unwrap_or(&0))
+                    .sum::<i32>(),
+            )
+        });
+
+        println!("Recommend: [{}]", &recommend[..5].join(","));
+
         let word = get_word(&stdin);
         let hints = get_hints(&stdin);
 
@@ -51,33 +79,7 @@ pub fn run() {
                 && not_contains.is_disjoint(&word_chars)
         });
 
-        match candidates.len() {
-            0 => return println!("Woops, there are no more words"),
-            1 => return println!("Found: {}", candidates[0]),
-            n if n <= 50 => println!("Remaining: [{}]", &candidates.join(",")),
-            n => println!("Remaining: Too many, didn't print: {}", n),
-        }
-
-        let mut histogram = HashMap::new();
-
-        for chars in candidates.iter().map(|word| word.chars().unique()) {
-            for ch in chars {
-                if unuseds.contains(&ch) {
-                    *histogram.entry(ch).or_insert(0) += 1;
-                }
-            }
-        }
-
-        recommend.sort_unstable_by_key(|word| {
-            Reverse(
-                word.chars()
-                    .unique()
-                    .map(|c| histogram.get(&c).unwrap_or(&0))
-                    .sum::<i32>(),
-            )
-        });
-
-        println!("Recommend: [{}]\n", &recommend[..5].join(","));
+        println!();
     }
 }
 

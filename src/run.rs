@@ -1,6 +1,6 @@
 use std::{
     cmp::Reverse,
-    collections::{BTreeSet, HashMap, HashSet},
+    collections::{HashMap, HashSet},
     error::Error,
     fs,
     io::{self, Stdin},
@@ -18,6 +18,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         .split_ascii_whitespace()
         .filter(|s| s.len() == 5)
         .map(|line| line.to_ascii_uppercase())
+        .unique()
         .collect();
 
     wordle(dict);
@@ -25,8 +26,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn wordle(mut candidates: BTreeSet<String>) {
-    let five_len_words = candidates.clone();
+fn wordle(mut candidates: Vec<String>) {
+    let mut recommend = candidates.clone();
     let mut char_infos = CharInfos::new(5);
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
@@ -68,8 +69,8 @@ fn wordle(mut candidates: BTreeSet<String>) {
 
         match candidates.len() {
             0 => return println!("Woops, there are no more words"),
-            1 => return println!("Found: {}", candidates.pop_first().unwrap()),
-            n if n <= 50 => println!("Remaining: [{}]", candidates.iter().join(",")),
+            1 => return println!("Found: {}", candidates[0]),
+            n if n <= 50 => println!("Remaining: [{}]", &candidates.join(",")),
             n => println!("Remaining: Too many, didn't print: {}", n),
         }
 
@@ -83,20 +84,16 @@ fn wordle(mut candidates: BTreeSet<String>) {
             }
         }
 
-        let recommend = five_len_words
-            .iter()
-            .sorted_by_key(|word| {
-                Reverse(
-                    word.chars()
-                        .unique()
-                        .map(|c| histogram.get(&c).unwrap_or(&0))
-                        .sum::<i32>(),
-                )
-            })
-            .take(5)
-            .collect::<Vec<_>>();
+        recommend.sort_unstable_by_key(|word| {
+            Reverse(
+                word.chars()
+                    .unique()
+                    .map(|c| histogram.get(&c).unwrap_or(&0))
+                    .sum::<i32>(),
+            )
+        });
 
-        println!("Recommend: [{}]\n", recommend.iter().join(","));
+        println!("Recommend: [{}]\n", &recommend[..5].join(","));
     }
 }
 

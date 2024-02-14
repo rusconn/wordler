@@ -1,4 +1,4 @@
-use std::{error::Error, fmt};
+use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Hint {
@@ -30,5 +30,3 @@ impl fmt::Display for UnknownHintError {
         write!(f, "Unknown hint: `{}`", self.hint)
     }
 }
-
-impl Error for UnknownHintError {}

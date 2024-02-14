@@ -12,31 +12,21 @@ cargo install --path .
 
 ### Example
 
-Find the word **WATCH**
+Find the word **RUSTY**
 
 ```shell
-> wordler /usr/share/dict/words
-Word: AUDIO # also lowercase is ok
-Hint: 10000 # 0: not exists, 1: wrong position, 2: correct position
-Remaining: Too many, didn't print: 1691
-Recommend: [ERNST,STERN,RESTY,STREY,TYLER]
+> wordler
+Word: STERN # also lowercase is ok
+Hint: 11010 # 0: not exists, 1: wrong position, 2: correct position
+Remaining: Too many, didn't print: 135
+Recommend: [AUDIO,MIAOU,AULOI,OUIJA,OUSIA]
 
-Word: STERN
-Hint: 01000
-Remaining: Too many, didn't print: 79
-Recommend: [LYMPH,CHYLE,GLYPH,HYLIC,LOCHY]
+Word: AUDIO
+Hint: 02000
+Remaining: [BURST,CURST,HURST,HURTS,RUSTS,RUSTY,RUTHS,TURFS,TURKS,TURMS,TURPS,WURST,YURTS]
+Recommend: [HACKY,CHOKY,MOCHY,PHYMA,HUMPY]
 
-Word: GLYPH
+Word: HACKY
 Hint: 00002
-Remaining: [BATCH,CATCH,HATCH,MATCH,WATCH]
-Recommend: [CLAMB,CLIMB,CLOMB,COMBY,COOMB]
-
-Word: CLIMB
-Hint: 10000
-Remaining: [HATCH,WATCH]
-Recommend: [ABLOW,ABWAB,ADAWE,ADAWN,ADOWN]
-
-Word: ADOWN
-Hint: 10010
-Found: WATCH
+Found: RUSTY
 ```

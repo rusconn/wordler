@@ -1,33 +1,17 @@
 use std::{
     cmp::Reverse,
     collections::{HashMap, HashSet},
-    error::Error,
-    fs,
     io::{self, Stdin},
 };
 
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{char_infos::CharInfos, config::Config, hint::Hint, io_util::get_line};
+use crate::{char_infos::CharInfos, dict::WORDS, hint::Hint, io_util::get_line};
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let dict_content = fs::read_to_string(config.dict_path)?;
-
-    let dict = dict_content
-        .split_ascii_whitespace()
-        .filter(|s| s.len() == 5)
-        .map(|line| line.to_ascii_uppercase())
-        .unique()
-        .collect();
-
-    wordle(dict);
-
-    Ok(())
-}
-
-fn wordle(mut candidates: Vec<String>) {
-    let mut recommend = candidates.clone();
+pub fn run() {
+    let mut candidates = WORDS.to_vec();
+    let mut recommend = WORDS.to_vec();
     let mut char_infos = CharInfos::new(5);
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();

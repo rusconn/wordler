@@ -16,17 +16,20 @@ Find the word **RUSTY**
 
 ```shell
 > wordler
-Word: STERN # also lowercase is ok
-Hint: 11010 # 0: not exists, 1: wrong position, 2: correct position
-Remaining: Too many, didn't print: 135
-Recommend: [AUDIO,MIAOU,AULOI,OUIJA,OUSIA]
+Remaining: Too many, didn't print: 14855
+Recommend: [AEROS,AROSE,SOARE,REAIS,SERIA]
+Word: SERIA # also lowercase is ok
+Hint: 10100 # 0: not exists, 1: wrong position, 2: correct position
 
-Word: AUDIO
-Hint: 02000
-Remaining: [BURST,CURST,HURST,HURTS,RUSTS,RUSTY,RUTHS,TURFS,TURKS,TURMS,TURPS,WURST,YURTS]
-Recommend: [HACKY,CHOKY,MOCHY,PHYMA,HUMPY]
+Remaining: Too many, didn't print: 145
+Recommend: [DOUBT,POUTY,UNPOT,PUTON,PUNTO]
+Word: DOUBT
+Hint: 00101
 
-Word: HACKY
-Hint: 00002
+Remaining: [RUNTS,RUSTS,RUSTY,RUTHS]
+Recommend: [RHYNE,HINNY,HENNY,HYENS,HYENA]
+Word: RHYNE
+Hint: 20100
+
 Found: RUSTY
 ```

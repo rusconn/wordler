@@ -34,7 +34,7 @@ impl<'a> Word<'a> {
             .sum()
     }
 
-    pub fn unique_chars(&self) -> impl Iterator<Item = &char> {
+    pub fn unique_letters(&self) -> impl Iterator<Item = &char> {
         self.chars.iter()
     }
 

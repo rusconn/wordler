@@ -6,7 +6,7 @@ use std::{
 use itertools::Itertools;
 
 use crate::{
-    candidates::Candidates, dict::WORDS, hint::Hint, io_util::get_line, letter_infos::LetterInfos,
+    candidates::Candidates, dict::WORDS, hint::Hint, letter_infos::LetterInfos,
     recommends::Recommends,
 };
 
@@ -26,7 +26,7 @@ pub fn run() {
             0 => return println!("Woops, there are no more words"),
             1 => return println!("Found: {}", candidates[0]),
             n if n <= 50 => println!("Remaining: [{}]", candidates.iter().join(",")),
-            n => println!("Remaining: Too many, didn't print: {}", n),
+            n => println!("Remaining: Too many, didn't print: {n}"),
         }
 
         recommends.update(&candidates, &unuseds);
@@ -100,4 +100,10 @@ fn get_hints(stdin: &Stdin) -> Vec<Hint> {
             Err(e) => eprintln!("Failed to read the hint: {e}"),
         }
     }
+}
+
+fn get_line(stdin: &Stdin) -> String {
+    let mut buf = String::new();
+    stdin.read_line(&mut buf).expect("Failed to read stdin");
+    buf.trim().into()
 }

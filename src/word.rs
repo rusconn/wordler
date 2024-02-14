@@ -7,22 +7,22 @@ use regex::Regex;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Word<'a> {
-    value: &'a str,
+    word: &'a str,
     chars: HashSet<char>,
 }
 
 impl<'a> From<&'a str> for Word<'a> {
-    fn from(value: &'a str) -> Self {
+    fn from(word: &'a str) -> Self {
         Self {
-            value,
-            chars: HashSet::from_iter(value.chars()),
+            word,
+            chars: HashSet::from_iter(word.chars()),
         }
     }
 }
 
 impl<'a> fmt::Display for Word<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.value)
+        write!(f, "{}", self.word)
     }
 }
 
@@ -41,11 +41,11 @@ impl<'a> Word<'a> {
     pub fn is_match(
         &self,
         regex: &Regex,
-        contain: &HashSet<char>,
-        not_contain: &HashSet<char>,
+        contains: &HashSet<char>,
+        not_contains: &HashSet<char>,
     ) -> bool {
-        regex.is_match(self.value)
-            && self.chars.is_superset(contain)
-            && self.chars.is_disjoint(not_contain)
+        regex.is_match(self.word)
+            && self.chars.is_superset(contains)
+            && self.chars.is_disjoint(not_contains)
     }
 }

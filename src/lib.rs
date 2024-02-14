@@ -1,3 +1,4 @@
+mod candidates;
 mod dict;
 mod hint;
 mod io_util;

@@ -3,7 +3,7 @@ use std::{
     collections::{HashMap, HashSet},
 };
 
-use crate::word::Word;
+use crate::{candidates::Candidates, word::Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends<'a> {
@@ -27,10 +27,10 @@ impl<'a> Recommends<'a> {
         self.words.iter().take(n)
     }
 
-    pub fn update(&mut self, candidates: &[Word], unuseds: &HashSet<char>) {
+    pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<char>) {
         let mut unused_letter_histogram = HashMap::default();
 
-        for word in candidates {
+        for word in candidates.iter() {
             for letter in word.unique_letters() {
                 if unuseds.contains(letter) {
                     *unused_letter_histogram.entry(*letter).or_insert(0) += 1;

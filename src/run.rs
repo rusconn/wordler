@@ -7,12 +7,12 @@ use std::{
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{char_infos::CharInfos, dict::WORDS, hint::Hint, io_util::get_line, word::Word};
+use crate::{dict::WORDS, hint::Hint, io_util::get_line, letter_infos::LetterInfos, word::Word};
 
 pub fn run() {
     let mut candidates = WORDS.map(Word::from).to_vec();
-    let mut recommend = WORDS.map(Word::from).to_vec();
-    let mut char_infos = CharInfos::new(5);
+    let mut recommends = WORDS.map(Word::from).to_vec();
+    let mut letter_infos = LetterInfos::new(5);
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
     let mut unuseds: HashSet<char> = HashSet::from_iter('A'..='Z');
@@ -29,44 +29,44 @@ pub fn run() {
         let mut histogram = HashMap::new();
 
         for word in &candidates {
-            for ch in word.unique_chars() {
-                if unuseds.contains(ch) {
-                    *histogram.entry(ch).or_insert(0) += 1;
+            for letter in word.unique_letters() {
+                if unuseds.contains(letter) {
+                    *histogram.entry(letter).or_insert(0) += 1;
                 }
             }
         }
 
-        recommend.sort_unstable_by_key(|word| Reverse(word.score(&histogram)));
+        recommends.sort_unstable_by_key(|word| Reverse(word.score(&histogram)));
 
-        if recommend[0].is_disjoint(&unuseds) {
+        if recommends[0].is_disjoint(&unuseds) {
             println!("Recommend: -");
         } else {
-            println!("Recommend: [{}]", &recommend[..5].iter().join(","));
+            println!("Recommend: [{}]", &recommends[..5].iter().join(","));
         }
 
         let word = get_word(&stdin);
         let hints = get_hints(&stdin);
 
-        for (i, (alpha, hint)) in word.chars().zip(hints.iter()).enumerate() {
+        for (i, (letter, hint)) in word.chars().zip(hints.iter()).enumerate() {
             match hint {
                 Hint::NotExists => {
-                    char_infos.not(i, alpha);
-                    not_contains.insert(alpha);
+                    letter_infos.not(i, letter);
+                    not_contains.insert(letter);
                 }
                 Hint::WrongSpot => {
-                    char_infos.not(i, alpha);
-                    contains.insert(alpha);
+                    letter_infos.not(i, letter);
+                    contains.insert(letter);
                 }
                 Hint::CorrectSpot => {
-                    char_infos.correct(i, alpha);
-                    contains.insert(alpha);
+                    letter_infos.correct(i, letter);
+                    contains.insert(letter);
                 }
             }
 
-            unuseds.remove(&alpha);
+            unuseds.remove(&letter);
         }
 
-        let regex = Regex::new(&char_infos.as_regex())
+        let regex = Regex::new(&letter_infos.as_regex())
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
         candidates.retain(|word| word.is_match(&regex, &contains, &not_contains));

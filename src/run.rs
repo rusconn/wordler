@@ -4,20 +4,21 @@ use std::{
 };
 
 use itertools::Itertools;
-use regex::Regex;
 
 use crate::{
-    dict::WORDS, hint::Hint, io_util::get_line, letter_infos::LetterInfos, recommends::Recommends,
-    word::Word,
+    candidates::Candidates, dict::WORDS, hint::Hint, io_util::get_line, letter_infos::LetterInfos,
+    recommends::Recommends,
 };
 
 pub fn run() {
-    let mut candidates = WORDS.map(Word::from).to_vec();
+    let mut candidates = Candidates::from(&WORDS);
     let mut recommends = Recommends::from(&WORDS);
     let mut letter_infos = LetterInfos::new(5);
+
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
     let mut unuseds: HashSet<char> = HashSet::from_iter('A'..='Z');
+
     let stdin = io::stdin();
 
     loop {
@@ -58,10 +59,7 @@ pub fn run() {
             unuseds.remove(&letter);
         }
 
-        let regex = Regex::new(&letter_infos.as_regex())
-            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
-
-        candidates.retain(|word| word.is_match(&regex, &contains, &not_contains));
+        candidates.retain(&letter_infos, &contains, &not_contains);
 
         println!();
     }

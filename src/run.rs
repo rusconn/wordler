@@ -7,11 +7,11 @@ use std::{
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{char_infos::CharInfos, dict::WORDS, hint::Hint, io_util::get_line};
+use crate::{char_infos::CharInfos, dict::WORDS, hint::Hint, io_util::get_line, word::Word};
 
 pub fn run() {
-    let mut candidates = WORDS.to_vec();
-    let mut recommend = WORDS.to_vec();
+    let mut candidates = WORDS.map(Word::from).to_vec();
+    let mut recommend = WORDS.map(Word::from).to_vec();
     let mut char_infos = CharInfos::new(5);
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
@@ -22,33 +22,26 @@ pub fn run() {
         match candidates.len() {
             0 => return println!("Woops, there are no more words"),
             1 => return println!("Found: {}", candidates[0]),
-            n if n <= 50 => println!("Remaining: [{}]", &candidates.join(",")),
+            n if n <= 50 => println!("Remaining: [{}]", candidates.iter().join(",")),
             n => println!("Remaining: Too many, didn't print: {}", n),
         }
 
         let mut histogram = HashMap::new();
 
-        for chars in candidates.iter().map(|word| word.chars().unique()) {
-            for ch in chars {
-                if unuseds.contains(&ch) {
+        for word in &candidates {
+            for ch in word.unique_chars() {
+                if unuseds.contains(ch) {
                     *histogram.entry(ch).or_insert(0) += 1;
                 }
             }
         }
 
-        recommend.sort_unstable_by_key(|word| {
-            Reverse(
-                word.chars()
-                    .unique()
-                    .map(|c| histogram.get(&c).unwrap_or(&0))
-                    .sum::<i32>(),
-            )
-        });
+        recommend.sort_unstable_by_key(|word| Reverse(word.score(&histogram)));
 
-        if HashSet::from_iter(recommend[0].chars()).is_disjoint(&unuseds) {
+        if recommend[0].is_disjoint(&unuseds) {
             println!("Recommend: -");
         } else {
-            println!("Recommend: [{}]", &recommend[..5].join(","));
+            println!("Recommend: [{}]", &recommend[..5].iter().join(","));
         }
 
         let word = get_word(&stdin);
@@ -76,12 +69,7 @@ pub fn run() {
         let regex = Regex::new(&char_infos.as_regex())
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
-        candidates.retain(|word| {
-            let word_chars = HashSet::from_iter(word.chars());
-            regex.is_match(word)
-                && contains.is_subset(&word_chars)
-                && not_contains.is_disjoint(&word_chars)
-        });
+        candidates.retain(|word| word.is_match(&regex, &contains, &not_contains));
 
         println!();
     }

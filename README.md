@@ -2,19 +2,17 @@
 
 A [Wordle](https://www.nytimes.com/games/wordle/index.html) helper.
 
-## Usage
-
-### Install
+## Install
 
 ```shell
 cargo install --path .
 ```
 
-### Example
+## Example
 
 Find the word **RUSTY**
 
-```shell
+```text
 > wordler
 Remaining: Too many, didn't print: 14855
 Recommend: [AEROS,AROSE,SOARE,REAIS,SERIA]

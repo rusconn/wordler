@@ -39,15 +39,9 @@ impl<'a> Recommends<'a> {
         }
 
         self.recommends
+            .retain(|recommend| !recommend.is_useless(&unused_letter_histogram));
+
+        self.recommends
             .sort_unstable_by_key(|recommend| Reverse(recommend.score(&unused_letter_histogram)));
-
-        let top_recommend = match self.recommends.first() {
-            Some(recommend) => recommend,
-            None => return,
-        };
-
-        if top_recommend.is_useless(&unused_letter_histogram) {
-            self.recommends.clear();
-        }
     }
 }

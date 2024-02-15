@@ -1,6 +1,10 @@
+mod recommend;
+
 use std::collections::{HashMap, HashSet};
 
-use crate::{candidates::Candidates, recommend::Recommend};
+use crate::candidates::Candidates;
+
+use self::recommend::Recommend;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends<'a> {

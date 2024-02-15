@@ -19,23 +19,11 @@ impl LetterInfos {
     }
 
     pub fn not(&mut self, nth: usize, letter: char) {
-        let info = match self.infos.get_mut(nth) {
-            Some(info) => info,
-            None => panic!("Invalid index: {nth}"),
-        };
-
-        if let LetterInfo::Not(set) = info {
-            set.insert(letter);
-        }
+        self.infos[nth].not(letter);
     }
 
     pub fn correct(&mut self, nth: usize, letter: char) {
-        let info = match self.infos.get_mut(nth) {
-            Some(info) => info,
-            None => panic!("Invalid index: {nth}"),
-        };
-
-        *info = LetterInfo::Correct(letter);
+        self.infos[nth].correct(letter);
     }
 
     pub fn as_regex(&self) -> String {

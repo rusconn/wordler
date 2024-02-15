@@ -44,6 +44,6 @@ impl<'a> Candidates<'a> {
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
         self.words
-            .retain(|word| word.is_match(&regex, &contains, &not_contains));
+            .retain(|word| word.is_match(&regex, contains, not_contains));
     }
 }

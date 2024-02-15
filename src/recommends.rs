@@ -1,7 +1,4 @@
-use std::{
-    cmp::Reverse,
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
 use crate::{candidates::Candidates, recommend::Recommend};
 
@@ -38,10 +35,11 @@ impl<'a> Recommends<'a> {
             }
         }
 
-        self.recommends
-            .retain(|recommend| !recommend.is_useless(&unused_letter_histogram));
+        for recommend in &mut self.recommends {
+            recommend.update(&unused_letter_histogram);
+        }
 
-        self.recommends
-            .sort_unstable_by_key(|recommend| Reverse(recommend.score(&unused_letter_histogram)));
+        self.recommends.retain(Recommend::is_useful);
+        self.recommends.sort_unstable_by(|x, y| y.cmp(x));
     }
 }

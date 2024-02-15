@@ -3,28 +3,28 @@ use std::{
     collections::{HashMap, HashSet},
 };
 
-use crate::{candidates::Candidates, word::Word};
+use crate::{candidates::Candidates, recommend::Recommend};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends<'a> {
-    words: Vec<Word<'a>>,
+    recommends: Vec<Recommend<'a>>,
 }
 
 impl<'a, const N: usize> From<&[&'a str; N]> for Recommends<'a> {
     fn from(words: &[&'a str; N]) -> Self {
         Self {
-            words: words.iter().map(|&word| Word::from(word)).collect(),
+            recommends: words.iter().map(|&word| Recommend::from(word)).collect(),
         }
     }
 }
 
 impl<'a> Recommends<'a> {
     pub fn is_empty(&self) -> bool {
-        self.words.is_empty()
+        self.recommends.is_empty()
     }
 
-    pub fn take(&self, n: usize) -> impl Iterator<Item = &Word<'a>> {
-        self.words.iter().take(n)
+    pub fn take(&self, n: usize) -> impl Iterator<Item = &Recommend<'a>> {
+        self.recommends.iter().take(n)
     }
 
     pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<char>) {
@@ -38,11 +38,13 @@ impl<'a> Recommends<'a> {
             }
         }
 
-        self.words
-            .sort_unstable_by_key(|word| Reverse(word.score(&unused_letter_histogram)));
+        self.recommends
+            .sort_unstable_by_key(|recommend| Reverse(recommend.score(&unused_letter_histogram)));
 
-        if self.words[0].score(&unused_letter_histogram) == 0 {
-            self.words.clear();
+        let top_recommend = &self.recommends[0];
+
+        if top_recommend.is_useless(&unused_letter_histogram) {
+            self.recommends.clear();
         }
     }
 }

@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    fmt,
-};
+use std::{collections::HashSet, fmt};
 
 use regex::Regex;
 
@@ -27,13 +24,6 @@ impl<'a> fmt::Display for Word<'a> {
 }
 
 impl<'a> Word<'a> {
-    pub fn score(&self, unused_letter_histogram: &HashMap<char, i32>) -> i32 {
-        self.chars
-            .iter()
-            .map(|c| unused_letter_histogram.get(&c).unwrap_or(&0))
-            .sum()
-    }
-
     pub fn unique_letters(&self) -> impl Iterator<Item = &char> {
         self.chars.iter()
     }

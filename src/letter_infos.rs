@@ -1,8 +1,10 @@
+mod letter_info;
+
 use std::iter;
 
 use itertools::Itertools;
 
-use crate::letter_info::LetterInfo;
+use self::letter_info::LetterInfo;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LetterInfos {

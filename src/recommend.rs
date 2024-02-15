@@ -25,7 +25,7 @@ impl<'a> Recommend<'a> {
     pub fn score(&self, unused_letter_histogram: &HashMap<char, i32>) -> i32 {
         self.word
             .unique_letters()
-            .map(|c| unused_letter_histogram.get(&c).unwrap_or(&0))
+            .map(|c| unused_letter_histogram.get(c).unwrap_or(&0))
             .sum()
     }
 

@@ -1,11 +1,8 @@
-mod candidates;
-mod dict;
-mod hint;
+pub mod candidates;
+pub mod dict;
+pub mod hint;
 mod letter_info;
-mod letter_infos;
+pub mod letter_infos;
 mod recommend;
-mod recommends;
-mod run;
+pub mod recommends;
 mod word;
-
-pub use run::run;

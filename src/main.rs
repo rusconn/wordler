@@ -1,3 +1,4 @@
+mod dict;
 mod hints;
 
 use std::{
@@ -7,10 +8,9 @@ use std::{
 
 use itertools::Itertools;
 
-use wordler::{
-    candidates::Candidates, dict::WORDS, letter_infos::LetterInfos, recommends::Recommends,
-};
+use wordler::{candidates::Candidates, letter_infos::LetterInfos, recommends::Recommends};
 
+use self::dict::WORDS;
 use self::hints::Hints;
 
 pub fn main() {

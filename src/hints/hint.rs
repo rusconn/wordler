@@ -1,6 +1,6 @@
 use std::{collections::HashSet, fmt};
 
-use wordler::letter_infos::LetterInfos;
+use wordler::LetterInfos;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hint(Variant);

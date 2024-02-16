@@ -8,7 +8,7 @@ use std::{
 
 use itertools::Itertools;
 
-use wordler::{candidates::Candidates, letter_infos::LetterInfos, recommends::Recommends};
+use wordler::{Candidates, LetterInfos, Recommends};
 
 use self::dict::WORDS;
 use self::hints::Hints;

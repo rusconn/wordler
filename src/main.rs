@@ -74,18 +74,13 @@ fn get_guess(stdin: &Stdin) -> Guess {
 
 fn get_hints(stdin: &Stdin) -> Hints {
     loop {
-        eprint!("Hint: ");
+        eprint!("Hints: ");
 
         let hints = get_line(stdin);
 
-        if hints.chars().count() != 5 {
-            eprintln!("Hint must be 5 letters");
-            continue;
-        }
-
         match Hints::try_from(hints.as_ref()) {
             Ok(hints) => return hints,
-            Err(e) => eprintln!("Failed to read the hint: {e}"),
+            Err(e) => eprintln!("Failed to read the hints: {e}"),
         }
     }
 }

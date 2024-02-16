@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fmt};
+use std::collections::HashSet;
 
 use wordler::LetterInfos;
 
@@ -6,14 +6,14 @@ use wordler::LetterInfos;
 pub struct Hint(Variant);
 
 impl TryFrom<char> for Hint {
-    type Error = UnknownHintError;
+    type Error = InvalidHintError;
 
     fn try_from(hint: char) -> Result<Self, Self::Error> {
         match hint {
             '0' => Ok(Self(Variant::NotExists)),
             '1' => Ok(Self(Variant::WrongSpot)),
             '2' => Ok(Self(Variant::CorrectSpot)),
-            _ => Err(UnknownHintError { hint }),
+            _ => Err(Self::Error::UnknownHint(hint)),
         }
     }
 }
@@ -48,14 +48,8 @@ impl Hint {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct UnknownHintError {
-    hint: char,
-}
-
-impl fmt::Display for UnknownHintError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Unknown hint: `{}`", self.hint)
-    }
+pub enum InvalidHintError {
+    UnknownHint(char),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

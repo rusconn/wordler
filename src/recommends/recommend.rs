@@ -1,8 +1,4 @@
-use std::{
-    cmp::{self, Ordering},
-    collections::HashMap,
-    fmt,
-};
+use std::{cmp::Ordering, collections::HashMap, fmt};
 
 use crate::word::Word;
 
@@ -22,13 +18,13 @@ impl<'a> From<&'a str> for Recommend<'a> {
 }
 
 impl<'a> fmt::Display for Recommend<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.word)
     }
 }
 
 impl<'a> PartialOrd for Recommend<'a> {
-    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }

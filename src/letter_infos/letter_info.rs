@@ -3,31 +3,29 @@ use std::collections::HashSet;
 use itertools::Itertools;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LetterInfo {
-    info: Variant,
-}
+pub struct LetterInfo(Variant);
 
 impl Default for LetterInfo {
     fn default() -> Self {
-        Self { info: Variant::Any }
+        Self(Variant::Any)
     }
 }
 
 impl LetterInfo {
     pub fn not(&mut self, letter: char) {
-        if let Variant::Not(set) = &mut self.info {
+        if let Variant::Not(set) = &mut self.0 {
             set.insert(letter);
         } else {
-            self.info = Variant::not(letter);
+            self.0 = Variant::not(letter);
         }
     }
 
     pub fn correct(&mut self, letter: char) {
-        self.info = Variant::correct(letter);
+        self.0 = Variant::correct(letter);
     }
 
     pub fn as_regex(&self) -> String {
-        match &self.info {
+        match &self.0 {
             Variant::Any => ".".into(),
             Variant::Not(set) => format!("[^{}]", set.iter().join("")),
             Variant::Correct(c) => (*c).into(),

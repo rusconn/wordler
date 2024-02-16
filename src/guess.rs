@@ -19,8 +19,8 @@ impl TryFrom<&str> for Guess {
             .chars()
             .map(Letter::try_from)
             .collect::<Result<_, _>>()
-            .map(Guess)
-            .map_err(InvalidGuessError::from)
+            .map(Self)
+            .map_err(Self::Error::from)
     }
 }
 
@@ -45,7 +45,7 @@ impl From<InvalidLetterError> for InvalidGuessError {
 }
 
 impl fmt::Display for InvalidGuessError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::InvalidLength => write!(f, "Guess must be 5 letters"),
             Self::NonAlphabetical(letter) => write!(f, "Non alphabetical letter: `{letter}`"),

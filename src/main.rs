@@ -22,7 +22,7 @@ pub fn main() {
 
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
-    let mut unuseds: HashSet<char> = HashSet::from_iter('A'..='Z');
+    let mut unuseds = HashSet::from_iter('A'..='Z');
 
     let stdin = io::stdin();
 
@@ -63,9 +63,9 @@ fn get_guess(stdin: &Stdin) -> Guess {
     loop {
         eprint!("Guess: ");
 
-        let input = get_line(stdin);
+        let guess = get_line(stdin);
 
-        match Guess::try_from(input.as_ref()) {
+        match Guess::try_from(guess.as_ref()) {
             Ok(guess) => return guess,
             Err(e) => eprintln!("Failed to read the guess: {e}"),
         }

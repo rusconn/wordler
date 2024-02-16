@@ -23,8 +23,8 @@ impl TryFrom<&str> for Hints {
             .chars()
             .map(Hint::try_from)
             .collect::<Result<_, _>>()
-            .map(Hints)
-            .map_err(InvalidHintsError::from)
+            .map(Self)
+            .map_err(Self::Error::from)
     }
 }
 
@@ -58,7 +58,7 @@ impl From<InvalidHintError> for InvalidHintsError {
 }
 
 impl fmt::Display for InvalidHintsError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::InvalidLength => write!(f, "Hints must be 5 letters"),
             Self::UnknownHint(hint) => write!(f, "Unknown hint: `{hint}`"),

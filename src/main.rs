@@ -1,3 +1,5 @@
+mod hints;
+
 use std::{
     collections::HashSet,
     io::{self, Stdin},
@@ -6,9 +8,10 @@ use std::{
 use itertools::Itertools;
 
 use wordler::{
-    candidates::Candidates, dict::WORDS, hint::Hint, letter_infos::LetterInfos,
-    recommends::Recommends,
+    candidates::Candidates, dict::WORDS, letter_infos::LetterInfos, recommends::Recommends,
 };
+
+use self::hints::Hints;
 
 pub fn main() {
     let mut candidates = Candidates::from(&WORDS);
@@ -40,24 +43,13 @@ pub fn main() {
         let word = get_word(&stdin);
         let hints = get_hints(&stdin);
 
-        for (i, (letter, hint)) in word.chars().zip(hints.iter()).enumerate() {
-            match hint {
-                Hint::NotExists => {
-                    letter_infos.not(i, letter);
-                    not_contains.insert(letter);
-                }
-                Hint::WrongSpot => {
-                    letter_infos.not(i, letter);
-                    contains.insert(letter);
-                }
-                Hint::CorrectSpot => {
-                    letter_infos.correct(i, letter);
-                    contains.insert(letter);
-                }
-            }
-
-            unuseds.remove(&letter);
-        }
+        hints.apply(
+            &word,
+            &mut letter_infos,
+            &mut contains,
+            &mut not_contains,
+            &mut unuseds,
+        );
 
         candidates.retain(&letter_infos, &contains, &not_contains);
 
@@ -84,7 +76,7 @@ fn get_word(stdin: &Stdin) -> String {
     }
 }
 
-fn get_hints(stdin: &Stdin) -> Vec<Hint> {
+fn get_hints(stdin: &Stdin) -> Hints {
     loop {
         eprint!("Hint: ");
 
@@ -95,7 +87,7 @@ fn get_hints(stdin: &Stdin) -> Vec<Hint> {
             continue;
         }
 
-        match hints.chars().map(Hint::try_from).collect() {
+        match Hints::try_from(hints.as_ref()) {
             Ok(hints) => return hints,
             Err(e) => eprintln!("Failed to read the hint: {e}"),
         }

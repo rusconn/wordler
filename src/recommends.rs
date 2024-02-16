@@ -7,25 +7,21 @@ use crate::candidates::Candidates;
 use self::recommend::Recommend;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Recommends<'a> {
-    recommends: Vec<Recommend<'a>>,
-}
+pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
 impl<'a, const N: usize> From<&[&'a str; N]> for Recommends<'a> {
     fn from(words: &[&'a str; N]) -> Self {
-        Self {
-            recommends: words.iter().map(|&word| Recommend::from(word)).collect(),
-        }
+        Self(words.iter().map(|&word| Recommend::from(word)).collect())
     }
 }
 
 impl<'a> Recommends<'a> {
     pub fn is_empty(&self) -> bool {
-        self.recommends.is_empty()
+        self.0.is_empty()
     }
 
     pub fn take(&self, n: usize) -> impl Iterator<Item = &Recommend<'a>> {
-        self.recommends.iter().take(n)
+        self.0.iter().take(n)
     }
 
     pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<char>) {
@@ -39,11 +35,11 @@ impl<'a> Recommends<'a> {
             }
         }
 
-        for recommend in &mut self.recommends {
+        for recommend in &mut self.0 {
             recommend.update(&unused_letter_histogram);
         }
 
-        self.recommends.retain(Recommend::is_useful);
-        self.recommends.sort_unstable_by(|x, y| y.cmp(x));
+        self.0.retain(Recommend::is_useful);
+        self.0.sort_unstable_by(|x, y| y.cmp(x));
     }
 }

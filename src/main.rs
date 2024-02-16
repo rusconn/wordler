@@ -1,4 +1,5 @@
 mod dict;
+mod guess;
 mod hints;
 
 use std::{
@@ -11,6 +12,7 @@ use itertools::Itertools;
 use wordler::{Candidates, LetterInfos, Recommends};
 
 use self::dict::WORDS;
+pub use self::guess::Guess;
 use self::hints::Hints;
 
 pub fn main() {
@@ -40,11 +42,11 @@ pub fn main() {
             println!("Recommend: [{}]", recommends.take(5).join(","));
         }
 
-        let word = get_word(&stdin);
+        let guess = get_guess(&stdin);
         let hints = get_hints(&stdin);
 
         hints.apply(
-            &word,
+            &guess,
             &mut letter_infos,
             &mut contains,
             &mut not_contains,
@@ -57,22 +59,16 @@ pub fn main() {
     }
 }
 
-fn get_word(stdin: &Stdin) -> String {
+fn get_guess(stdin: &Stdin) -> Guess {
     loop {
-        eprint!("Word: ");
+        eprint!("Guess: ");
 
         let input = get_line(stdin);
 
-        if input.chars().count() != 5 {
-            eprintln!("Word must be 5 letters");
-            continue;
+        match Guess::try_from(input.as_ref()) {
+            Ok(guess) => return guess,
+            Err(e) => eprintln!("Failed to read the guess: {e}"),
         }
-        if !input.chars().all(|c| c.is_ascii_alphabetic()) {
-            eprintln!("All letters must be ascii alphabetic");
-            continue;
-        }
-
-        return input.to_ascii_uppercase();
     }
 }
 

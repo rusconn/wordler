@@ -1,40 +1,54 @@
+mod letter;
+
 use std::fmt;
 
+use self::letter::{InvalidLetterError, Letter};
+
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Guess(String);
+pub struct Guess(Vec<Letter>);
 
 impl TryFrom<&str> for Guess {
     type Error = InvalidGuessError;
 
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        if value.chars().count() != 5 {
+    fn try_from(guess: &str) -> Result<Self, Self::Error> {
+        if guess.chars().count() != 5 {
             return Err(Self::Error::InvalidLength);
         }
-        if !value.chars().all(|c| c.is_ascii_alphabetic()) {
-            return Err(Self::Error::NonAlphabetical);
-        }
 
-        Ok(Self(value.into()))
+        guess
+            .chars()
+            .map(Letter::try_from)
+            .collect::<Result<_, _>>()
+            .map(Guess)
+            .map_err(InvalidGuessError::from)
     }
 }
 
 impl Guess {
     pub fn letters(&self) -> impl Iterator<Item = char> + '_ {
-        self.0.chars()
+        self.0.iter().map(Letter::as_char)
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum InvalidGuessError {
     InvalidLength,
-    NonAlphabetical,
+    NonAlphabetical(char),
+}
+
+impl From<InvalidLetterError> for InvalidGuessError {
+    fn from(value: InvalidLetterError) -> Self {
+        match value {
+            InvalidLetterError::NonAlphabetical(letter) => Self::NonAlphabetical(letter),
+        }
+    }
 }
 
 impl fmt::Display for InvalidGuessError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::InvalidLength => write!(f, "Guess must be 5 letters"),
-            Self::NonAlphabetical => write!(f, "All letters must be ascii alphabetic"),
+            Self::NonAlphabetical(letter) => write!(f, "Non alphabetical letter: `{letter}`"),
         }
     }
 }

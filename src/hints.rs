@@ -2,7 +2,7 @@ mod hint;
 
 use std::collections::HashSet;
 
-use wordler::letter_infos::LetterInfos;
+use wordler::LetterInfos;
 
 use self::hint::{Hint, UnknownHintError};
 

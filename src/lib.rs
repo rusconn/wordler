@@ -1,4 +1,8 @@
-pub mod candidates;
-pub mod letter_infos;
-pub mod recommends;
+mod candidates;
+mod letter_infos;
+mod recommends;
 mod word;
+
+pub use candidates::Candidates;
+pub use letter_infos::LetterInfos;
+pub use recommends::Recommends;

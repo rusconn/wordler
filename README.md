@@ -16,18 +16,18 @@ Find the word **RUSTY**
 > wordler
 Remaining: Too many, didn't print: 14855
 Recommend: [AEROS,AROSE,SOARE,REAIS,SERIA]
-Word: SERIA # also lowercase is ok
-Hint: 10100 # 0: not exists, 1: wrong position, 2: correct position
+Guess: SERIA # also lowercase is ok
+Hints: 10100 # 0: not exists, 1: wrong position, 2: correct position
 
 Remaining: Too many, didn't print: 145
-Recommend: [DOUBT,POUTY,UNPOT,PUTON,PUNTO]
-Word: DOUBT
-Hint: 00101
+Recommend: [DOUBT,POUTY,PUTON,OUTBY,PUNTO]
+Guess: DOUBT
+Hints: 00101
 
 Remaining: [RUNTS,RUSTS,RUSTY,RUTHS]
-Recommend: [RHYNE,HINNY,HENNY,HYENS,HYENA]
-Word: RHYNE
-Hint: 20100
+Recommend: [HYENS,HYSON,HORNY,HONEY,HUNKY]
+Guess: HYSON
+Hints: 01200
 
 Found: RUSTY
 ```

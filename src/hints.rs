@@ -2,9 +2,7 @@ mod hint;
 
 use std::{collections::HashSet, fmt};
 
-use wordler::LetterInfos;
-
-use crate::Guess;
+use crate::{Guess, LetterInfos};
 
 use self::hint::{Hint, InvalidHintError};
 

@@ -2,20 +2,23 @@ mod recommend;
 
 use std::collections::{HashMap, HashSet};
 
-use crate::Candidates;
+use crate::{Candidates, Letter};
 
 use self::recommend::Recommend;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
-impl<'a, const N: usize> From<&[&'a str; N]> for Recommends<'a> {
-    fn from(words: &[&'a str; N]) -> Self {
-        Self(words.iter().map(|&word| Recommend::from(word)).collect())
-    }
-}
-
 impl<'a> Recommends<'a> {
+    /// Make sure the strs are valid
+    pub fn unsafe_from(strs: &[&'a str]) -> Self {
+        Self(
+            strs.iter()
+                .map(|&str| Recommend::unsafe_from(str))
+                .collect(),
+        )
+    }
+
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -24,7 +27,7 @@ impl<'a> Recommends<'a> {
         self.0.iter().take(n)
     }
 
-    pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<char>) {
+    pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<Letter>) {
         let mut unused_letter_histogram = HashMap::default();
 
         for word in candidates.iter() {

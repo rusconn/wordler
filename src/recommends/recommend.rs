@@ -1,20 +1,11 @@
 use std::{cmp::Ordering, collections::HashMap, fmt};
 
-use crate::Word;
+use crate::{letter::Letter, Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommend<'a> {
     word: Word<'a>,
     score: i32,
-}
-
-impl<'a> From<&'a str> for Recommend<'a> {
-    fn from(word: &'a str) -> Self {
-        Self {
-            word: Word::from(word),
-            score: 0,
-        }
-    }
 }
 
 impl<'a> fmt::Display for Recommend<'a> {
@@ -40,7 +31,15 @@ impl<'a> Ord for Recommend<'a> {
 }
 
 impl<'a> Recommend<'a> {
-    pub fn update(&mut self, unused_letter_histogram: &HashMap<char, i32>) {
+    /// Make sure the str is valid
+    pub fn unsafe_from(str: &'a str) -> Self {
+        Self {
+            word: Word::unsafe_from(str),
+            score: 0,
+        }
+    }
+
+    pub fn update(&mut self, unused_letter_histogram: &HashMap<Letter, i32>) {
         self.score = self
             .word
             .unique_letters()

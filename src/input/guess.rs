@@ -1,10 +1,8 @@
-mod letter;
-
 use std::{fmt, io::Stdin};
 
-use super::util::get_line;
+use crate::letter::{InvalidCharacterError, Letter};
 
-use self::letter::{InvalidLetterError, Letter};
+use super::util::get_line;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Guess(Vec<Letter>);
@@ -40,8 +38,8 @@ impl Guess {
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Letter> {
-        self.0.iter()
+    pub fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
+        self.0.iter().copied()
     }
 }
 
@@ -51,10 +49,10 @@ pub enum InvalidGuessError {
     NonAlphabetical(char),
 }
 
-impl From<InvalidLetterError> for InvalidGuessError {
-    fn from(value: InvalidLetterError) -> Self {
+impl From<InvalidCharacterError> for InvalidGuessError {
+    fn from(value: InvalidCharacterError) -> Self {
         match value {
-            InvalidLetterError::NonAlphabetical(letter) => Self::NonAlphabetical(letter),
+            InvalidCharacterError::NonAlphabetical(letter) => Self::NonAlphabetical(letter),
         }
     }
 }

@@ -6,9 +6,9 @@ use crate::Letter;
 pub struct Veileds(FxHashSet<Letter>);
 
 impl Veileds {
-    /// Make sure the chars are valid
-    pub fn unsafe_from<T: Iterator<Item = char>>(chars: T) -> Self {
-        Self(FxHashSet::from_iter(chars.map(Letter::unsafe_from)))
+    /// Make sure the bytes are valid
+    pub fn unsafe_from<T: Iterator<Item = u8>>(bytes: T) -> Self {
+        Self(FxHashSet::from_iter(bytes.map(Letter::unsafe_from)))
     }
 
     pub fn contains(&self, letter: Letter) -> bool {

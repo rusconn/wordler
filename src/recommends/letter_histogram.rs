@@ -1,9 +1,11 @@
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::hash_map::Entry;
+
+use rustc_hash::FxHashMap;
 
 use crate::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct LetterHistogram(HashMap<Letter, i32>);
+pub struct LetterHistogram(FxHashMap<Letter, i32>);
 
 impl LetterHistogram {
     pub fn get(&self, letter: &Letter) -> Option<&i32> {

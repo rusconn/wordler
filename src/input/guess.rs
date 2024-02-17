@@ -1,6 +1,8 @@
 mod letter;
 
-use std::fmt;
+use std::{fmt, io::Stdin};
+
+use super::util::get_line;
 
 use self::letter::{InvalidLetterError, Letter};
 
@@ -25,8 +27,21 @@ impl TryFrom<&str> for Guess {
 }
 
 impl Guess {
-    pub fn letters(&self) -> impl Iterator<Item = char> + '_ {
-        self.0.iter().map(Letter::as_char)
+    pub fn read(stdin: &Stdin) -> Self {
+        loop {
+            eprint!("Guess: ");
+
+            let guess = get_line(stdin);
+
+            match Self::try_from(guess.as_ref()) {
+                Ok(guess) => return guess,
+                Err(e) => eprintln!("Failed to read the guess: {e}"),
+            }
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Letter> {
+        self.0.iter()
     }
 }
 

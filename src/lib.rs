@@ -1,20 +1,16 @@
 mod candidates;
 mod dict;
-mod guess;
-mod hints;
+mod input;
 mod letter_infos;
 mod recommends;
 mod word;
 
-use std::{
-    collections::HashSet,
-    io::{self, Stdin},
-};
+use std::{collections::HashSet, io};
 
 use itertools::Itertools;
 
 use self::{
-    candidates::Candidates, dict::WORDS, guess::Guess, hints::Hints, letter_infos::LetterInfos,
+    candidates::Candidates, dict::WORDS, input::Input, letter_infos::LetterInfos,
     recommends::Recommends, word::Word,
 };
 
@@ -45,11 +41,9 @@ pub fn run() {
             println!("Recommend: [{}]", recommends.take(5).join(","));
         }
 
-        let guess = get_guess(&stdin);
-        let hints = get_hints(&stdin);
+        let input = Input::read(&stdin);
 
-        hints.apply(
-            &guess,
+        input.apply(
             &mut letter_infos,
             &mut contains,
             &mut not_contains,
@@ -60,36 +54,4 @@ pub fn run() {
 
         println!();
     }
-}
-
-fn get_guess(stdin: &Stdin) -> Guess {
-    loop {
-        eprint!("Guess: ");
-
-        let guess = get_line(stdin);
-
-        match Guess::try_from(guess.as_ref()) {
-            Ok(guess) => return guess,
-            Err(e) => eprintln!("Failed to read the guess: {e}"),
-        }
-    }
-}
-
-fn get_hints(stdin: &Stdin) -> Hints {
-    loop {
-        eprint!("Hints: ");
-
-        let hints = get_line(stdin);
-
-        match Hints::try_from(hints.as_ref()) {
-            Ok(hints) => return hints,
-            Err(e) => eprintln!("Failed to read the hints: {e}"),
-        }
-    }
-}
-
-fn get_line(stdin: &Stdin) -> String {
-    let mut buf = String::new();
-    stdin.read_line(&mut buf).expect("Failed to read stdin");
-    buf.trim().into()
 }

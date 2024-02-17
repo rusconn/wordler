@@ -1,9 +1,10 @@
 mod hint;
 
-use std::{collections::HashSet, fmt};
+use std::{fmt, io::Stdin};
 
-use crate::{Guess, LetterInfos};
+use super::util::get_line;
 
+pub use self::hint::Variant;
 use self::hint::{Hint, InvalidHintError};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -27,17 +28,21 @@ impl TryFrom<&str> for Hints {
 }
 
 impl Hints {
-    pub fn apply(
-        &self,
-        guess: &Guess,
-        letter_infos: &mut LetterInfos,
-        contains: &mut HashSet<char>,
-        not_contains: &mut HashSet<char>,
-        unuseds: &mut HashSet<char>,
-    ) {
-        for (nth, (letter, hint)) in guess.letters().zip(&self.0).enumerate() {
-            hint.apply(nth, letter, letter_infos, contains, not_contains, unuseds);
+    pub fn read(stdin: &Stdin) -> Self {
+        loop {
+            eprint!("Hints: ");
+
+            let hints = get_line(stdin);
+
+            match Hints::try_from(hints.as_ref()) {
+                Ok(hints) => return hints,
+                Err(e) => eprintln!("Failed to read the hints: {e}"),
+            }
         }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Hint> {
+        self.0.iter()
     }
 }
 

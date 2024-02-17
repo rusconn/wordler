@@ -26,8 +26,8 @@ impl<'a> Word<'a> {
         }
     }
 
-    pub fn unique_letters(&self) -> impl Iterator<Item = &Letter> {
-        self.letter_set.iter()
+    pub fn unique_letters(&self) -> impl Iterator<Item = Letter> + '_ {
+        self.letter_set.iter().copied()
     }
 
     pub fn is_match(&self, regex: &Regex, includes: &Includes, excludes: &Excludes) -> bool {

@@ -11,11 +11,11 @@ impl Veileds {
         Self(FxHashSet::from_iter(chars.map(Letter::unsafe_from)))
     }
 
-    pub fn contains(&self, letter: &Letter) -> bool {
-        self.0.contains(letter)
+    pub fn contains(&self, letter: Letter) -> bool {
+        self.0.contains(&letter)
     }
 
-    pub fn remove(&mut self, letter: &Letter) -> bool {
-        self.0.remove(letter)
+    pub fn remove(&mut self, letter: Letter) -> bool {
+        self.0.remove(&letter)
     }
 }

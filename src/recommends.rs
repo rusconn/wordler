@@ -12,12 +12,8 @@ pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
 impl<'a> Recommends<'a> {
     /// Make sure the strs are valid
-    pub fn unsafe_from(strs: &[&'a str]) -> Self {
-        Self(
-            strs.iter()
-                .map(|&str| Recommend::unsafe_from(str))
-                .collect(),
-        )
+    pub fn unsafe_from<const N: usize>(strs: [&'a str; N]) -> Self {
+        Self(strs.into_iter().map(Recommend::unsafe_from).collect())
     }
 
     pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &Veileds) {
@@ -26,7 +22,7 @@ impl<'a> Recommends<'a> {
         for word in candidates.iter() {
             for letter in word.unique_letters() {
                 if veileds.contains(letter) {
-                    *veiled_letter_histogram.entry(*letter).or_insert(0) += 1;
+                    *veiled_letter_histogram.entry(letter).or_insert(0) += 1;
                 }
             }
         }

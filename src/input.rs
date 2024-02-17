@@ -48,7 +48,7 @@ impl Input {
                 }
             }
 
-            veileds.remove(&letter);
+            veileds.remove(letter);
         }
     }
 }

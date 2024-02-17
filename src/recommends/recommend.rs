@@ -45,7 +45,7 @@ impl<'a> Recommend<'a> {
         self.score = self
             .word
             .unique_letters()
-            .map(|c| veiled_letter_histogram.get(c).unwrap_or(&0))
+            .map(|c| veiled_letter_histogram.get(c).unwrap_or(0))
             .sum()
     }
 

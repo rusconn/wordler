@@ -11,11 +11,13 @@ use self::letter_info::LetterInfo;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LetterInfos(Vec<LetterInfo>);
 
-impl LetterInfos {
-    pub fn new(n: usize) -> Self {
-        Self(iter::repeat(LetterInfo::default()).take(n).collect())
+impl Default for LetterInfos {
+    fn default() -> Self {
+        Self(iter::repeat(LetterInfo::default()).take(5).collect())
     }
+}
 
+impl LetterInfos {
     pub fn not(&mut self, nth: usize, letter: Letter) {
         self.0[nth].not(letter);
     }

@@ -18,13 +18,13 @@ use self::{
 };
 
 pub fn run() {
-    let mut candidates = Candidates::unsafe_from(&WORDS);
-    let mut recommends = Recommends::unsafe_from(&WORDS);
-    let mut letter_infos = LetterInfos::new(5);
-
-    let mut includes = Includes::new();
-    let mut excludes = Excludes::new();
+    let mut candidates = Candidates::unsafe_from(WORDS);
+    let mut recommends = Recommends::unsafe_from(WORDS);
     let mut veileds = Veileds::unsafe_from('A'..='Z');
+
+    let mut letter_infos = LetterInfos::default();
+    let mut includes = Includes::default();
+    let mut excludes = Excludes::default();
 
     let stdin = io::stdin();
 

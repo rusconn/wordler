@@ -1,9 +1,9 @@
-use std::{collections::HashSet, ops::Index};
+use std::ops::Index;
 
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{Includes, Letter, LetterInfos, Word};
+use crate::{Excludes, Includes, LetterInfos, Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);
@@ -38,16 +38,11 @@ impl<'a> Candidates<'a> {
         self.0.len() <= 1
     }
 
-    pub fn retain(
-        &mut self,
-        letter_infos: &LetterInfos,
-        includes: &Includes,
-        not_contains: &HashSet<Letter>,
-    ) {
+    pub fn retain(&mut self, letter_infos: &LetterInfos, includes: &Includes, excludes: &Excludes) {
         let regex = Regex::new(&letter_infos.as_regex())
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
         self.0
-            .retain(|word| word.is_match(&regex, includes, not_contains));
+            .retain(|word| word.is_match(&regex, includes, excludes));
     }
 }

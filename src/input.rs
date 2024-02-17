@@ -4,7 +4,7 @@ mod util;
 
 use std::{collections::HashSet, io::Stdin};
 
-use crate::{Includes, Letter, LetterInfos};
+use crate::{Excludes, Includes, Letter, LetterInfos};
 
 use self::{
     guess::Guess,
@@ -29,14 +29,14 @@ impl Input {
         &self,
         letter_infos: &mut LetterInfos,
         includes: &mut Includes,
-        not_contains: &mut HashSet<Letter>,
+        excludes: &mut Excludes,
         unuseds: &mut HashSet<Letter>,
     ) {
         for (nth, (letter, hint)) in self.guess.iter().zip(self.hints.iter()).enumerate() {
             match hint.0 {
                 HintVariant::NotExists => {
                     letter_infos.not(nth, letter);
-                    not_contains.insert(letter);
+                    excludes.insert(letter);
                 }
                 HintVariant::WrongSpot => {
                     letter_infos.not(nth, letter);

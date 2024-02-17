@@ -6,13 +6,15 @@ mod input;
 mod letter;
 mod letter_infos;
 mod recommends;
+mod veileds;
 mod word;
 
-use std::{collections::HashSet, io};
+use std::io;
 
 use self::{
     candidates::Candidates, dict::WORDS, excludes::Excludes, includes::Includes, input::Input,
-    letter::Letter, letter_infos::LetterInfos, recommends::Recommends, word::Word,
+    letter::Letter, letter_infos::LetterInfos, recommends::Recommends, veileds::Veileds,
+    word::Word,
 };
 
 pub fn run() {
@@ -22,7 +24,7 @@ pub fn run() {
 
     let mut includes = Includes::new();
     let mut excludes = Excludes::new();
-    let mut unuseds = HashSet::from_iter(('A'..='Z').map(Letter::unsafe_from));
+    let mut veileds = Veileds::unsafe_from('A'..='Z');
 
     let stdin = io::stdin();
 
@@ -31,7 +33,7 @@ pub fn run() {
             return;
         }
 
-        recommends.update(&candidates, &unuseds);
+        recommends.update(&candidates, &veileds);
         recommends.print();
 
         let input = Input::read(&stdin);
@@ -40,7 +42,7 @@ pub fn run() {
             &mut letter_infos,
             &mut includes,
             &mut excludes,
-            &mut unuseds,
+            &mut veileds,
         );
 
         candidates.retain(&letter_infos, &includes, &excludes);

@@ -1,10 +1,10 @@
 mod recommend;
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use itertools::Itertools;
 
-use crate::{Candidates, Letter};
+use crate::{Candidates, Veileds};
 
 use self::recommend::Recommend;
 
@@ -21,19 +21,19 @@ impl<'a> Recommends<'a> {
         )
     }
 
-    pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<Letter>) {
-        let mut unused_letter_histogram = HashMap::default();
+    pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &Veileds) {
+        let mut veiled_letter_histogram = HashMap::default();
 
         for word in candidates.iter() {
             for letter in word.unique_letters() {
-                if unuseds.contains(letter) {
-                    *unused_letter_histogram.entry(*letter).or_insert(0) += 1;
+                if veileds.contains(letter) {
+                    *veiled_letter_histogram.entry(*letter).or_insert(0) += 1;
                 }
             }
         }
 
         for recommend in &mut self.0 {
-            recommend.update(&unused_letter_histogram);
+            recommend.update(&veiled_letter_histogram);
         }
 
         self.0.retain(Recommend::is_useful);

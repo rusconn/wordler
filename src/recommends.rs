@@ -2,6 +2,8 @@ mod recommend;
 
 use std::collections::{HashMap, HashSet};
 
+use itertools::Itertools;
+
 use crate::{Candidates, Letter};
 
 use self::recommend::Recommend;
@@ -17,14 +19,6 @@ impl<'a> Recommends<'a> {
                 .map(|&str| Recommend::unsafe_from(str))
                 .collect(),
         )
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
-
-    pub fn take(&self, n: usize) -> impl Iterator<Item = &Recommend<'a>> {
-        self.0.iter().take(n)
     }
 
     pub fn update(&mut self, candidates: &Candidates<'a>, unuseds: &HashSet<Letter>) {
@@ -44,5 +38,13 @@ impl<'a> Recommends<'a> {
 
         self.0.retain(Recommend::is_useful);
         self.0.sort_unstable_by(|x, y| y.cmp(x));
+    }
+
+    pub fn print(&self) {
+        if self.0.is_empty() {
+            println!("Recommend: -");
+        } else {
+            println!("Recommend: [{}]", self.0.iter().take(5).join(","));
+        }
     }
 }

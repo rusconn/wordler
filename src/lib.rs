@@ -35,12 +35,7 @@ pub fn run() {
         }
 
         recommends.update(&candidates, &unuseds);
-
-        if recommends.is_empty() {
-            println!("Recommend: -");
-        } else {
-            println!("Recommend: [{}]", recommends.take(5).join(","));
-        }
+        recommends.print();
 
         let input = Input::read(&stdin);
 

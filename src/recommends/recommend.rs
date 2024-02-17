@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, collections::HashMap, fmt};
 
-use crate::word::Word;
+use crate::Word;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommend<'a> {

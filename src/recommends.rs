@@ -2,7 +2,7 @@ mod recommend;
 
 use std::collections::{HashMap, HashSet};
 
-use crate::candidates::Candidates;
+use crate::Candidates;
 
 use self::recommend::Recommend;
 

@@ -2,7 +2,7 @@ use std::{collections::HashSet, ops::Index};
 
 use regex::Regex;
 
-use crate::{letter_infos::LetterInfos, word::Word};
+use crate::{LetterInfos, Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);
@@ -22,10 +22,6 @@ impl<'a> Index<usize> for Candidates<'a> {
 }
 
 impl<'a> Candidates<'a> {
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
     pub fn len(&self) -> usize {
         self.0.len()
     }

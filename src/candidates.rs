@@ -18,8 +18,8 @@ impl<'a> Index<usize> for Candidates<'a> {
 
 impl<'a> Candidates<'a> {
     /// Make sure the strs are valid
-    pub fn unsafe_from(strs: &[&'a str]) -> Self {
-        Self(strs.iter().map(|&str| Word::unsafe_from(str)).collect())
+    pub fn unsafe_from<const N: usize>(strs: [&'a str; N]) -> Self {
+        Self(strs.into_iter().map(Word::unsafe_from).collect())
     }
 
     pub fn iter(&self) -> impl Iterator<Item = &Word<'a>> {

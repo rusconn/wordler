@@ -1,5 +1,6 @@
 mod candidates;
 mod dict;
+mod excludes;
 mod includes;
 mod input;
 mod letter;
@@ -10,8 +11,8 @@ mod word;
 use std::{collections::HashSet, io};
 
 use self::{
-    candidates::Candidates, dict::WORDS, includes::Includes, input::Input, letter::Letter,
-    letter_infos::LetterInfos, recommends::Recommends, word::Word,
+    candidates::Candidates, dict::WORDS, excludes::Excludes, includes::Includes, input::Input,
+    letter::Letter, letter_infos::LetterInfos, recommends::Recommends, word::Word,
 };
 
 pub fn run() {
@@ -20,7 +21,7 @@ pub fn run() {
     let mut letter_infos = LetterInfos::new(5);
 
     let mut includes = Includes::new();
-    let mut not_contains = HashSet::new();
+    let mut excludes = Excludes::new();
     let mut unuseds = HashSet::from_iter(('A'..='Z').map(Letter::unsafe_from));
 
     let stdin = io::stdin();
@@ -38,11 +39,11 @@ pub fn run() {
         input.apply(
             &mut letter_infos,
             &mut includes,
-            &mut not_contains,
+            &mut excludes,
             &mut unuseds,
         );
 
-        candidates.retain(&letter_infos, &includes, &not_contains);
+        candidates.retain(&letter_infos, &includes, &excludes);
 
         println!();
     }

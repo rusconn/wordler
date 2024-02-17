@@ -2,7 +2,7 @@ use std::{collections::HashSet, fmt};
 
 use regex::Regex;
 
-use crate::{Includes, Letter};
+use crate::{Excludes, Includes, Letter};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Word<'a> {
@@ -29,14 +29,9 @@ impl<'a> Word<'a> {
         self.letter_set.iter()
     }
 
-    pub fn is_match(
-        &self,
-        regex: &Regex,
-        includes: &Includes,
-        not_contains: &HashSet<Letter>,
-    ) -> bool {
+    pub fn is_match(&self, regex: &Regex, includes: &Includes, excludes: &Excludes) -> bool {
         regex.is_match(self.word)
             && includes.is_subset(&self.letter_set)
-            && self.letter_set.is_disjoint(not_contains)
+            && excludes.is_disjoint(&self.letter_set)
     }
 }

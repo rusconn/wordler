@@ -2,9 +2,9 @@ mod guess;
 mod hints;
 mod util;
 
-use std::{collections::HashSet, io::Stdin};
+use std::io::Stdin;
 
-use crate::{Excludes, Includes, Letter, LetterInfos};
+use crate::{Excludes, Includes, LetterInfos, Veileds};
 
 use self::{
     guess::Guess,
@@ -30,7 +30,7 @@ impl Input {
         letter_infos: &mut LetterInfos,
         includes: &mut Includes,
         excludes: &mut Excludes,
-        unuseds: &mut HashSet<Letter>,
+        veileds: &mut Veileds,
     ) {
         for (nth, (letter, hint)) in self.guess.iter().zip(self.hints.iter()).enumerate() {
             match hint.0 {
@@ -48,7 +48,7 @@ impl Input {
                 }
             }
 
-            unuseds.remove(&letter);
+            veileds.remove(&letter);
         }
     }
 }

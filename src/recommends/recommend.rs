@@ -39,11 +39,11 @@ impl<'a> Recommend<'a> {
         }
     }
 
-    pub fn update(&mut self, unused_letter_histogram: &HashMap<Letter, i32>) {
+    pub fn update(&mut self, veiled_letter_histogram: &HashMap<Letter, i32>) {
         self.score = self
             .word
             .unique_letters()
-            .map(|c| unused_letter_histogram.get(c).unwrap_or(&0))
+            .map(|c| veiled_letter_histogram.get(c).unwrap_or(&0))
             .sum()
     }
 

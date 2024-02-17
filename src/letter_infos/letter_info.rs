@@ -1,6 +1,5 @@
-use std::collections::HashSet;
-
 use itertools::Itertools;
+use rustc_hash::FxHashSet;
 
 use crate::Letter;
 
@@ -38,13 +37,13 @@ impl LetterInfo {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Variant {
     Any,
-    Not(HashSet<Letter>),
+    Not(FxHashSet<Letter>),
     Correct(Letter),
 }
 
 impl Variant {
     fn not(letter: Letter) -> Self {
-        Self::Not(HashSet::from([letter]))
+        Self::Not(FxHashSet::from_iter([letter]))
     }
 
     fn correct(letter: Letter) -> Self {

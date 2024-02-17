@@ -1,13 +1,14 @@
-use std::{collections::HashSet, fmt};
+use std::fmt;
 
 use regex::Regex;
+use rustc_hash::FxHashSet;
 
 use crate::{Excludes, Includes, Letter};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Word<'a> {
     word: &'a str,
-    letter_set: HashSet<Letter>,
+    letter_set: FxHashSet<Letter>,
 }
 
 impl<'a> fmt::Display for Word<'a> {
@@ -21,7 +22,7 @@ impl<'a> Word<'a> {
     pub fn unsafe_from(str: &'a str) -> Self {
         Self {
             word: str,
-            letter_set: HashSet::from_iter(str.chars().map(Letter::unsafe_from)),
+            letter_set: FxHashSet::from_iter(str.chars().map(Letter::unsafe_from)),
         }
     }
 

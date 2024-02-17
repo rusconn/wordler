@@ -1,16 +1,16 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 use crate::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Includes(HashSet<Letter>);
+pub struct Includes(FxHashSet<Letter>);
 
 impl Includes {
     pub fn new() -> Self {
         Self(Default::default())
     }
 
-    pub fn is_subset(&self, other: &HashSet<Letter>) -> bool {
+    pub fn is_subset(&self, other: &FxHashSet<Letter>) -> bool {
         self.0.is_subset(other)
     }
 

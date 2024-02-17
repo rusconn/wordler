@@ -8,8 +8,6 @@ mod word;
 
 use std::{collections::HashSet, io};
 
-use itertools::Itertools;
-
 use self::{
     candidates::Candidates, dict::WORDS, input::Input, letter::Letter, letter_infos::LetterInfos,
     recommends::Recommends, word::Word,
@@ -27,11 +25,8 @@ pub fn run() {
     let stdin = io::stdin();
 
     loop {
-        match candidates.len() {
-            0 => return println!("Woops, there are no more words"),
-            1 => return println!("Found: {}", candidates[0]),
-            n if n <= 50 => println!("Remaining: [{}]", candidates.iter().join(",")),
-            n => println!("Remaining: Too many, didn't print: {n}"),
+        if candidates.print() {
+            return;
         }
 
         recommends.update(&candidates, &unuseds);

@@ -1,5 +1,6 @@
 use std::{collections::HashSet, ops::Index};
 
+use itertools::Itertools;
 use regex::Regex;
 
 use crate::{Letter, LetterInfos, Word};
@@ -21,12 +22,20 @@ impl<'a> Candidates<'a> {
         Self(strs.iter().map(|&str| Word::unsafe_from(str)).collect())
     }
 
-    pub fn len(&self) -> usize {
-        self.0.len()
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = &Word<'a>> {
         self.0.iter()
+    }
+
+    /// returns true if game over
+    pub fn print(&self) -> bool {
+        match self.0.len() {
+            0 => println!("Woops, there are no more words"),
+            1 => println!("Found: {}", self.0[0]),
+            n if n <= 50 => println!("Remaining: [{}]", self.0.iter().join(",")),
+            n => println!("Remaining: Too many, didn't print: {n}"),
+        }
+
+        self.0.len() <= 1
     }
 
     pub fn retain(

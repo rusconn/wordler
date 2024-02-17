@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Letter(char);
+pub struct Letter(u8);
 
 impl TryFrom<char> for Letter {
     type Error = InvalidCharacterError;
@@ -11,20 +11,20 @@ impl TryFrom<char> for Letter {
             return Err(Self::Error::NonAlphabetical(ch));
         }
 
-        Ok(Self(ch.to_ascii_uppercase()))
+        Ok(Self(ch.to_ascii_uppercase() as u8))
     }
 }
 
 impl fmt::Display for Letter {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "{}", self.0 as char)
     }
 }
 
 impl Letter {
-    /// Make sure the char is valid
-    pub fn unsafe_from(ch: char) -> Self {
-        Self(ch)
+    /// Make sure the byte is valid
+    pub fn unsafe_from(byte: u8) -> Self {
+        Self(byte)
     }
 }
 

@@ -22,7 +22,7 @@ impl<'a> Word<'a> {
     pub fn unsafe_from(str: &'a str) -> Self {
         Self {
             word: str,
-            letter_set: FxHashSet::from_iter(str.chars().map(Letter::unsafe_from)),
+            letter_set: FxHashSet::from_iter(str.bytes().map(Letter::unsafe_from)),
         }
     }
 

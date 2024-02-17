@@ -20,7 +20,7 @@ use self::{
 pub fn run() {
     let mut candidates = Candidates::unsafe_from(WORDS);
     let mut recommends = Recommends::unsafe_from(WORDS);
-    let mut veileds = Veileds::unsafe_from('A'..='Z');
+    let mut veileds = Veileds::unsafe_from(b'A'..=b'Z');
 
     let mut letter_infos = LetterInfos::default();
     let mut includes = Includes::default();

@@ -4,6 +4,8 @@ use std::iter;
 
 use itertools::Itertools;
 
+use crate::Letter;
+
 use self::letter_info::LetterInfo;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -14,11 +16,11 @@ impl LetterInfos {
         Self(iter::repeat(LetterInfo::default()).take(n).collect())
     }
 
-    pub fn not(&mut self, nth: usize, letter: char) {
+    pub fn not(&mut self, nth: usize, letter: Letter) {
         self.0[nth].not(letter);
     }
 
-    pub fn correct(&mut self, nth: usize, letter: char) {
+    pub fn correct(&mut self, nth: usize, letter: Letter) {
         self.0[nth].correct(letter);
     }
 

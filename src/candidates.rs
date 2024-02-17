@@ -2,16 +2,10 @@ use std::{collections::HashSet, ops::Index};
 
 use regex::Regex;
 
-use crate::{LetterInfos, Word};
+use crate::{Letter, LetterInfos, Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);
-
-impl<'a, const N: usize> From<&[&'a str; N]> for Candidates<'a> {
-    fn from(words: &[&'a str; N]) -> Self {
-        Self(words.iter().map(|&word| Word::from(word)).collect())
-    }
-}
 
 impl<'a> Index<usize> for Candidates<'a> {
     type Output = Word<'a>;
@@ -22,6 +16,11 @@ impl<'a> Index<usize> for Candidates<'a> {
 }
 
 impl<'a> Candidates<'a> {
+    /// Make sure the strs are valid
+    pub fn unsafe_from(strs: &[&'a str]) -> Self {
+        Self(strs.iter().map(|&str| Word::unsafe_from(str)).collect())
+    }
+
     pub fn len(&self) -> usize {
         self.0.len()
     }
@@ -33,8 +32,8 @@ impl<'a> Candidates<'a> {
     pub fn retain(
         &mut self,
         letter_infos: &LetterInfos,
-        contains: &HashSet<char>,
-        not_contains: &HashSet<char>,
+        contains: &HashSet<Letter>,
+        not_contains: &HashSet<Letter>,
     ) {
         let regex = Regex::new(&letter_infos.as_regex())
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));

@@ -2,6 +2,8 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
+use crate::Letter;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LetterInfo(Variant);
 
@@ -12,7 +14,7 @@ impl Default for LetterInfo {
 }
 
 impl LetterInfo {
-    pub fn not(&mut self, letter: char) {
+    pub fn not(&mut self, letter: Letter) {
         if let Variant::Not(set) = &mut self.0 {
             set.insert(letter);
         } else {
@@ -20,7 +22,7 @@ impl LetterInfo {
         }
     }
 
-    pub fn correct(&mut self, letter: char) {
+    pub fn correct(&mut self, letter: Letter) {
         self.0 = Variant::correct(letter);
     }
 
@@ -28,7 +30,7 @@ impl LetterInfo {
         match &self.0 {
             Variant::Any => ".".into(),
             Variant::Not(set) => format!("[^{}]", set.iter().join("")),
-            Variant::Correct(c) => (*c).into(),
+            Variant::Correct(c) => c.to_string(),
         }
     }
 }
@@ -36,16 +38,16 @@ impl LetterInfo {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Variant {
     Any,
-    Not(HashSet<char>),
-    Correct(char),
+    Not(HashSet<Letter>),
+    Correct(Letter),
 }
 
 impl Variant {
-    fn not(letter: char) -> Self {
+    fn not(letter: Letter) -> Self {
         Self::Not(HashSet::from([letter]))
     }
 
-    fn correct(letter: char) -> Self {
+    fn correct(letter: Letter) -> Self {
         Self::Correct(letter)
     }
 }

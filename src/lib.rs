@@ -1,6 +1,7 @@
 mod candidates;
 mod dict;
 mod input;
+mod letter;
 mod letter_infos;
 mod recommends;
 mod word;
@@ -10,18 +11,18 @@ use std::{collections::HashSet, io};
 use itertools::Itertools;
 
 use self::{
-    candidates::Candidates, dict::WORDS, input::Input, letter_infos::LetterInfos,
+    candidates::Candidates, dict::WORDS, input::Input, letter::Letter, letter_infos::LetterInfos,
     recommends::Recommends, word::Word,
 };
 
 pub fn run() {
-    let mut candidates = Candidates::from(&WORDS);
-    let mut recommends = Recommends::from(&WORDS);
+    let mut candidates = Candidates::unsafe_from(&WORDS);
+    let mut recommends = Recommends::unsafe_from(&WORDS);
     let mut letter_infos = LetterInfos::new(5);
 
     let mut contains = HashSet::new();
     let mut not_contains = HashSet::new();
-    let mut unuseds = HashSet::from_iter('A'..='Z');
+    let mut unuseds = HashSet::from_iter(('A'..='Z').map(Letter::unsafe_from));
 
     let stdin = io::stdin();
 

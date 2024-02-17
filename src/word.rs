@@ -2,19 +2,12 @@ use std::{collections::HashSet, fmt};
 
 use regex::Regex;
 
+use crate::Letter;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Word<'a> {
     word: &'a str,
-    chars: HashSet<char>,
-}
-
-impl<'a> From<&'a str> for Word<'a> {
-    fn from(word: &'a str) -> Self {
-        Self {
-            word,
-            chars: HashSet::from_iter(word.chars()),
-        }
-    }
+    chars: HashSet<Letter>,
 }
 
 impl<'a> fmt::Display for Word<'a> {
@@ -24,15 +17,23 @@ impl<'a> fmt::Display for Word<'a> {
 }
 
 impl<'a> Word<'a> {
-    pub fn unique_letters(&self) -> impl Iterator<Item = &char> {
+    /// Make sure the str is valid
+    pub fn unsafe_from(str: &'a str) -> Self {
+        Self {
+            word: str,
+            chars: HashSet::from_iter(str.chars().map(Letter::unsafe_from)),
+        }
+    }
+
+    pub fn unique_letters(&self) -> impl Iterator<Item = &Letter> {
         self.chars.iter()
     }
 
     pub fn is_match(
         &self,
         regex: &Regex,
-        contains: &HashSet<char>,
-        not_contains: &HashSet<char>,
+        contains: &HashSet<Letter>,
+        not_contains: &HashSet<Letter>,
     ) -> bool {
         regex.is_match(self.word)
             && self.chars.is_superset(contains)

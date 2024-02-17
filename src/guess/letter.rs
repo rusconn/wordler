@@ -9,7 +9,7 @@ impl TryFrom<char> for Letter {
             return Err(Self::Error::NonAlphabetical(letter));
         }
 
-        Ok(Self(letter))
+        Ok(Self(letter.to_ascii_uppercase()))
     }
 }
 

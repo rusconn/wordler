@@ -1,12 +1,11 @@
+mod letter_histogram;
 mod recommend;
-
-use std::collections::HashMap;
 
 use itertools::Itertools;
 
 use crate::{Candidates, Veileds};
 
-use self::recommend::Recommend;
+use self::{letter_histogram::LetterHistogram, recommend::Recommend};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends<'a>(Vec<Recommend<'a>>);
@@ -22,7 +21,7 @@ impl<'a> Recommends<'a> {
     }
 
     pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &Veileds) {
-        let mut veiled_letter_histogram = HashMap::default();
+        let mut veiled_letter_histogram = LetterHistogram::default();
 
         for word in candidates.iter() {
             for letter in word.unique_letters() {

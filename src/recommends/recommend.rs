@@ -1,6 +1,8 @@
-use std::{cmp::Ordering, collections::HashMap, fmt};
+use std::{cmp::Ordering, fmt};
 
-use crate::{letter::Letter, Word};
+use crate::Word;
+
+use super::LetterHistogram;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommend<'a> {
@@ -39,7 +41,7 @@ impl<'a> Recommend<'a> {
         }
     }
 
-    pub fn update(&mut self, veiled_letter_histogram: &HashMap<Letter, i32>) {
+    pub fn update(&mut self, veiled_letter_histogram: &LetterHistogram) {
         self.score = self
             .word
             .unique_letters()

@@ -1,6 +1,8 @@
 mod hint;
 
-use std::{error, fmt, io::Stdin};
+use std::io::Stdin;
+
+use anyhow::{ensure, Result};
 
 use super::util::get_line;
 
@@ -10,12 +12,10 @@ use self::hint::Hint;
 pub struct Hints(Vec<Hint>);
 
 impl TryFrom<&str> for Hints {
-    type Error = Box<dyn error::Error>;
+    type Error = anyhow::Error;
 
-    fn try_from(hints: &str) -> Result<Self, Self::Error> {
-        if hints.chars().count() != 5 {
-            return Err(InvalidLengthError.into());
-        }
+    fn try_from(hints: &str) -> Result<Self> {
+        ensure!(hints.chars().count() == 5, "Hints must be 5 letters");
 
         hints
             .chars()
@@ -43,14 +43,3 @@ impl Hints {
         self.0.iter()
     }
 }
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct InvalidLengthError;
-
-impl fmt::Display for InvalidLengthError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Hints must be 5 letters")
-    }
-}
-
-impl error::Error for InvalidLengthError {}

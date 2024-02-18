@@ -1,4 +1,4 @@
-use std::{error, fmt};
+use anyhow::{bail, Result};
 
 use crate::{Excludes, Includes, Letter, LetterInfos, Veileds};
 
@@ -6,14 +6,14 @@ use crate::{Excludes, Includes, Letter, LetterInfos, Veileds};
 pub struct Hint(Variant);
 
 impl TryFrom<char> for Hint {
-    type Error = Box<dyn error::Error>;
+    type Error = anyhow::Error;
 
-    fn try_from(hint: char) -> Result<Self, Self::Error> {
+    fn try_from(hint: char) -> Result<Self> {
         match hint {
             '0' => Ok(Self(Variant::NotExists)),
             '1' => Ok(Self(Variant::WrongSpot)),
             '2' => Ok(Self(Variant::CorrectSpot)),
-            _ => Err(UnknownHintError(hint).into()),
+            _ => bail!("Unknown hint: `{hint}`"),
         }
     }
 }
@@ -46,17 +46,6 @@ impl Hint {
         veileds.remove(letter);
     }
 }
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct UnknownHintError(char);
-
-impl fmt::Display for UnknownHintError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Unknown hint: `{}`", self.0)
-    }
-}
-
-impl error::Error for UnknownHintError {}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Variant {

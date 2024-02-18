@@ -1,4 +1,6 @@
-use std::{error, fmt, io::Stdin};
+use std::io::Stdin;
+
+use anyhow::{ensure, Result};
 
 use crate::letter::Letter;
 
@@ -8,12 +10,10 @@ use super::util::get_line;
 pub struct Guess(Vec<Letter>);
 
 impl TryFrom<&str> for Guess {
-    type Error = Box<dyn error::Error>;
+    type Error = anyhow::Error;
 
-    fn try_from(guess: &str) -> Result<Self, Self::Error> {
-        if guess.chars().count() != 5 {
-            return Err(InvalidLengthError.into());
-        }
+    fn try_from(guess: &str) -> Result<Self> {
+        ensure!(guess.chars().count() == 5, "Guess must be 5 letters");
 
         guess
             .chars()
@@ -41,14 +41,3 @@ impl Guess {
         self.0.iter().copied()
     }
 }
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct InvalidLengthError;
-
-impl fmt::Display for InvalidLengthError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Guess must be 5 letters")
-    }
-}
-
-impl error::Error for InvalidLengthError {}

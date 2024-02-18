@@ -27,6 +27,13 @@ impl<'a> Recommends<'a> {
             }
         }
 
+        // common letters must be scored as 0
+        for (_, n) in veiled_letter_histogram.iter_mut() {
+            if *n as usize == candidates.len() {
+                *n = 0;
+            }
+        }
+
         for recommend in &mut self.0 {
             recommend.update(&veiled_letter_histogram);
         }

@@ -4,7 +4,6 @@ use std::{fmt, io::Stdin};
 
 use super::util::get_line;
 
-pub use self::hint::Variant;
 use self::hint::{Hint, InvalidHintError};
 
 #[derive(Debug, Clone, PartialEq, Eq)]

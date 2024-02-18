@@ -6,10 +6,7 @@ use std::io::Stdin;
 
 use crate::{Excludes, Includes, LetterInfos, Veileds};
 
-use self::{
-    guess::Guess,
-    hints::{Hints, Variant as HintVariant},
-};
+use self::{guess::Guess, hints::Hints};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Input {
@@ -33,22 +30,7 @@ impl Input {
         veileds: &mut Veileds,
     ) {
         for (nth, (letter, hint)) in self.guess.iter().zip(self.hints.iter()).enumerate() {
-            match hint.0 {
-                HintVariant::NotExists => {
-                    letter_infos.not(nth, letter);
-                    excludes.insert(letter);
-                }
-                HintVariant::WrongSpot => {
-                    letter_infos.not(nth, letter);
-                    includes.insert(letter);
-                }
-                HintVariant::CorrectSpot => {
-                    letter_infos.correct(nth, letter);
-                    includes.insert(letter);
-                }
-            }
-
-            veileds.remove(letter);
+            hint.apply(nth, letter, letter_infos, includes, excludes, veileds);
         }
     }
 }

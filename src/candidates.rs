@@ -22,6 +22,10 @@ impl<'a> Candidates<'a> {
         Self(strs.into_iter().map(Word::unsafe_from).collect())
     }
 
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = &Word<'a>> {
         self.0.iter()
     }

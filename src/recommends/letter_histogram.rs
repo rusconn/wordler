@@ -1,4 +1,4 @@
-use std::collections::hash_map::Entry;
+use std::collections::hash_map::{Entry, IterMut};
 
 use rustc_hash::FxHashMap;
 
@@ -14,5 +14,9 @@ impl LetterHistogram {
 
     pub fn entry(&mut self, letter: Letter) -> Entry<'_, Letter, i32> {
         self.0.entry(letter)
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<'_, Letter, i32> {
+        self.0.iter_mut()
     }
 }

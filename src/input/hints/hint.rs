@@ -1,17 +1,19 @@
+use std::{error, fmt};
+
 use crate::{Excludes, Includes, Letter, LetterInfos, Veileds};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hint(Variant);
 
 impl TryFrom<char> for Hint {
-    type Error = InvalidHintError;
+    type Error = Box<dyn error::Error>;
 
     fn try_from(hint: char) -> Result<Self, Self::Error> {
         match hint {
             '0' => Ok(Self(Variant::NotExists)),
             '1' => Ok(Self(Variant::WrongSpot)),
             '2' => Ok(Self(Variant::CorrectSpot)),
-            _ => Err(Self::Error::UnknownHint(hint)),
+            _ => Err(UnknownHintError(hint).into()),
         }
     }
 }
@@ -46,9 +48,15 @@ impl Hint {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum InvalidHintError {
-    UnknownHint(char),
+struct UnknownHintError(char);
+
+impl fmt::Display for UnknownHintError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Unknown hint: `{}`", self.0)
+    }
 }
+
+impl error::Error for UnknownHintError {}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Variant {

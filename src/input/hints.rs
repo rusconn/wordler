@@ -1,20 +1,20 @@
 mod hint;
 
-use std::{fmt, io::Stdin};
+use std::{error, fmt, io::Stdin};
 
 use super::util::get_line;
 
-use self::hint::{Hint, InvalidHintError};
+use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hints(Vec<Hint>);
 
 impl TryFrom<&str> for Hints {
-    type Error = InvalidHintsError;
+    type Error = Box<dyn error::Error>;
 
     fn try_from(hints: &str) -> Result<Self, Self::Error> {
         if hints.chars().count() != 5 {
-            return Err(Self::Error::InvalidLength);
+            return Err(InvalidLengthError.into());
         }
 
         hints
@@ -22,7 +22,6 @@ impl TryFrom<&str> for Hints {
             .map(Hint::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
-            .map_err(Self::Error::from)
     }
 }
 
@@ -46,24 +45,12 @@ impl Hints {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum InvalidHintsError {
-    InvalidLength,
-    UnknownHint(char),
-}
+struct InvalidLengthError;
 
-impl From<InvalidHintError> for InvalidHintsError {
-    fn from(value: InvalidHintError) -> Self {
-        match value {
-            InvalidHintError::UnknownHint(hint) => Self::UnknownHint(hint),
-        }
-    }
-}
-
-impl fmt::Display for InvalidHintsError {
+impl fmt::Display for InvalidLengthError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::InvalidLength => write!(f, "Hints must be 5 letters"),
-            Self::UnknownHint(hint) => write!(f, "Unknown hint: `{hint}`"),
-        }
+        write!(f, "Hints must be 5 letters")
     }
 }
+
+impl error::Error for InvalidLengthError {}

@@ -1,6 +1,6 @@
-use std::{fmt, io::Stdin};
+use std::{error, fmt, io::Stdin};
 
-use crate::letter::{InvalidCharacterError, Letter};
+use crate::letter::Letter;
 
 use super::util::get_line;
 
@@ -8,11 +8,11 @@ use super::util::get_line;
 pub struct Guess(Vec<Letter>);
 
 impl TryFrom<&str> for Guess {
-    type Error = InvalidGuessError;
+    type Error = Box<dyn error::Error>;
 
     fn try_from(guess: &str) -> Result<Self, Self::Error> {
         if guess.chars().count() != 5 {
-            return Err(Self::Error::InvalidLength);
+            return Err(InvalidLengthError.into());
         }
 
         guess
@@ -20,7 +20,6 @@ impl TryFrom<&str> for Guess {
             .map(Letter::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
-            .map_err(Self::Error::from)
     }
 }
 
@@ -44,24 +43,12 @@ impl Guess {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum InvalidGuessError {
-    InvalidLength,
-    NonAlphabetical(char),
-}
+struct InvalidLengthError;
 
-impl From<InvalidCharacterError> for InvalidGuessError {
-    fn from(value: InvalidCharacterError) -> Self {
-        match value {
-            InvalidCharacterError::NonAlphabetical(letter) => Self::NonAlphabetical(letter),
-        }
-    }
-}
-
-impl fmt::Display for InvalidGuessError {
+impl fmt::Display for InvalidLengthError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::InvalidLength => write!(f, "Guess must be 5 letters"),
-            Self::NonAlphabetical(letter) => write!(f, "Non alphabetical letter: `{letter}`"),
-        }
+        write!(f, "Guess must be 5 letters")
     }
 }
+
+impl error::Error for InvalidLengthError {}

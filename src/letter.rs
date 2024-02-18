@@ -1,14 +1,14 @@
-use std::fmt;
+use std::{error, fmt};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Letter(u8);
 
 impl TryFrom<char> for Letter {
-    type Error = InvalidCharacterError;
+    type Error = Box<dyn error::Error>;
 
     fn try_from(ch: char) -> Result<Self, Self::Error> {
         if !ch.is_ascii_alphabetic() {
-            return Err(Self::Error::NonAlphabetical(ch));
+            return Err(NonAlphabeticalCharacterError(ch).into());
         }
 
         Ok(Self(ch.to_ascii_uppercase() as u8))
@@ -29,6 +29,12 @@ impl Letter {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum InvalidCharacterError {
-    NonAlphabetical(char),
+struct NonAlphabeticalCharacterError(char);
+
+impl fmt::Display for NonAlphabeticalCharacterError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Non alphabetical letter: `{}`", self.0)
+    }
 }
+
+impl error::Error for NonAlphabeticalCharacterError {}

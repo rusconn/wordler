@@ -1,5 +1,7 @@
+use crate::{Excludes, Includes, Letter, LetterInfos, Veileds};
+
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Hint(pub Variant);
+pub struct Hint(Variant);
 
 impl TryFrom<char> for Hint {
     type Error = InvalidHintError;
@@ -14,13 +16,42 @@ impl TryFrom<char> for Hint {
     }
 }
 
+impl Hint {
+    pub fn apply(
+        &self,
+        nth: usize,
+        letter: Letter,
+        letter_infos: &mut LetterInfos,
+        includes: &mut Includes,
+        excludes: &mut Excludes,
+        veileds: &mut Veileds,
+    ) {
+        match self.0 {
+            Variant::NotExists => {
+                letter_infos.not(nth, letter);
+                excludes.insert(letter);
+            }
+            Variant::WrongSpot => {
+                letter_infos.not(nth, letter);
+                includes.insert(letter);
+            }
+            Variant::CorrectSpot => {
+                letter_infos.correct(nth, letter);
+                includes.insert(letter);
+            }
+        }
+
+        veileds.remove(letter);
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum InvalidHintError {
     UnknownHint(char),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Variant {
+enum Variant {
     NotExists,
     WrongSpot,
     CorrectSpot,

@@ -53,3 +53,63 @@ impl<'a> Recommend<'a> {
         self.score > 0
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::Letter;
+
+    use super::*;
+
+    #[test]
+    fn fmt() {
+        assert_eq!(Recommend::unsafe_from("AUDIO").to_string(), "AUDIO");
+        assert_eq!(Recommend::unsafe_from("HIPPO").to_string(), "HIPPO");
+        assert_eq!(Recommend::unsafe_from("AAAAA").to_string(), "AAAAA");
+    }
+
+    #[test]
+    fn cmp() {
+        let mut recommend1 = Recommend::unsafe_from("AAAAA");
+        let mut recommend2 = Recommend::unsafe_from("BBBBB");
+        assert_eq!(recommend1.cmp(&recommend2), Ordering::Equal);
+
+        recommend1.score = 1;
+        assert_eq!(recommend1.cmp(&recommend2), Ordering::Greater);
+
+        recommend2.score = 2;
+        assert_eq!(recommend1.cmp(&recommend2), Ordering::Less);
+    }
+
+    #[test]
+    fn update() {
+        let mut histogram = LetterHistogram::default();
+
+        let mut recommend = Recommend::unsafe_from("HIPPO");
+        assert_eq!(recommend.score, 0);
+
+        *histogram.entry(Letter::unsafe_from(b'A')).or_insert(0) += 1;
+        recommend.update(&histogram);
+        assert_eq!(recommend.score, 0);
+
+        *histogram.entry(Letter::unsafe_from(b'P')).or_insert(0) += 1;
+        recommend.update(&histogram);
+        assert_eq!(recommend.score, 1);
+
+        *histogram.entry(Letter::unsafe_from(b'I')).or_insert(0) += 1;
+        recommend.update(&histogram);
+        assert_eq!(recommend.score, 2);
+
+        *histogram.entry(Letter::unsafe_from(b'I')).or_insert(0) += 1;
+        recommend.update(&histogram);
+        assert_eq!(recommend.score, 3);
+    }
+
+    #[test]
+    fn is_useful() {
+        let mut recommend = Recommend::unsafe_from("HIPPO");
+        assert!(!recommend.is_useful());
+
+        recommend.score = 1;
+        assert!(recommend.is_useful());
+    }
+}

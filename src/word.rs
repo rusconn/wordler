@@ -36,3 +36,65 @@ impl<'a> Word<'a> {
             && excludes.is_disjoint(&self.letter_set)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fmt() {
+        assert_eq!(Word::unsafe_from("AUDIO").to_string(), "AUDIO");
+        assert_eq!(Word::unsafe_from("HIPPO").to_string(), "HIPPO");
+        assert_eq!(Word::unsafe_from("AAAAA").to_string(), "AAAAA");
+    }
+
+    #[test]
+    fn unique_letters() {
+        assert_eq!(Word::unsafe_from("AUDIO").unique_letters().count(), 5);
+        assert_eq!(Word::unsafe_from("HIPPO").unique_letters().count(), 4);
+        assert_eq!(Word::unsafe_from("AAAAA").unique_letters().count(), 1);
+    }
+
+    #[test]
+    fn is_match_regex() {
+        let word = Word::unsafe_from("HIPPO");
+        let regex = Regex::new("HIPPO").unwrap();
+        let includes = Includes::default();
+        let excludes = Excludes::default();
+        assert!(word.is_match(&regex, &includes, &excludes));
+
+        let regex = Regex::new("ZIPPO").unwrap();
+        assert!(!word.is_match(&regex, &includes, &excludes));
+
+        let regex = Regex::new("HIP[^P]O").unwrap();
+        assert!(!word.is_match(&regex, &includes, &excludes));
+    }
+
+    #[test]
+    fn is_match_includes() {
+        let word = Word::unsafe_from("HIPPO");
+        let regex = Regex::new(".....").unwrap();
+        let mut includes = Includes::default();
+        let excludes = Excludes::default();
+
+        includes.insert(Letter::unsafe_from(b'I'));
+        assert!(word.is_match(&regex, &includes, &excludes));
+
+        includes.insert(Letter::unsafe_from(b'Z'));
+        assert!(!word.is_match(&regex, &includes, &excludes));
+    }
+
+    #[test]
+    fn is_match_excludes() {
+        let word = Word::unsafe_from("HIPPO");
+        let regex = Regex::new(".....").unwrap();
+        let includes = Includes::default();
+        let mut excludes = Excludes::default();
+
+        excludes.insert(Letter::unsafe_from(b'Z'));
+        assert!(word.is_match(&regex, &includes, &excludes));
+
+        excludes.insert(Letter::unsafe_from(b'P'));
+        assert!(!word.is_match(&regex, &includes, &excludes));
+    }
+}

@@ -27,3 +27,42 @@ impl Letter {
         Self(byte)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn try_from_success() {
+        assert_eq!(Letter::try_from('a').unwrap(), Letter(b'A'));
+        assert_eq!(Letter::try_from('z').unwrap(), Letter(b'Z'));
+        assert_eq!(Letter::try_from('A').unwrap(), Letter(b'A'));
+        assert_eq!(Letter::try_from('Z').unwrap(), Letter(b'Z'));
+    }
+
+    #[test]
+    fn try_from_failure() {
+        assert_eq!(
+            Letter::try_from('@').unwrap_err().to_string(),
+            "Non alphabetical letter: `@`"
+        );
+        assert_eq!(
+            Letter::try_from('1').unwrap_err().to_string(),
+            "Non alphabetical letter: `1`"
+        );
+        assert_eq!(
+            Letter::try_from('あ').unwrap_err().to_string(),
+            "Non alphabetical letter: `あ`"
+        );
+        assert_eq!(
+            Letter::try_from(' ').unwrap_err().to_string(),
+            "Non alphabetical letter: ` `"
+        );
+    }
+
+    #[test]
+    fn fmt() {
+        assert_eq!(Letter(b'A').to_string(), "A");
+        assert_eq!(Letter(b'Z').to_string(), "Z");
+    }
+}

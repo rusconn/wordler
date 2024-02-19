@@ -50,3 +50,30 @@ impl Variant {
         Self::Correct(letter)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn operations() {
+        let mut letter_info = LetterInfo::default();
+        assert_eq!(letter_info.as_regex(), ".");
+
+        letter_info.not(Letter::unsafe_from(b'A'));
+        assert_eq!(letter_info.as_regex(), "[^A]");
+
+        letter_info.correct(Letter::unsafe_from(b'B'));
+        assert_eq!(letter_info.as_regex(), "B");
+
+        let mut letter_info = LetterInfo::default();
+        letter_info.not(Letter::unsafe_from(b'A'));
+        assert_eq!(letter_info.as_regex(), "[^A]");
+
+        letter_info.not(Letter::unsafe_from(b'B'));
+        assert_eq!(letter_info.as_regex(), "[^AB]");
+
+        letter_info.correct(Letter::unsafe_from(b'C'));
+        assert_eq!(letter_info.as_regex(), "C");
+    }
+}

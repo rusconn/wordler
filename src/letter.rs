@@ -16,8 +16,8 @@ impl TryFrom<char> for Letter {
 }
 
 impl fmt::Display for Letter {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0 as char)
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", char::from(self.0))
     }
 }
 

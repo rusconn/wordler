@@ -2,7 +2,7 @@ use std::io::Stdin;
 
 use anyhow::{ensure, Result};
 
-use crate::letter::Letter;
+use crate::Letter;
 
 use super::util::get_line;
 

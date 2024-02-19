@@ -28,7 +28,7 @@ impl<'a> Recommends<'a> {
             }
         }
 
-        // common letters must be scored as 0
+        // common letters must not be scored
         for (_, n) in veiled_letter_histogram.iter_mut() {
             if *n as usize == candidates.len() {
                 *n = 0;

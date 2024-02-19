@@ -20,11 +20,11 @@ use self::{
 pub fn run() {
     let mut candidates = Candidates::default();
     let mut recommends = Recommends::default();
-    let mut veileds = Veileds::default();
-
     let mut letter_infos = LetterInfos::default();
+
     let mut includes = Includes::default();
     let mut excludes = Excludes::default();
+    let mut veileds = Veileds::default();
 
     let stdin = io::stdin();
 

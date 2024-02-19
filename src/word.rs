@@ -39,20 +39,24 @@ impl<'a> Word<'a> {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
 
-    #[test]
-    fn fmt() {
-        assert_eq!(Word::unsafe_from("AUDIO").to_string(), "AUDIO");
-        assert_eq!(Word::unsafe_from("HIPPO").to_string(), "HIPPO");
-        assert_eq!(Word::unsafe_from("AAAAA").to_string(), "AAAAA");
+    #[rstest(
+        input,
+        output,
+        case("AUDIO", "AUDIO"),
+        case("HIPPO", "HIPPO"),
+        case("AAAAA", "AAAAA")
+    )]
+    fn fmt(input: &str, output: &str) {
+        assert_eq!(Word::unsafe_from(input).to_string(), output);
     }
 
-    #[test]
-    fn unique_letters() {
-        assert_eq!(Word::unsafe_from("AUDIO").unique_letters().count(), 5);
-        assert_eq!(Word::unsafe_from("HIPPO").unique_letters().count(), 4);
-        assert_eq!(Word::unsafe_from("AAAAA").unique_letters().count(), 1);
+    #[rstest(input, output, case("AUDIO", 5), case("HIPPO", 4), case("AAAAA", 1))]
+    fn unique_letters(input: &str, output: usize) {
+        assert_eq!(Word::unsafe_from(input).unique_letters().count(), output);
     }
 
     #[test]

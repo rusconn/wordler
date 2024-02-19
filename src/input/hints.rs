@@ -46,43 +46,39 @@ impl Hints {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
 
-    #[test]
-    fn try_from_success() {
-        assert!(Hints::try_from("00000").is_ok());
-        assert!(Hints::try_from("11111").is_ok());
-        assert!(Hints::try_from("22222").is_ok());
-        assert!(Hints::try_from("01010").is_ok());
-        assert!(Hints::try_from("01201").is_ok());
+    #[rstest(
+        input,
+        case("00000"),
+        case("11111"),
+        case("22222"),
+        case("01010"),
+        case("01201")
+    )]
+    fn try_from_success(input: &str) {
+        assert!(Hints::try_from(input).is_ok());
     }
 
-    #[test]
-    fn try_from_failure_len() {
+    #[rstest(input, case(""), case("@"), case("1021"), case("120021"))]
+    fn try_from_failure_len(input: &str) {
         assert_eq!(
-            Hints::try_from("").unwrap_err().to_string(),
-            "Hints must be 5 letters"
-        );
-        assert_eq!(
-            Hints::try_from("@").unwrap_err().to_string(),
-            "Hints must be 5 letters"
-        );
-        assert_eq!(
-            Hints::try_from("1021").unwrap_err().to_string(),
-            "Hints must be 5 letters"
-        );
-        assert_eq!(
-            Hints::try_from("120021").unwrap_err().to_string(),
+            Hints::try_from(input).unwrap_err().to_string(),
             "Hints must be 5 letters"
         );
     }
 
-    #[test]
-    fn try_from_failure_hint() {
-        assert!(Hints::try_from("1021a").is_err());
-        assert!(Hints::try_from("10b1@").is_err());
-        assert!(Hints::try_from("10203").is_err());
-        assert!(Hints::try_from("00あ12").is_err());
-        assert!(Hints::try_from("10 20").is_err());
+    #[rstest(
+        input,
+        case("1021a"),
+        case("10b1@"),
+        case("10203"),
+        case("00あ12"),
+        case("10 20")
+    )]
+    fn try_from_failure_hint(input: &str) {
+        assert!(Hints::try_from(input).is_err());
     }
 }

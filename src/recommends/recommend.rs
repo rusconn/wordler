@@ -56,15 +56,21 @@ impl<'a> Recommend<'a> {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use crate::Letter;
 
     use super::*;
 
-    #[test]
-    fn fmt() {
-        assert_eq!(Recommend::unsafe_from("AUDIO").to_string(), "AUDIO");
-        assert_eq!(Recommend::unsafe_from("HIPPO").to_string(), "HIPPO");
-        assert_eq!(Recommend::unsafe_from("AAAAA").to_string(), "AAAAA");
+    #[rstest(
+        input,
+        output,
+        case("AUDIO", "AUDIO"),
+        case("HIPPO", "HIPPO"),
+        case("AAAAA", "AAAAA")
+    )]
+    fn fmt(input: &str, output: &str) {
+        assert_eq!(Recommend::unsafe_from(input).to_string(), output);
     }
 
     #[test]

@@ -56,32 +56,27 @@ enum Variant {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
+    use super::Variant::*;
     use super::*;
 
-    #[test]
-    fn try_from_success() {
-        assert_eq!(Hint::try_from('0').unwrap(), Hint(Variant::NotExists));
-        assert_eq!(Hint::try_from('1').unwrap(), Hint(Variant::WrongSpot));
-        assert_eq!(Hint::try_from('2').unwrap(), Hint(Variant::CorrectSpot));
+    #[rstest(
+        input,
+        variant,
+        case('0', NotExists),
+        case('1', WrongSpot),
+        case('2', CorrectSpot)
+    )]
+    fn try_from_success(input: char, variant: Variant) {
+        assert_eq!(Hint::try_from(input).unwrap(), Hint(variant));
     }
 
-    #[test]
-    fn try_from_failure() {
+    #[rstest(input, case('@'), case('3'), case('あ'), case(' '))]
+    fn try_from_failure(input: char) {
         assert_eq!(
-            Hint::try_from('@').unwrap_err().to_string(),
-            "Unknown hint: `@`"
-        );
-        assert_eq!(
-            Hint::try_from('3').unwrap_err().to_string(),
-            "Unknown hint: `3`"
-        );
-        assert_eq!(
-            Hint::try_from('あ').unwrap_err().to_string(),
-            "Unknown hint: `あ`"
-        );
-        assert_eq!(
-            Hint::try_from(' ').unwrap_err().to_string(),
-            "Unknown hint: ` `"
+            Hint::try_from(input).unwrap_err().to_string(),
+            format!("Unknown hint: `{input}`"),
         );
     }
 }

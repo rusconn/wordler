@@ -1,19 +1,22 @@
 mod candidates;
 mod dict;
-mod excludes;
-mod includes;
 mod input;
 mod letter;
 mod letter_infos;
+mod letter_set;
 mod recommends;
-mod veileds;
 mod word;
 
 use std::io;
 
 use self::{
-    candidates::Candidates, dict::WORDS, excludes::Excludes, includes::Includes, input::Input,
-    letter::Letter, letter_infos::LetterInfos, recommends::Recommends, veileds::Veileds,
+    candidates::Candidates,
+    dict::WORDS,
+    input::Input,
+    letter::Letter,
+    letter_infos::LetterInfos,
+    letter_set::{Excludes, Includes, NotLetters, Veileds, WordLetters},
+    recommends::Recommends,
     word::Word,
 };
 

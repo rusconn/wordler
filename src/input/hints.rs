@@ -39,8 +39,8 @@ impl Hints {
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Hint> {
-        self.0.iter()
+    pub fn iter(&self) -> impl Iterator<Item = Hint> + '_ {
+        self.0.iter().copied()
     }
 }
 

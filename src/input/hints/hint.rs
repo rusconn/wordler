@@ -2,7 +2,7 @@ use anyhow::{bail, Result};
 
 use crate::{Excludes, Includes, Letter, LetterInfos, Veileds};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Hint(Variant);
 
 impl TryFrom<char> for Hint {
@@ -47,7 +47,7 @@ impl Hint {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Variant {
     NotExists,
     WrongSpot,

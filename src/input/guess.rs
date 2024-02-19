@@ -44,41 +44,25 @@ impl Guess {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
 
-    #[test]
-    fn try_from_success() {
-        assert!(Guess::try_from("audio").is_ok());
-        assert!(Guess::try_from("STERN").is_ok());
-        assert!(Guess::try_from("cHuMp").is_ok());
-        assert!(Guess::try_from("aaaaa").is_ok());
+    #[rstest(input, case("audio"), case("STERN"), case("cHuMp"), case("aaaaa"))]
+    fn try_from_success(input: &str) {
+        assert!(Guess::try_from(input).is_ok());
     }
 
-    #[test]
-    fn try_from_failure_len() {
+    #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]
+    fn try_from_failure_len(input: &str) {
         assert_eq!(
-            Guess::try_from("").unwrap_err().to_string(),
-            "Guess must be 5 letters"
-        );
-        assert_eq!(
-            Guess::try_from("@").unwrap_err().to_string(),
-            "Guess must be 5 letters"
-        );
-        assert_eq!(
-            Guess::try_from("will").unwrap_err().to_string(),
-            "Guess must be 5 letters"
-        );
-        assert_eq!(
-            Guess::try_from("clippy").unwrap_err().to_string(),
+            Guess::try_from(input).unwrap_err().to_string(),
             "Guess must be 5 letters"
         );
     }
 
-    #[test]
-    fn try_from_failure_letter() {
-        assert!(Guess::try_from("will@").is_err());
-        assert!(Guess::try_from("1will").is_err());
-        assert!(Guess::try_from("wiあll").is_err());
-        assert!(Guess::try_from("wi ll").is_err());
+    #[rstest(input, case("will@"), case("1will"), case("wiあll"), case("wi ll"))]
+    fn try_from_failure_letter(input: &str) {
+        assert!(Guess::try_from(input).is_err());
     }
 }

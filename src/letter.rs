@@ -30,39 +30,32 @@ impl Letter {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
 
-    #[test]
-    fn try_from_success() {
-        assert_eq!(Letter::try_from('a').unwrap(), Letter(b'A'));
-        assert_eq!(Letter::try_from('z').unwrap(), Letter(b'Z'));
-        assert_eq!(Letter::try_from('A').unwrap(), Letter(b'A'));
-        assert_eq!(Letter::try_from('Z').unwrap(), Letter(b'Z'));
+    #[rstest(
+        input,
+        byte,
+        case('a', b'A'),
+        case('z', b'Z'),
+        case('A', b'A'),
+        case('Z', b'Z')
+    )]
+    fn try_from_success(input: char, byte: u8) {
+        assert_eq!(Letter::try_from(input).unwrap(), Letter(byte));
     }
 
-    #[test]
-    fn try_from_failure() {
+    #[rstest(ch, case('@'), case('1'), case('あ'), case(' '))]
+    fn try_from_failure(ch: char) {
         assert_eq!(
-            Letter::try_from('@').unwrap_err().to_string(),
-            "Non alphabetical letter: `@`"
-        );
-        assert_eq!(
-            Letter::try_from('1').unwrap_err().to_string(),
-            "Non alphabetical letter: `1`"
-        );
-        assert_eq!(
-            Letter::try_from('あ').unwrap_err().to_string(),
-            "Non alphabetical letter: `あ`"
-        );
-        assert_eq!(
-            Letter::try_from(' ').unwrap_err().to_string(),
-            "Non alphabetical letter: ` `"
+            Letter::try_from(ch).unwrap_err().to_string(),
+            format!("Non alphabetical letter: `{ch}`"),
         );
     }
 
-    #[test]
-    fn fmt() {
-        assert_eq!(Letter(b'A').to_string(), "A");
-        assert_eq!(Letter(b'Z').to_string(), "Z");
+    #[rstest(byte, s, case(b'A', "A"), case(b'Z', "Z"))]
+    fn fmt(byte: u8, s: &str) {
+        assert_eq!(Letter(byte).to_string(), s);
     }
 }

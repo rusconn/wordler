@@ -43,3 +43,46 @@ impl Hints {
         self.0.iter()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn try_from_success() {
+        assert!(Hints::try_from("00000").is_ok());
+        assert!(Hints::try_from("11111").is_ok());
+        assert!(Hints::try_from("22222").is_ok());
+        assert!(Hints::try_from("01010").is_ok());
+        assert!(Hints::try_from("01201").is_ok());
+    }
+
+    #[test]
+    fn try_from_failure_len() {
+        assert_eq!(
+            Hints::try_from("").unwrap_err().to_string(),
+            "Hints must be 5 letters"
+        );
+        assert_eq!(
+            Hints::try_from("@").unwrap_err().to_string(),
+            "Hints must be 5 letters"
+        );
+        assert_eq!(
+            Hints::try_from("1021").unwrap_err().to_string(),
+            "Hints must be 5 letters"
+        );
+        assert_eq!(
+            Hints::try_from("120021").unwrap_err().to_string(),
+            "Hints must be 5 letters"
+        );
+    }
+
+    #[test]
+    fn try_from_failure_hint() {
+        assert!(Hints::try_from("1021a").is_err());
+        assert!(Hints::try_from("10b1@").is_err());
+        assert!(Hints::try_from("10203").is_err());
+        assert!(Hints::try_from("00あ12").is_err());
+        assert!(Hints::try_from("10 20").is_err());
+    }
+}

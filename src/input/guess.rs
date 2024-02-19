@@ -41,3 +41,44 @@ impl Guess {
         self.0.iter().copied()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn try_from_success() {
+        assert!(Guess::try_from("audio").is_ok());
+        assert!(Guess::try_from("STERN").is_ok());
+        assert!(Guess::try_from("cHuMp").is_ok());
+        assert!(Guess::try_from("aaaaa").is_ok());
+    }
+
+    #[test]
+    fn try_from_failure_len() {
+        assert_eq!(
+            Guess::try_from("").unwrap_err().to_string(),
+            "Guess must be 5 letters"
+        );
+        assert_eq!(
+            Guess::try_from("@").unwrap_err().to_string(),
+            "Guess must be 5 letters"
+        );
+        assert_eq!(
+            Guess::try_from("will").unwrap_err().to_string(),
+            "Guess must be 5 letters"
+        );
+        assert_eq!(
+            Guess::try_from("clippy").unwrap_err().to_string(),
+            "Guess must be 5 letters"
+        );
+    }
+
+    #[test]
+    fn try_from_failure_letter() {
+        assert!(Guess::try_from("will@").is_err());
+        assert!(Guess::try_from("1will").is_err());
+        assert!(Guess::try_from("wiあll").is_err());
+        assert!(Guess::try_from("wi ll").is_err());
+    }
+}

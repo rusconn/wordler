@@ -53,3 +53,35 @@ enum Variant {
     WrongSpot,
     CorrectSpot,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn try_from_success() {
+        assert_eq!(Hint::try_from('0').unwrap(), Hint(Variant::NotExists));
+        assert_eq!(Hint::try_from('1').unwrap(), Hint(Variant::WrongSpot));
+        assert_eq!(Hint::try_from('2').unwrap(), Hint(Variant::CorrectSpot));
+    }
+
+    #[test]
+    fn try_from_failure() {
+        assert_eq!(
+            Hint::try_from('@').unwrap_err().to_string(),
+            "Unknown hint: `@`"
+        );
+        assert_eq!(
+            Hint::try_from('3').unwrap_err().to_string(),
+            "Unknown hint: `3`"
+        );
+        assert_eq!(
+            Hint::try_from('あ').unwrap_err().to_string(),
+            "Unknown hint: `あ`"
+        );
+        assert_eq!(
+            Hint::try_from(' ').unwrap_err().to_string(),
+            "Unknown hint: ` `"
+        );
+    }
+}

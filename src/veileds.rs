@@ -5,12 +5,13 @@ use crate::Letter;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Veileds(FxHashSet<Letter>);
 
-impl Veileds {
-    /// Make sure the bytes are valid
-    pub fn unsafe_from<T: Iterator<Item = u8>>(bytes: T) -> Self {
-        Self(FxHashSet::from_iter(bytes.map(Letter::unsafe_from)))
+impl Default for Veileds {
+    fn default() -> Self {
+        Self(FxHashSet::from_iter((b'A'..=b'Z').map(Letter::unsafe_from)))
     }
+}
 
+impl Veileds {
     pub fn contains(&self, letter: Letter) -> bool {
         self.0.contains(&letter)
     }

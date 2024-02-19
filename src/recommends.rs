@@ -3,19 +3,20 @@ mod recommend;
 
 use itertools::Itertools;
 
-use crate::{Candidates, Veileds};
+use crate::{Candidates, Veileds, WORDS};
 
 use self::{letter_histogram::LetterHistogram, recommend::Recommend};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
-impl<'a> Recommends<'a> {
-    /// Make sure the strs are valid
-    pub fn unsafe_from<const N: usize>(strs: [&'a str; N]) -> Self {
-        Self(strs.into_iter().map(Recommend::unsafe_from).collect())
+impl<'a> Default for Recommends<'a> {
+    fn default() -> Self {
+        Self(WORDS.into_iter().map(Recommend::unsafe_from).collect())
     }
+}
 
+impl<'a> Recommends<'a> {
     pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &Veileds) {
         let mut veiled_letter_histogram = LetterHistogram::default();
 

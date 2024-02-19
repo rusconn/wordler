@@ -3,10 +3,16 @@ use std::ops::Index;
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{Excludes, Includes, LetterInfos, Word};
+use crate::{Excludes, Includes, LetterInfos, Word, WORDS};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);
+
+impl<'a> Default for Candidates<'a> {
+    fn default() -> Self {
+        Self(WORDS.into_iter().map(Word::unsafe_from).collect())
+    }
+}
 
 impl<'a> Index<usize> for Candidates<'a> {
     type Output = Word<'a>;
@@ -17,11 +23,6 @@ impl<'a> Index<usize> for Candidates<'a> {
 }
 
 impl<'a> Candidates<'a> {
-    /// Make sure the strs are valid
-    pub fn unsafe_from<const N: usize>(strs: [&'a str; N]) -> Self {
-        Self(strs.into_iter().map(Word::unsafe_from).collect())
-    }
-
     pub fn len(&self) -> usize {
         self.0.len()
     }

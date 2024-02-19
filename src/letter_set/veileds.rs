@@ -1,13 +1,18 @@
-use rustc_hash::FxHashSet;
-
 use crate::Letter;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Veileds(FxHashSet<Letter>);
+use super::{LetterSet, Set};
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct VeiledsDerivative;
+
+pub type Veileds = LetterSet<VeiledsDerivative>;
 
 impl Default for Veileds {
     fn default() -> Self {
-        Self(FxHashSet::from_iter((b'A'..=b'Z').map(Letter::unsafe_from)))
+        Self(
+            Set::from_iter((b'A'..=b'Z').map(Letter::unsafe_from)),
+            Default::default(),
+        )
     }
 }
 

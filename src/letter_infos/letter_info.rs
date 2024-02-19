@@ -1,7 +1,6 @@
 use itertools::Itertools;
-use rustc_hash::FxHashSet;
 
-use crate::Letter;
+use crate::{Letter, NotLetters};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LetterInfo(Variant);
@@ -37,13 +36,13 @@ impl LetterInfo {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Variant {
     Any,
-    Not(FxHashSet<Letter>),
+    Not(NotLetters),
     Correct(Letter),
 }
 
 impl Variant {
     fn not(letter: Letter) -> Self {
-        Self::Not(FxHashSet::from_iter([letter]))
+        Self::Not(NotLetters::new(letter))
     }
 
     fn correct(letter: Letter) -> Self {

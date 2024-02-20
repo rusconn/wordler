@@ -1,4 +1,4 @@
-use std::io::Stdin;
+use std::io::{Stdin, Stdout, Write};
 
 use anyhow::{ensure, Result};
 
@@ -24,9 +24,10 @@ impl TryFrom<&str> for Guess {
 }
 
 impl Guess {
-    pub fn read(stdin: &Stdin) -> Self {
+    pub fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         loop {
-            eprint!("Guess: ");
+            print!("Guess: ");
+            stdout.flush().expect("Failed to write to stdout");
 
             let guess = get_line(stdin);
 

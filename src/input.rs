@@ -2,7 +2,7 @@ mod guess;
 mod hints;
 mod util;
 
-use std::io::Stdin;
+use std::io::{Stdin, Stdout};
 
 use crate::{Excludes, Includes, LetterInfos, Veileds};
 
@@ -15,10 +15,10 @@ pub struct Input {
 }
 
 impl Input {
-    pub fn read(stdin: &Stdin) -> Self {
+    pub fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         Self {
-            guess: Guess::read(stdin),
-            hints: Hints::read(stdin),
+            guess: Guess::read(stdin, stdout),
+            hints: Hints::read(stdin, stdout),
         }
     }
 

@@ -30,6 +30,7 @@ pub fn run() {
     let mut veileds = Veileds::default();
 
     let stdin = io::stdin();
+    let mut stdout = io::stdout();
 
     loop {
         if candidates.print() {
@@ -39,7 +40,7 @@ pub fn run() {
         recommends.update(&candidates, &veileds);
         recommends.print();
 
-        let input = Input::read(&stdin);
+        let input = Input::read(&stdin, &mut stdout);
 
         input.apply(
             &mut letter_infos,

@@ -1,6 +1,6 @@
 mod hint;
 
-use std::io::Stdin;
+use std::io::{Stdin, Stdout, Write};
 
 use anyhow::{ensure, Result};
 
@@ -26,9 +26,10 @@ impl TryFrom<&str> for Hints {
 }
 
 impl Hints {
-    pub fn read(stdin: &Stdin) -> Self {
+    pub fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         loop {
-            eprint!("Hints: ");
+            print!("Hints: ");
+            stdout.flush().expect("Failed to write to stdout");
 
             let hints = get_line(stdin);
 

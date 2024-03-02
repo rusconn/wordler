@@ -3,7 +3,7 @@ mod recommend;
 
 use itertools::Itertools;
 
-use crate::{Candidates, Veileds, WORDS};
+use crate::{candidates::Candidates, dict::WORDS, letter_set::Veileds};
 
 use self::{letter_histogram::LetterHistogram, recommend::Recommend};
 

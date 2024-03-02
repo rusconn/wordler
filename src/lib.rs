@@ -9,15 +9,12 @@ mod word;
 
 use std::io;
 
-use self::{
+use crate::{
     candidates::Candidates,
-    dict::WORDS,
     input::Input,
-    letter::Letter,
     letter_infos::LetterInfos,
-    letter_set::{Excludes, Includes, NotLetters, Veileds, WordLetters},
+    letter_set::{Excludes, Includes, Veileds},
     recommends::Recommends,
-    word::Word,
 };
 
 pub fn run() {

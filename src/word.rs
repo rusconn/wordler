@@ -2,7 +2,10 @@ use std::fmt;
 
 use regex::Regex;
 
-use crate::{Excludes, Includes, Letter, WordLetters};
+use crate::{
+    letter::Letter,
+    letter_set::{Excludes, Includes, WordLetters},
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Word<'a> {

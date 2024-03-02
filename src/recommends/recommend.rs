@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, fmt};
 
-use crate::Word;
+use crate::word::Word;
 
 use super::LetterHistogram;
 
@@ -58,7 +58,7 @@ impl<'a> Recommend<'a> {
 mod tests {
     use rstest::rstest;
 
-    use crate::Letter;
+    use crate::letter::Letter;
 
     use super::*;
 

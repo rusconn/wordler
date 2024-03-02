@@ -1,4 +1,4 @@
-use crate::Letter;
+use crate::letter::Letter;
 
 use super::LetterSet;
 

@@ -8,7 +8,7 @@ use std::marker::PhantomData;
 
 use rustc_hash::FxHashSet;
 
-use crate::Letter;
+use crate::letter::Letter;
 
 pub use self::{
     excludes::Excludes, includes::Includes, not_letters::NotLetters, veileds::Veileds,

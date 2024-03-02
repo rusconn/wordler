@@ -2,7 +2,7 @@ use std::collections::hash_map::Entry;
 
 use rustc_hash::FxHashMap;
 
-use crate::Letter;
+use crate::letter::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct LetterHistogram(FxHashMap<Letter, i32>);

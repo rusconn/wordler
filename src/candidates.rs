@@ -3,7 +3,12 @@ use std::ops::Index;
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{Excludes, Includes, LetterInfos, Word, WORDS};
+use crate::{
+    dict::WORDS,
+    letter_infos::LetterInfos,
+    letter_set::{Excludes, Includes},
+    word::Word,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);

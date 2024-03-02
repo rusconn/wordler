@@ -1,6 +1,10 @@
 use anyhow::{bail, Result};
 
-use crate::{Excludes, Includes, Letter, LetterInfos, Veileds};
+use crate::{
+    letter::Letter,
+    letter_infos::LetterInfos,
+    letter_set::{Excludes, Includes, Veileds},
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Hint(Variant);

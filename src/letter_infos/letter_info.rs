@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-use crate::{Letter, NotLetters};
+use crate::{letter::Letter, letter_set::NotLetters};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LetterInfo(Variant);

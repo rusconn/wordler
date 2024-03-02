@@ -4,7 +4,10 @@ mod util;
 
 use std::io::{Stdin, Stdout};
 
-use crate::{Excludes, Includes, LetterInfos, Veileds};
+use crate::{
+    letter_infos::LetterInfos,
+    letter_set::{Excludes, Includes, Veileds},
+};
 
 use self::{guess::Guess, hints::Hints};
 

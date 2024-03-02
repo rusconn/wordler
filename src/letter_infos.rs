@@ -4,7 +4,7 @@ use std::iter;
 
 use itertools::Itertools;
 
-use crate::Letter;
+use crate::letter::Letter;
 
 use self::letter_info::LetterInfo;
 

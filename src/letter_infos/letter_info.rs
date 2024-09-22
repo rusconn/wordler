@@ -70,7 +70,7 @@ mod tests {
         assert_eq!(letter_info.as_regex(), "[^A]");
 
         letter_info.not(Letter::from_unchecked(b'B'));
-        assert_eq!(letter_info.as_regex(), "[^AB]");
+        assert!(["[^AB]", "[^BA]"].contains(&letter_info.as_regex().as_str()));
 
         letter_info.correct(Letter::from_unchecked(b'C'));
         assert_eq!(letter_info.as_regex(), "C");

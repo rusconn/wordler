@@ -15,7 +15,7 @@ pub struct Candidates<'a>(Vec<Word<'a>>);
 
 impl<'a> Default for Candidates<'a> {
     fn default() -> Self {
-        Self(WORDS.into_iter().map(Word::unsafe_from).collect())
+        Self(WORDS.into_iter().map(Word::from_unchecked).collect())
     }
 }
 

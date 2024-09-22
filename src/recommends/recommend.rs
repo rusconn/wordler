@@ -33,10 +33,9 @@ impl<'a> Ord for Recommend<'a> {
 }
 
 impl<'a> Recommend<'a> {
-    /// Make sure the str is valid
-    pub fn unsafe_from(str: &'a str) -> Self {
+    pub fn from_unchecked(str: &'a str) -> Self {
         Self {
-            word: Word::unsafe_from(str),
+            word: Word::from_unchecked(str),
             score: 0,
         }
     }
@@ -70,13 +69,13 @@ mod tests {
         case("AAAAA", "AAAAA")
     )]
     fn fmt(input: &str, output: &str) {
-        assert_eq!(Recommend::unsafe_from(input).to_string(), output);
+        assert_eq!(Recommend::from_unchecked(input).to_string(), output);
     }
 
     #[test]
     fn cmp() {
-        let mut recommend1 = Recommend::unsafe_from("AAAAA");
-        let mut recommend2 = Recommend::unsafe_from("BBBBB");
+        let mut recommend1 = Recommend::from_unchecked("AAAAA");
+        let mut recommend2 = Recommend::from_unchecked("BBBBB");
         assert_eq!(recommend1.cmp(&recommend2), Ordering::Equal);
 
         recommend1.score = 1;
@@ -90,29 +89,29 @@ mod tests {
     fn update() {
         let mut histogram = LetterHistogram::default();
 
-        let mut recommend = Recommend::unsafe_from("HIPPO");
+        let mut recommend = Recommend::from_unchecked("HIPPO");
         assert_eq!(recommend.score, 0);
 
-        *histogram.entry(Letter::unsafe_from(b'A')).or_insert(0) += 1;
+        *histogram.entry(Letter::from_unchecked(b'A')).or_insert(0) += 1;
         recommend.update(&histogram);
         assert_eq!(recommend.score, 0);
 
-        *histogram.entry(Letter::unsafe_from(b'P')).or_insert(0) += 1;
+        *histogram.entry(Letter::from_unchecked(b'P')).or_insert(0) += 1;
         recommend.update(&histogram);
         assert_eq!(recommend.score, 1);
 
-        *histogram.entry(Letter::unsafe_from(b'I')).or_insert(0) += 1;
+        *histogram.entry(Letter::from_unchecked(b'I')).or_insert(0) += 1;
         recommend.update(&histogram);
         assert_eq!(recommend.score, 2);
 
-        *histogram.entry(Letter::unsafe_from(b'I')).or_insert(0) += 1;
+        *histogram.entry(Letter::from_unchecked(b'I')).or_insert(0) += 1;
         recommend.update(&histogram);
         assert_eq!(recommend.score, 3);
     }
 
     #[test]
     fn is_useful() {
-        let mut recommend = Recommend::unsafe_from("HIPPO");
+        let mut recommend = Recommend::from_unchecked("HIPPO");
         assert!(!recommend.is_useful());
 
         recommend.score = 1;

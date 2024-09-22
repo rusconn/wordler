@@ -40,19 +40,19 @@ mod tests {
         let mut letter_infos = LetterInfos::default();
         assert_eq!(letter_infos.as_regex(), ".....");
 
-        letter_infos.not(1, Letter::unsafe_from(b'A'));
+        letter_infos.not(1, Letter::from_unchecked(b'A'));
         assert_eq!(letter_infos.as_regex(), ".[^A]...");
 
-        letter_infos.not(4, Letter::unsafe_from(b'B'));
+        letter_infos.not(4, Letter::from_unchecked(b'B'));
         assert_eq!(letter_infos.as_regex(), ".[^A]..[^B]");
 
-        letter_infos.not(1, Letter::unsafe_from(b'C'));
+        letter_infos.not(1, Letter::from_unchecked(b'C'));
         assert_eq!(letter_infos.as_regex(), ".[^AC]..[^B]");
 
-        letter_infos.correct(2, Letter::unsafe_from(b'D'));
+        letter_infos.correct(2, Letter::from_unchecked(b'D'));
         assert_eq!(letter_infos.as_regex(), ".[^AC]D.[^B]");
 
-        letter_infos.correct(1, Letter::unsafe_from(b'E'));
+        letter_infos.correct(1, Letter::from_unchecked(b'E'));
         assert_eq!(letter_infos.as_regex(), ".ED.[^B]");
     }
 }

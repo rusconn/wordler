@@ -22,8 +22,7 @@ impl fmt::Display for Letter {
 }
 
 impl Letter {
-    /// Make sure the byte is valid
-    pub fn unsafe_from(byte: u8) -> Self {
+    pub fn from_unchecked(byte: u8) -> Self {
         Self(byte)
     }
 }

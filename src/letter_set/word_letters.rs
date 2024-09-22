@@ -7,16 +7,14 @@ pub struct WordDerivative;
 
 pub type WordLetters = LetterSet<WordDerivative>;
 
-impl From<&str> for WordLetters {
-    fn from(str: &str) -> Self {
+impl WordLetters {
+    pub fn from_unchecked(str: &str) -> Self {
         Self(
-            Set::from_iter(str.bytes().map(Letter::unsafe_from)),
+            Set::from_iter(str.bytes().map(Letter::from_unchecked)),
             Default::default(),
         )
     }
-}
 
-impl WordLetters {
     pub fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
         self.0.iter().copied()
     }

@@ -47,10 +47,10 @@ mod tests {
         assert_eq!(letter_infos.as_regex(), ".[^A]..[^B]");
 
         letter_infos.not(1, Letter::from_unchecked(b'C'));
-        assert_eq!(letter_infos.as_regex(), ".[^AC]..[^B]");
+        assert!([".[^AC]..[^B]", ".[^CA]..[^B]"].contains(&letter_infos.as_regex().as_str()));
 
         letter_infos.correct(2, Letter::from_unchecked(b'D'));
-        assert_eq!(letter_infos.as_regex(), ".[^AC]D.[^B]");
+        assert!([".[^AC]D.[^B]", ".[^CA]D.[^B]"].contains(&letter_infos.as_regex().as_str()));
 
         letter_infos.correct(1, Letter::from_unchecked(b'E'));
         assert_eq!(letter_infos.as_regex(), ".ED.[^B]");

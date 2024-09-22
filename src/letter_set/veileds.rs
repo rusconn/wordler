@@ -10,7 +10,7 @@ pub type Veileds = LetterSet<VeiledsDerivative>;
 impl Default for Veileds {
     fn default() -> Self {
         Self(
-            Set::from_iter((b'A'..=b'Z').map(Letter::unsafe_from)),
+            Set::from_iter((b'A'..=b'Z').map(Letter::from_unchecked)),
             Default::default(),
         )
     }

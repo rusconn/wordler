@@ -12,7 +12,7 @@ pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
 impl<'a> Default for Recommends<'a> {
     fn default() -> Self {
-        Self(WORDS.into_iter().map(Recommend::unsafe_from).collect())
+        Self(WORDS.into_iter().map(Recommend::from_unchecked).collect())
     }
 }
 

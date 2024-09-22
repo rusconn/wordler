@@ -20,11 +20,10 @@ impl<'a> fmt::Display for Word<'a> {
 }
 
 impl<'a> Word<'a> {
-    /// Make sure the str is valid
-    pub fn unsafe_from(str: &'a str) -> Self {
+    pub fn from_unchecked(str: &'a str) -> Self {
         Self {
             word: str,
-            letter_set: WordLetters::from(str),
+            letter_set: WordLetters::from_unchecked(str),
         }
     }
 
@@ -53,17 +52,17 @@ mod tests {
         case("AAAAA", "AAAAA")
     )]
     fn fmt(input: &str, output: &str) {
-        assert_eq!(Word::unsafe_from(input).to_string(), output);
+        assert_eq!(Word::from_unchecked(input).to_string(), output);
     }
 
     #[rstest(input, output, case("AUDIO", 5), case("HIPPO", 4), case("AAAAA", 1))]
     fn unique_letters(input: &str, output: usize) {
-        assert_eq!(Word::unsafe_from(input).unique_letters().count(), output);
+        assert_eq!(Word::from_unchecked(input).unique_letters().count(), output);
     }
 
     #[test]
     fn is_match_regex() {
-        let word = Word::unsafe_from("HIPPO");
+        let word = Word::from_unchecked("HIPPO");
         let regex = Regex::new("HIPPO").unwrap();
         let includes = Includes::default();
         let excludes = Excludes::default();
@@ -78,29 +77,29 @@ mod tests {
 
     #[test]
     fn is_match_includes() {
-        let word = Word::unsafe_from("HIPPO");
+        let word = Word::from_unchecked("HIPPO");
         let regex = Regex::new(".....").unwrap();
         let mut includes = Includes::default();
         let excludes = Excludes::default();
 
-        includes.insert(Letter::unsafe_from(b'I'));
+        includes.insert(Letter::from_unchecked(b'I'));
         assert!(word.is_match(&regex, &includes, &excludes));
 
-        includes.insert(Letter::unsafe_from(b'Z'));
+        includes.insert(Letter::from_unchecked(b'Z'));
         assert!(!word.is_match(&regex, &includes, &excludes));
     }
 
     #[test]
     fn is_match_excludes() {
-        let word = Word::unsafe_from("HIPPO");
+        let word = Word::from_unchecked("HIPPO");
         let regex = Regex::new(".....").unwrap();
         let includes = Includes::default();
         let mut excludes = Excludes::default();
 
-        excludes.insert(Letter::unsafe_from(b'Z'));
+        excludes.insert(Letter::from_unchecked(b'Z'));
         assert!(word.is_match(&regex, &includes, &excludes));
 
-        excludes.insert(Letter::unsafe_from(b'P'));
+        excludes.insert(Letter::from_unchecked(b'P'));
         assert!(!word.is_match(&regex, &includes, &excludes));
     }
 }

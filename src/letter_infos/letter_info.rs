@@ -2,14 +2,8 @@ use itertools::Itertools;
 
 use crate::{letter::Letter, letter_set::NotLetters};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct LetterInfo(Variant);
-
-impl Default for LetterInfo {
-    fn default() -> Self {
-        Self(Variant::Any)
-    }
-}
 
 impl LetterInfo {
     pub fn not(&mut self, letter: Letter) {
@@ -33,8 +27,9 @@ impl LetterInfo {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 enum Variant {
+    #[default]
     Any,
     Not(NotLetters),
     Correct(Letter),

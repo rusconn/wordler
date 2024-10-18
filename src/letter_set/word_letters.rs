@@ -1,23 +1,11 @@
-use std::ops::{Deref, DerefMut};
+use std::ops::Deref;
+
+use derive_more::derive::{Deref, DerefMut};
 
 use super::{Letter, LetterSet, Set};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deref, DerefMut)]
 pub struct WordLetters(LetterSet);
-
-impl Deref for WordLetters {
-    type Target = LetterSet;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for WordLetters {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
 
 impl WordLetters {
     pub fn from_unchecked(str: &str) -> Self {

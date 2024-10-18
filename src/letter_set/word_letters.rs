@@ -2,7 +2,7 @@ use crate::letter::Letter;
 
 use super::{LetterSet, Set};
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WordDerivative;
 
 pub type WordLetters = LetterSet<WordDerivative>;

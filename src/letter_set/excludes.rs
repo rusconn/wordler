@@ -1,6 +1,6 @@
 use super::LetterSet;
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExcludesDerivative;
 
 pub type Excludes = LetterSet<ExcludesDerivative>;

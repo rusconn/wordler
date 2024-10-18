@@ -1,5 +1,3 @@
-use std::ops::Index;
-
 use itertools::Itertools;
 use regex::Regex;
 
@@ -16,14 +14,6 @@ pub struct Candidates<'a>(Vec<Word<'a>>);
 impl<'a> Default for Candidates<'a> {
     fn default() -> Self {
         Self(WORDS.into_iter().map(Word::from_unchecked).collect())
-    }
-}
-
-impl<'a> Index<usize> for Candidates<'a> {
-    type Output = Word<'a>;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.0[index]
     }
 }
 

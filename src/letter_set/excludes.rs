@@ -1,12 +1,20 @@
+use std::ops::{Deref, DerefMut};
+
 use super::LetterSet;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ExcludesDerivative;
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct Excludes(LetterSet);
 
-pub type Excludes = LetterSet<ExcludesDerivative>;
+impl Deref for Excludes {
+    type Target = LetterSet;
 
-impl Default for Excludes {
-    fn default() -> Self {
-        Self(Default::default(), Default::default())
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Excludes {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }

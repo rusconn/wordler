@@ -47,7 +47,7 @@ impl Hint {
             }
         }
 
-        veileds.remove(letter);
+        veileds.remove(&letter);
     }
 }
 

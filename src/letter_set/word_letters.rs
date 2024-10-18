@@ -14,8 +14,4 @@ impl WordLetters {
             Default::default(),
         )
     }
-
-    pub fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
-        self.0.iter().copied()
-    }
 }

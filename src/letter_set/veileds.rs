@@ -15,13 +15,3 @@ impl Default for Veileds {
         )
     }
 }
-
-impl Veileds {
-    pub fn contains(&self, letter: Letter) -> bool {
-        self.0.contains(&letter)
-    }
-
-    pub fn remove(&mut self, letter: Letter) -> bool {
-        self.0.remove(&letter)
-    }
-}

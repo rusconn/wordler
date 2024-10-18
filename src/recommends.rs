@@ -22,7 +22,7 @@ impl<'a> Recommends<'a> {
 
         for word in candidates.iter() {
             for letter in word.unique_letters() {
-                if veileds.contains(letter) {
+                if veileds.contains(&letter) {
                     *veiled_letter_histogram.entry(letter).or_insert(0) += 1;
                 }
             }

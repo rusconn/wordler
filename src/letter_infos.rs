@@ -13,7 +13,7 @@ pub struct LetterInfos(Vec<LetterInfo>);
 
 impl Default for LetterInfos {
     fn default() -> Self {
-        Self(iter::repeat(LetterInfo::default()).take(5).collect())
+        Self(iter::repeat_n(LetterInfo::default(), 5).collect())
     }
 }
 

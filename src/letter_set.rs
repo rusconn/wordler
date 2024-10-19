@@ -13,6 +13,4 @@ pub use self::{
     word_letters::WordLetters,
 };
 
-type Set<T> = FxHashSet<T>;
-
-type LetterSet = Set<Letter>;
+type LetterSet = FxHashSet<Letter>;

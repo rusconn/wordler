@@ -35,7 +35,7 @@ impl<'a> Recommends<'a> {
             }
         }
 
-        for recommend in &mut self.0 {
+        for recommend in self.0.iter_mut() {
             recommend.update(&veiled_letter_histogram);
         }
 

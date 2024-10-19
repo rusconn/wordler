@@ -3,36 +3,74 @@ mod letter_info;
 use std::iter;
 
 use itertools::Itertools;
+use rustc_hash::FxHashSet;
 
-use crate::letter::Letter;
+use crate::{
+    input::{Hint, Input},
+    letter::Letter,
+    word::Letters,
+};
 
 use self::letter_info::LetterInfo;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LetterInfos(Vec<LetterInfo>);
+pub struct LetterInfos {
+    infos: Vec<LetterInfo>,
+    includes: FxHashSet<Letter>,
+    excludes: FxHashSet<Letter>,
+    veileds: FxHashSet<Letter>,
+}
 
 impl Default for LetterInfos {
     fn default() -> Self {
-        Self(iter::repeat_n(LetterInfo::default(), 5).collect())
+        Self {
+            infos: iter::repeat_n(LetterInfo::default(), 5).collect(),
+            includes: Default::default(),
+            excludes: Default::default(),
+            veileds: (b'A'..=b'Z').map(Letter::from_unchecked).collect(),
+        }
     }
 }
 
 impl LetterInfos {
-    pub fn not(&mut self, nth: usize, letter: Letter) {
-        self.0[nth].not(letter);
+    pub fn apply(&mut self, input: Input) {
+        for ((letter, hint), info) in input.iter().zip(self.infos.iter_mut()) {
+            match hint {
+                Hint::NotExists => {
+                    info.not(letter);
+                    self.excludes.insert(letter);
+                }
+                Hint::WrongSpot => {
+                    info.not(letter);
+                    self.includes.insert(letter);
+                }
+                Hint::CorrectSpot => {
+                    info.correct(letter);
+                    self.includes.insert(letter);
+                }
+            }
+
+            self.veileds.remove(&letter);
+        }
     }
 
-    pub fn correct(&mut self, nth: usize, letter: Letter) {
-        self.0[nth].correct(letter);
+    pub fn is_veiled(&self, letter: Letter) -> bool {
+        self.veileds.contains(&letter)
+    }
+
+    pub fn is_match(&self, letters: &Letters) -> bool {
+        self.includes.is_subset(letters) && self.excludes.is_disjoint(letters)
     }
 
     pub fn as_regex(&self) -> String {
-        self.0.iter().map(LetterInfo::as_regex).join("")
+        self.infos.iter().map(LetterInfo::as_regex).join("")
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::letter::Letter;
+
     use super::*;
 
     #[test]
@@ -40,19 +78,19 @@ mod tests {
         let mut letter_infos = LetterInfos::default();
         assert_eq!(letter_infos.as_regex(), ".....");
 
-        letter_infos.not(1, Letter::from_unchecked(b'A'));
+        letter_infos.infos[1].not(Letter::from_unchecked(b'A'));
         assert_eq!(letter_infos.as_regex(), ".[^A]...");
 
-        letter_infos.not(4, Letter::from_unchecked(b'B'));
+        letter_infos.infos[4].not(Letter::from_unchecked(b'B'));
         assert_eq!(letter_infos.as_regex(), ".[^A]..[^B]");
 
-        letter_infos.not(1, Letter::from_unchecked(b'C'));
+        letter_infos.infos[1].not(Letter::from_unchecked(b'C'));
         assert!([".[^AC]..[^B]", ".[^CA]..[^B]"].contains(&letter_infos.as_regex().as_str()));
 
-        letter_infos.correct(2, Letter::from_unchecked(b'D'));
+        letter_infos.infos[2].correct(Letter::from_unchecked(b'D'));
         assert!([".[^AC]D.[^B]", ".[^CA]D.[^B]"].contains(&letter_infos.as_regex().as_str()));
 
-        letter_infos.correct(1, Letter::from_unchecked(b'E'));
+        letter_infos.infos[1].correct(Letter::from_unchecked(b'E'));
         assert_eq!(letter_infos.as_regex(), ".ED.[^B]");
     }
 }

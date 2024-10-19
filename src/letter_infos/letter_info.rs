@@ -1,6 +1,9 @@
-use itertools::Itertools;
+use std::iter;
 
-use crate::{letter::Letter, letter_set::NotLetters};
+use itertools::Itertools;
+use rustc_hash::FxHashSet;
+
+use crate::letter::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct LetterInfo(Variant);
@@ -31,13 +34,13 @@ impl LetterInfo {
 enum Variant {
     #[default]
     Any,
-    Not(NotLetters),
+    Not(FxHashSet<Letter>),
     Correct(Letter),
 }
 
 impl Variant {
     fn not(letter: Letter) -> Self {
-        Self::Not(NotLetters::new(letter))
+        Self::Not(iter::once(letter).collect())
     }
 
     fn correct(letter: Letter) -> Self {

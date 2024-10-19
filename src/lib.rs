@@ -3,28 +3,19 @@ mod dict;
 mod input;
 mod letter;
 mod letter_infos;
-mod letter_set;
 mod recommends;
 mod word;
 
 use std::io;
 
 use crate::{
-    candidates::Candidates,
-    input::Input,
-    letter_infos::LetterInfos,
-    letter_set::{Excludes, Includes, Veileds},
-    recommends::Recommends,
+    candidates::Candidates, input::Input, letter_infos::LetterInfos, recommends::Recommends,
 };
 
 pub fn run() {
     let mut candidates = Candidates::default();
     let mut recommends = Recommends::default();
     let mut letter_infos = LetterInfos::default();
-
-    let mut includes = Includes::default();
-    let mut excludes = Excludes::default();
-    let mut veileds = Veileds::default();
 
     let stdin = io::stdin();
     let mut stdout = io::stdout();
@@ -34,19 +25,14 @@ pub fn run() {
             return;
         }
 
-        recommends.update(&candidates, &veileds);
+        recommends.update(&candidates, &letter_infos);
         recommends.print();
 
         let input = Input::read(&stdin, &mut stdout);
 
-        input.apply(
-            &mut letter_infos,
-            &mut includes,
-            &mut excludes,
-            &mut veileds,
-        );
+        letter_infos.apply(input);
 
-        candidates.retain(&letter_infos, &includes, &excludes);
+        candidates.retain(&letter_infos);
 
         println!();
     }

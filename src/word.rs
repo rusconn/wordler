@@ -10,7 +10,7 @@ use crate::{
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Word<'a> {
     word: &'a str,
-    letter_set: WordLetters,
+    letters: WordLetters,
 }
 
 impl<'a> fmt::Display for Word<'a> {
@@ -23,18 +23,18 @@ impl<'a> Word<'a> {
     pub fn from_unchecked(str: &'a str) -> Self {
         Self {
             word: str,
-            letter_set: WordLetters::from_unchecked(str),
+            letters: WordLetters::from_unchecked(str),
         }
     }
 
     pub fn unique_letters(&self) -> impl Iterator<Item = Letter> + '_ {
-        self.letter_set.iter()
+        self.letters.iter()
     }
 
     pub fn is_match(&self, regex: &Regex, includes: &Includes, excludes: &Excludes) -> bool {
         regex.is_match(self.word)
-            && includes.is_subset(&self.letter_set)
-            && excludes.is_disjoint(&self.letter_set)
+            && includes.is_subset(&self.letters)
+            && excludes.is_disjoint(&self.letters)
     }
 }
 

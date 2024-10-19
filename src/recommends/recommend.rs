@@ -24,11 +24,7 @@ impl<'a> PartialOrd for Recommend<'a> {
 
 impl<'a> Ord for Recommend<'a> {
     fn cmp(&self, other: &Self) -> Ordering {
-        match self.score - other.score {
-            n if n < 0 => Ordering::Less,
-            n if n > 0 => Ordering::Greater,
-            _ => Ordering::Equal,
-        }
+        self.score.cmp(&other.score)
     }
 }
 

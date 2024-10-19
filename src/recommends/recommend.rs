@@ -2,7 +2,7 @@ use std::{cmp::Ordering, fmt};
 
 use crate::word::Word;
 
-use super::LetterHistogram;
+use super::VeiledLetterHistogram;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommend<'a> {
@@ -36,11 +36,11 @@ impl<'a> Recommend<'a> {
         }
     }
 
-    pub fn update(&mut self, veiled_letter_histogram: &LetterHistogram) {
+    pub fn update(&mut self, histogram: &VeiledLetterHistogram) {
         self.score = self
             .word
             .unique_letters()
-            .map(|c| veiled_letter_histogram.get(&c).unwrap_or(&0))
+            .map(|c| histogram.get(&c).unwrap_or(&0))
             .sum()
     }
 
@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn update() {
-        let mut histogram = LetterHistogram::default();
+        let mut histogram: VeiledLetterHistogram = Default::default();
 
         let mut recommend = Recommend::from_unchecked("HIPPO");
         assert_eq!(recommend.score, 0);

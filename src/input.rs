@@ -1,15 +1,13 @@
 mod guess;
-mod hints;
+pub mod hints;
 mod util;
 
 use std::io::{Stdin, Stdout};
 
-use crate::{
-    letter_infos::LetterInfos,
-    letter_set::{Excludes, Includes, Veileds},
-};
+use crate::letter::Letter;
 
-use self::{guess::Guess, hints::Hints};
+use self::guess::Guess;
+pub use self::hints::{Hint, Hints};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Input {
@@ -25,15 +23,7 @@ impl Input {
         }
     }
 
-    pub fn apply(
-        &self,
-        letter_infos: &mut LetterInfos,
-        includes: &mut Includes,
-        excludes: &mut Excludes,
-        veileds: &mut Veileds,
-    ) {
-        for (nth, (letter, hint)) in self.guess.iter().zip(self.hints.iter()).enumerate() {
-            hint.apply(nth, letter, letter_infos, includes, excludes, veileds);
-        }
+    pub fn iter(&self) -> impl Iterator<Item = (Letter, Hint)> + '_ {
+        self.guess.iter().zip(self.hints.iter())
     }
 }

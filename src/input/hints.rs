@@ -6,7 +6,7 @@ use anyhow::{ensure, Result};
 
 use super::util::get_line;
 
-use self::hint::Hint;
+pub use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hints(Vec<Hint>);

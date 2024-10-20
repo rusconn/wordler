@@ -3,7 +3,7 @@ use std::fmt;
 use anyhow::{ensure, Result};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Letter(u8);
+pub(crate) struct Letter(u8);
 
 impl TryFrom<char> for Letter {
     type Error = anyhow::Error;
@@ -22,7 +22,7 @@ impl fmt::Display for Letter {
 }
 
 impl Letter {
-    pub fn from_unchecked(byte: u8) -> Self {
+    pub(crate) fn from_unchecked(byte: u8) -> Self {
         Self(byte)
     }
 }

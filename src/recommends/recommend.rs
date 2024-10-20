@@ -5,7 +5,7 @@ use crate::word::Word;
 use super::VeiledLetterHistogram;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Recommend<'a> {
+pub(super) struct Recommend<'a> {
     word: Word<'a>,
     score: i32,
 }
@@ -29,14 +29,14 @@ impl<'a> Ord for Recommend<'a> {
 }
 
 impl<'a> Recommend<'a> {
-    pub fn from_unchecked(str: &'a str) -> Self {
+    pub(super) fn from_unchecked(str: &'a str) -> Self {
         Self {
             word: Word::from_unchecked(str),
             score: 0,
         }
     }
 
-    pub fn update(&mut self, histogram: &VeiledLetterHistogram) {
+    pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram) {
         self.score = self
             .word
             .unique_letters()
@@ -44,7 +44,7 @@ impl<'a> Recommend<'a> {
             .sum()
     }
 
-    pub fn is_useful(&self) -> bool {
+    pub(super) fn is_useful(&self) -> bool {
         self.score > 0
     }
 }

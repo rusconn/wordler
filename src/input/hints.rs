@@ -6,10 +6,10 @@ use anyhow::{ensure, Result};
 
 use super::util::get_line;
 
-pub use self::hint::Hint;
+pub(crate) use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Hints(Vec<Hint>);
+pub(super) struct Hints(Vec<Hint>);
 
 impl TryFrom<&str> for Hints {
     type Error = anyhow::Error;
@@ -26,7 +26,7 @@ impl TryFrom<&str> for Hints {
 }
 
 impl Hints {
-    pub fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
+    pub(super) fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         loop {
             print!("Hints: ");
             stdout.flush().expect("Failed to write to stdout");
@@ -40,7 +40,7 @@ impl Hints {
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Hint> + '_ {
+    pub(super) fn iter(&self) -> impl Iterator<Item = Hint> + '_ {
         self.0.iter().copied()
     }
 }

@@ -6,10 +6,10 @@ use rustc_hash::FxHashSet;
 use crate::letter::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct LetterInfo(Variant);
+pub(super) struct LetterInfo(Variant);
 
 impl LetterInfo {
-    pub fn not(&mut self, letter: Letter) {
+    pub(super) fn not(&mut self, letter: Letter) {
         if let Variant::Not(set) = &mut self.0 {
             set.insert(letter);
         } else {
@@ -17,11 +17,11 @@ impl LetterInfo {
         }
     }
 
-    pub fn correct(&mut self, letter: Letter) {
+    pub(super) fn correct(&mut self, letter: Letter) {
         self.0 = Variant::correct(letter);
     }
 
-    pub fn as_regex(&self) -> String {
+    pub(super) fn as_regex(&self) -> String {
         match &self.0 {
             Variant::Any => ".".into(),
             Variant::Not(set) => format!("[^{}]", set.iter().join("")),

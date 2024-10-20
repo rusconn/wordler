@@ -14,7 +14,7 @@ use crate::{
 use self::letter_info::LetterInfo;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LetterInfos {
+pub(crate) struct LetterInfos {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
@@ -33,7 +33,7 @@ impl Default for LetterInfos {
 }
 
 impl LetterInfos {
-    pub fn apply(&mut self, input: Input) {
+    pub(crate) fn apply(&mut self, input: Input) {
         for ((letter, hint), info) in input.iter().zip(self.infos.iter_mut()) {
             match hint {
                 Hint::NotExists => {
@@ -54,15 +54,15 @@ impl LetterInfos {
         }
     }
 
-    pub fn is_veiled(&self, letter: Letter) -> bool {
+    pub(crate) fn is_veiled(&self, letter: Letter) -> bool {
         self.veileds.contains(&letter)
     }
 
-    pub fn is_match(&self, letters: &Letters) -> bool {
+    pub(crate) fn is_match(&self, letters: &Letters) -> bool {
         self.includes.is_subset(letters) && self.excludes.is_disjoint(letters)
     }
 
-    pub fn as_regex(&self) -> String {
+    pub(crate) fn as_regex(&self) -> String {
         self.infos.iter().map(LetterInfo::as_regex).join("")
     }
 }

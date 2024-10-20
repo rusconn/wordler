@@ -3,7 +3,7 @@ use std::fmt;
 use regex::Regex;
 use rustc_hash::FxHashSet;
 
-use crate::{letter::Letter, letter_infos::LetterInfos};
+use crate::{input::Input, letter::Letter};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Word<'a> {
@@ -31,8 +31,8 @@ impl<'a> Word<'a> {
         self.letters.iter().copied()
     }
 
-    pub(crate) fn is_match(&self, letter_infos: &LetterInfos, regex: &Regex) -> bool {
-        letter_infos.is_match(&self.letters) && regex.is_match(self.word)
+    pub(crate) fn is_match(&self, input: &Input, regex: &Regex) -> bool {
+        input.is_match(&self.letters) && regex.is_match(self.word)
     }
 }
 

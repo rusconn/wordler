@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::{dict::WORDS, letter_infos::LetterInfos, word::Word};
+use crate::{dict::WORDS, input::Input, word::Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Candidates<'a>(Vec<Word<'a>>);
@@ -33,10 +33,10 @@ impl<'a> Candidates<'a> {
         self.0.len() <= 1
     }
 
-    pub(crate) fn retain(&mut self, letter_infos: &LetterInfos) {
-        let regex = Regex::new(&letter_infos.as_regex())
-            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
+    pub(crate) fn retain(&mut self, input: &Input) {
+        let regex =
+            Regex::new(&input.as_regex()).unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
-        self.0.retain(|word| word.is_match(letter_infos, &regex));
+        self.0.retain(|word| word.is_match(input, &regex));
     }
 }

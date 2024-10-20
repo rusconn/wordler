@@ -1,7 +1,7 @@
 use anyhow::{bail, Result};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum Hint {
+pub(in super::super) enum Hint {
     NotExists,
     WrongSpot,
     CorrectSpot,

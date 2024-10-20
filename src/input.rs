@@ -9,36 +9,54 @@ use std::{
 };
 
 use itertools::Itertools;
+use regex::Regex;
 use rustc_hash::FxHashSet;
 
-use crate::{letter::Letter, word::Letters};
+use crate::{letter::Letter, word::Word};
 
 use self::guess::Guess;
 use self::hints::{Hint, Hints};
 use self::letter_info::LetterInfo;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub(crate) struct Input {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
     veileds: FxHashSet<Letter>,
+    regex: Regex,
 }
 
 impl Input {
     pub(crate) fn default() -> Self {
+        let infos: Vec<_> = iter::repeat_n(LetterInfo::default(), 5).collect();
+        let regex = Self::regex(&infos);
+
         Self {
-            infos: iter::repeat_n(LetterInfo::default(), 5).collect(),
+            infos,
             includes: Default::default(),
             excludes: Default::default(),
             veileds: (b'A'..=b'Z').map(Letter::from_unchecked).collect(),
+            regex,
         }
+    }
+
+    fn regex(infos: &[LetterInfo]) -> Regex {
+        Regex::new(Self::regex_string(infos).as_str())
+            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"))
+    }
+
+    fn regex_string(infos: &[LetterInfo]) -> String {
+        infos.iter().map(LetterInfo::regex_string).join("")
     }
 
     pub(crate) fn read(&mut self, stdin: &Stdin, stdout: &mut Stdout) {
         let guess = Guess::read(stdin, stdout);
         let hints = Hints::read(stdin, stdout);
+        self.update(guess, hints);
+    }
 
+    fn update(&mut self, guess: Guess, hints: Hints) {
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
             match hint {
                 Hint::NotExists => {
@@ -57,45 +75,61 @@ impl Input {
 
             self.veileds.remove(&letter);
         }
+
+        self.regex = Self::regex(&self.infos);
     }
 
     pub(crate) fn is_veiled(&self, letter: Letter) -> bool {
         self.veileds.contains(&letter)
     }
 
-    pub(crate) fn is_match(&self, letters: &Letters) -> bool {
-        self.includes.is_subset(letters) && self.excludes.is_disjoint(letters)
-    }
-
-    pub(crate) fn as_regex(&self) -> String {
-        self.infos.iter().map(LetterInfo::as_regex).join("")
+    pub(crate) fn is_match(&self, Word { str, letters }: &Word) -> bool {
+        self.regex.is_match(str)
+            && self.includes.is_subset(letters)
+            && self.excludes.is_disjoint(letters)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::letter::Letter;
+    use std::cell::LazyCell;
 
     use super::*;
 
+    fn letters(bytes: &[u8]) -> FxHashSet<Letter> {
+        bytes.iter().copied().map(Letter::from_unchecked).collect()
+    }
+
+    fn complement(l: &FxHashSet<Letter>) -> FxHashSet<Letter> {
+        let u = LazyCell::new(|| {
+            let v: Vec<_> = (b'A'..=b'Z').collect();
+            letters(v.as_slice())
+        });
+        u.difference(l).copied().collect()
+    }
+
     #[test]
-    fn operations() {
+    fn update() {
         let mut input = Input::default();
-        assert_eq!(input.as_regex(), ".....");
+        assert_eq!(input.includes, letters(b""));
+        assert_eq!(input.excludes, letters(b""));
+        assert_eq!(input.veileds, complement(&letters(b"")));
+        assert_eq!(Input::regex_string(&input.infos), ".....");
 
-        input.infos[1].not(Letter::from_unchecked(b'A'));
-        assert_eq!(input.as_regex(), ".[^A]...");
+        let guess = Guess::try_from("SERIA").unwrap();
+        let hints = Hints::try_from("10100").unwrap();
+        input.update(guess, hints);
+        assert_eq!(input.includes, letters(b"SR"));
+        assert_eq!(input.excludes, letters(b"EIA"));
+        assert_eq!(input.veileds, complement(&letters(b"SERIA")));
+        assert_eq!(Input::regex_string(&input.infos), "[^S][^E][^R][^I][^A]");
 
-        input.infos[4].not(Letter::from_unchecked(b'B'));
-        assert_eq!(input.as_regex(), ".[^A]..[^B]");
-
-        input.infos[1].not(Letter::from_unchecked(b'C'));
-        assert!([".[^AC]..[^B]", ".[^CA]..[^B]"].contains(&input.as_regex().as_str()));
-
-        input.infos[2].correct(Letter::from_unchecked(b'D'));
-        assert!([".[^AC]D.[^B]", ".[^CA]D.[^B]"].contains(&input.as_regex().as_str()));
-
-        input.infos[1].correct(Letter::from_unchecked(b'E'));
-        assert_eq!(input.as_regex(), ".ED.[^B]");
+        let guess = Guess::try_from("HYSON").unwrap();
+        let hints = Hints::try_from("01200").unwrap();
+        input.update(guess, hints);
+        assert_eq!(input.includes, letters(b"SRYS"));
+        assert_eq!(input.excludes, letters(b"EIAHON"));
+        assert_eq!(input.veileds, complement(&letters(b"SERIAHYSON")));
+        assert_eq!(Input::regex_string(&input.infos), "[^HS][^EY]S[^IO][^AN]");
     }
 }

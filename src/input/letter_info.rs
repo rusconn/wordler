@@ -1,7 +1,6 @@
-use std::iter;
+use std::{collections::BTreeSet, iter};
 
 use itertools::Itertools;
-use rustc_hash::FxHashSet;
 
 use crate::letter::Letter;
 
@@ -21,7 +20,7 @@ impl LetterInfo {
         self.0 = Variant::correct(letter);
     }
 
-    pub(super) fn as_regex(&self) -> String {
+    pub(super) fn regex_string(&self) -> String {
         match &self.0 {
             Variant::Any => ".".into(),
             Variant::Not(set) => format!("[^{}]", set.iter().join("")),
@@ -34,7 +33,7 @@ impl LetterInfo {
 enum Variant {
     #[default]
     Any,
-    Not(FxHashSet<Letter>),
+    Not(BTreeSet<Letter>),
     Correct(Letter),
 }
 
@@ -55,22 +54,22 @@ mod tests {
     #[test]
     fn operations() {
         let mut letter_info = LetterInfo::default();
-        assert_eq!(letter_info.as_regex(), ".");
+        assert_eq!(letter_info.regex_string(), ".");
 
         letter_info.not(Letter::from_unchecked(b'A'));
-        assert_eq!(letter_info.as_regex(), "[^A]");
+        assert_eq!(letter_info.regex_string(), "[^A]");
 
         letter_info.correct(Letter::from_unchecked(b'B'));
-        assert_eq!(letter_info.as_regex(), "B");
+        assert_eq!(letter_info.regex_string(), "B");
 
         let mut letter_info = LetterInfo::default();
-        letter_info.not(Letter::from_unchecked(b'A'));
-        assert_eq!(letter_info.as_regex(), "[^A]");
-
         letter_info.not(Letter::from_unchecked(b'B'));
-        assert!(["[^AB]", "[^BA]"].contains(&letter_info.as_regex().as_str()));
+        assert_eq!(letter_info.regex_string(), "[^B]");
+
+        letter_info.not(Letter::from_unchecked(b'A'));
+        assert_eq!(letter_info.regex_string(), "[^AB]");
 
         letter_info.correct(Letter::from_unchecked(b'C'));
-        assert_eq!(letter_info.as_regex(), "C");
+        assert_eq!(letter_info.regex_string(), "C");
     }
 }

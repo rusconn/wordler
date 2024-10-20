@@ -1,5 +1,5 @@
 use wordler::run;
 
-pub fn main() {
+fn main() {
     run();
 }

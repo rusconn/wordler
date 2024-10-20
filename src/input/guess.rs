@@ -7,7 +7,7 @@ use crate::letter::Letter;
 use super::util::get_line;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Guess(Vec<Letter>);
+pub(super) struct Guess(Vec<Letter>);
 
 impl TryFrom<&str> for Guess {
     type Error = anyhow::Error;
@@ -24,7 +24,7 @@ impl TryFrom<&str> for Guess {
 }
 
 impl Guess {
-    pub fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
+    pub(super) fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         loop {
             print!("Guess: ");
             stdout.flush().expect("Failed to write to stdout");
@@ -38,7 +38,7 @@ impl Guess {
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
+    pub(super) fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
         self.0.iter().copied()
     }
 }

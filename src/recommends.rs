@@ -8,7 +8,7 @@ use crate::{candidates::Candidates, dict::WORDS, letter::Letter, letter_infos::L
 use self::recommend::Recommend;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Recommends<'a>(Vec<Recommend<'a>>);
+pub(crate) struct Recommends<'a>(Vec<Recommend<'a>>);
 
 type VeiledLetterHistogram = FxHashMap<Letter, i32>;
 
@@ -19,7 +19,7 @@ impl<'a> Default for Recommends<'a> {
 }
 
 impl<'a> Recommends<'a> {
-    pub fn update(&mut self, candidates: &Candidates<'a>, letter_infos: &LetterInfos) {
+    pub(crate) fn update(&mut self, candidates: &Candidates<'a>, letter_infos: &LetterInfos) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in candidates.iter() {
@@ -45,7 +45,7 @@ impl<'a> Recommends<'a> {
         self.0.sort_unstable_by(|x, y| y.cmp(x));
     }
 
-    pub fn print(&self) {
+    pub(crate) fn print(&self) {
         if self.0.is_empty() {
             println!("Recommend: -");
         } else {

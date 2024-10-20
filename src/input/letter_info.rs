@@ -6,7 +6,7 @@ use rustc_hash::FxHashSet;
 use crate::letter::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub(super) struct LetterInfo(Variant);
+pub(crate) struct LetterInfo(Variant);
 
 impl LetterInfo {
     pub(super) fn not(&mut self, letter: Letter) {

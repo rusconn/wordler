@@ -3,7 +3,7 @@ mod recommend;
 use itertools::Itertools;
 use rustc_hash::FxHashMap;
 
-use crate::{candidates::Candidates, dict::WORDS, letter::Letter, letter_infos::LetterInfos};
+use crate::{candidates::Candidates, dict::WORDS, input::Input, letter::Letter};
 
 use self::recommend::Recommend;
 
@@ -19,12 +19,12 @@ impl<'a> Default for Recommends<'a> {
 }
 
 impl<'a> Recommends<'a> {
-    pub(crate) fn update(&mut self, candidates: &Candidates<'a>, letter_infos: &LetterInfos) {
+    pub(crate) fn update(&mut self, candidates: &Candidates<'a>, input: &Input) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in candidates.iter() {
             for letter in word.unique_letters() {
-                if letter_infos.is_veiled(letter) {
+                if input.is_veiled(letter) {
                     *histogram.entry(letter).or_insert(0) += 1;
                 }
             }

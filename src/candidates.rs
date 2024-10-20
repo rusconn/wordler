@@ -1,5 +1,4 @@
 use itertools::Itertools;
-use regex::Regex;
 
 use crate::{dict::WORDS, input::Input, word::Word};
 
@@ -34,9 +33,6 @@ impl<'a> Candidates<'a> {
     }
 
     pub(crate) fn retain(&mut self, input: &Input) {
-        let regex =
-            Regex::new(&input.as_regex()).unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
-
-        self.0.retain(|word| word.is_match(input, &regex));
+        self.0.retain(|word| input.is_match(word));
     }
 }

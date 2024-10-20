@@ -2,7 +2,7 @@ use std::fmt;
 
 use anyhow::{ensure, Result};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Letter(u8);
 
 impl TryFrom<char> for Letter {

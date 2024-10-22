@@ -23,7 +23,7 @@ impl<'a> Recommends<'a> {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in candidates.iter() {
-            for letter in word.unique_letters() {
+            for &letter in word.letters.iter() {
                 if input.is_veiled(letter) {
                     *histogram.entry(letter).or_insert(0) += 1;
                 }

@@ -39,8 +39,9 @@ impl<'a> Recommend<'a> {
     pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram) {
         self.score = self
             .word
-            .unique_letters()
-            .map(|c| histogram.get(&c).unwrap_or(&0))
+            .letters
+            .iter()
+            .map(|c| histogram.get(c).unwrap_or(&0))
             .sum()
     }
 

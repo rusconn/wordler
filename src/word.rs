@@ -23,10 +23,6 @@ impl<'a> Word<'a> {
             letters: str.bytes().map(Letter::from_unchecked).collect(),
         }
     }
-
-    pub(crate) fn unique_letters(&self) -> impl Iterator<Item = Letter> + '_ {
-        self.letters.iter().copied()
-    }
 }
 
 #[cfg(test)]
@@ -48,6 +44,6 @@ mod tests {
 
     #[rstest(input, output, case("AUDIO", 5), case("HIPPO", 4), case("AAAAA", 1))]
     fn unique_letters(input: &str, output: usize) {
-        assert_eq!(Word::from_unchecked(input).unique_letters().count(), output);
+        assert_eq!(Word::from_unchecked(input).letters.len(), output);
     }
 }

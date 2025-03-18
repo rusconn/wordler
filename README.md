@@ -5,7 +5,7 @@ A [Wordle](https://www.nytimes.com/games/wordle/index.html) helper.
 ## Install
 
 ```shell
-cargo install --path .
+cargo install --git https://github.com/rusconn/wordler.git
 ```
 
 ## Example

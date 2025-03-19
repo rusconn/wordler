@@ -10,7 +10,7 @@ pub(crate) struct Word<'a> {
     pub(crate) letters: FxHashSet<Letter>,
 }
 
-impl<'a> fmt::Display for Word<'a> {
+impl fmt::Display for Word<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.str)
     }

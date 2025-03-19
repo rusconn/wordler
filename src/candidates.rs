@@ -5,7 +5,7 @@ use crate::{dict::WORDS, input::Input, word::Word};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Candidates<'a>(Vec<Word<'a>>);
 
-impl<'a> Default for Candidates<'a> {
+impl Default for Candidates<'_> {
     fn default() -> Self {
         Self(WORDS.into_iter().map(Word::from_unchecked).collect())
     }

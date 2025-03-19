@@ -1,6 +1,6 @@
 use std::fmt;
 
-use anyhow::{ensure, Result};
+use anyhow::{Result, ensure};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Letter(u8);

@@ -1,6 +1,6 @@
 use std::io::{Stdin, Stdout, Write};
 
-use anyhow::{ensure, Result};
+use anyhow::{Result, ensure};
 
 use crate::letter::Letter;
 

@@ -1,4 +1,4 @@
-pub(crate) const WORDS: [&str; 14855] = [
+pub(crate) static WORDS: [&str; 14855] = [
     "AAHED", "AALII", "AAPAS", "AARGH", "AARTI", "ABACA", "ABACI", "ABACK", "ABACS", "ABAFT",
     "ABAHT", "ABAKA", "ABAMP", "ABAND", "ABASE", "ABASH", "ABASK", "ABATE", "ABAYA", "ABBAS",
     "ABBED", "ABBES", "ABBEY", "ABBOT", "ABCEE", "ABEAM", "ABEAR", "ABEAT", "ABEER", "ABELE",

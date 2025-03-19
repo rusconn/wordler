@@ -12,7 +12,7 @@ pub(crate) struct Recommends<'a>(Vec<Recommend<'a>>);
 
 type VeiledLetterHistogram = FxHashMap<Letter, i32>;
 
-impl<'a> Default for Recommends<'a> {
+impl Default for Recommends<'_> {
     fn default() -> Self {
         Self(WORDS.into_iter().map(Recommend::from_unchecked).collect())
     }

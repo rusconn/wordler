@@ -10,19 +10,19 @@ pub(super) struct Recommend<'a> {
     score: i32,
 }
 
-impl<'a> fmt::Display for Recommend<'a> {
+impl fmt::Display for Recommend<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.word)
     }
 }
 
-impl<'a> PartialOrd for Recommend<'a> {
+impl PartialOrd for Recommend<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'a> Ord for Recommend<'a> {
+impl Ord for Recommend<'_> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.score.cmp(&other.score)
     }

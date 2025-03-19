@@ -9,7 +9,10 @@ license = "MIT"
 [dependencies]
 anyhow = "1.0.97"
 itertools = "0.14.0"
-regex = "1.11.1"
+regex = { version = "1.11.1", default-features = false, features = [
+  "std",
+  "perf",
+] }
 rustc-hash = "2.1.1"
 
 [dev-dependencies]

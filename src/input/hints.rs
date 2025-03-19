@@ -2,7 +2,7 @@ mod hint;
 
 use std::io::{Stdin, Stdout, Write};
 
-use anyhow::{ensure, Result};
+use anyhow::{Result, ensure};
 
 use super::util::get_line;
 

@@ -92,20 +92,19 @@ impl Input {
 
 #[cfg(test)]
 mod tests {
-    use std::cell::LazyCell;
+    use std::sync::LazyLock;
 
     use super::*;
+
+    static U: LazyLock<FxHashSet<Letter>> =
+        LazyLock::new(|| letters(&(b'A'..=b'Z').collect::<Vec<_>>()));
 
     fn letters(bytes: &[u8]) -> FxHashSet<Letter> {
         bytes.iter().copied().map(Letter::from_unchecked).collect()
     }
 
     fn complement(l: &FxHashSet<Letter>) -> FxHashSet<Letter> {
-        let u = LazyCell::new(|| {
-            let v: Vec<_> = (b'A'..=b'Z').collect();
-            letters(v.as_slice())
-        });
-        u.difference(l).copied().collect()
+        U.difference(l).copied().collect()
     }
 
     #[test]

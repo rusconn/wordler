@@ -1,4 +1,7 @@
-use std::io::{self, Stdin, Stdout, Write};
+use std::{
+    fmt,
+    io::{self, Stdin, Stdout, Write},
+};
 
 use wordler::{Candidates, Guess, Hints, Input, Recommends};
 
@@ -32,29 +35,27 @@ fn main() {
 }
 
 fn read_guess(stdin: &Stdin, stdout: &mut Stdout) -> Guess {
-    loop {
-        print!("Guess: ");
-        stdout.flush().unwrap();
-
-        let guess = get_line(stdin);
-
-        match Guess::try_from(guess.as_ref()) {
-            Ok(guess) => return guess,
-            Err(e) => eprintln!("Failed to read the guess: {e}"),
-        }
-    }
+    read_line(stdin, stdout, "Guess", "guess")
 }
 
 fn read_hints(stdin: &Stdin, stdout: &mut Stdout) -> Hints {
+    read_line(stdin, stdout, "Hints", "hints")
+}
+
+fn read_line<T>(stdin: &Stdin, stdout: &mut Stdout, label: &str, kind: &str) -> T
+where
+    T: for<'a> TryFrom<&'a str>,
+    for<'a> <T as TryFrom<&'a str>>::Error: fmt::Display,
+{
     loop {
-        print!("Hints: ");
+        print!("{label}: ");
         stdout.flush().unwrap();
 
-        let hints = get_line(stdin);
+        let input = get_line(stdin);
 
-        match Hints::try_from(hints.as_ref()) {
-            Ok(hints) => return hints,
-            Err(e) => eprintln!("Failed to read the hints: {e}"),
+        match T::try_from(&input) {
+            Ok(t) => return t,
+            Err(e) => eprintln!("Failed to read the {kind}: {e}"),
         }
     }
 }

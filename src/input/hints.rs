@@ -29,7 +29,7 @@ impl Hints {
     pub(super) fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         loop {
             print!("Hints: ");
-            stdout.flush().expect("Failed to write to stdout");
+            stdout.flush().unwrap();
 
             let hints = get_line(stdin);
 

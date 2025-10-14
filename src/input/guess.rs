@@ -27,7 +27,7 @@ impl Guess {
     pub(super) fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
         loop {
             print!("Guess: ");
-            stdout.flush().expect("Failed to write to stdout");
+            stdout.flush().unwrap();
 
             let guess = get_line(stdin);
 

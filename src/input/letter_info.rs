@@ -1,4 +1,4 @@
-use std::{collections::BTreeSet, iter};
+use std::collections::BTreeSet;
 
 use itertools::Itertools;
 
@@ -39,7 +39,7 @@ enum Variant {
 
 impl Variant {
     fn not(letter: Letter) -> Self {
-        Self::Not(iter::once(letter).collect())
+        Self::Not(BTreeSet::from([letter]))
     }
 
     fn correct(letter: Letter) -> Self {

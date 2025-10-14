@@ -1,13 +1,9 @@
-use std::io::{Stdin, Stdout, Write};
-
 use anyhow::{Result, ensure};
 
 use crate::letter::Letter;
 
-use super::util::get_line;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) struct Guess(Vec<Letter>);
+pub struct Guess(Vec<Letter>);
 
 impl TryFrom<&str> for Guess {
     type Error = anyhow::Error;
@@ -24,20 +20,6 @@ impl TryFrom<&str> for Guess {
 }
 
 impl Guess {
-    pub(super) fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
-        loop {
-            print!("Guess: ");
-            stdout.flush().unwrap();
-
-            let guess = get_line(stdin);
-
-            match Self::try_from(guess.as_ref()) {
-                Ok(guess) => return guess,
-                Err(e) => eprintln!("Failed to read the guess: {e}"),
-            }
-        }
-    }
-
     pub(super) fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
         self.0.iter().copied()
     }

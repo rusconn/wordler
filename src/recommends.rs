@@ -1,5 +1,7 @@
 mod recommend;
 
+use std::fmt;
+
 use itertools::Itertools;
 use rustc_hash::FxHashMap;
 
@@ -8,7 +10,7 @@ use crate::{candidates::Candidates, dict::WORDS, input::Input, letter::Letter};
 use self::recommend::Recommend;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct Recommends<'a>(Vec<Recommend<'a>>);
+pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
 type VeiledLetterHistogram = FxHashMap<Letter, i32>;
 
@@ -18,8 +20,18 @@ impl Default for Recommends<'_> {
     }
 }
 
+impl fmt::Display for Recommends<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.0.is_empty() {
+            write!(f, "Recommend: -")
+        } else {
+            write!(f, "Recommend: [{}]", self.0.iter().take(5).join(","))
+        }
+    }
+}
+
 impl<'a> Recommends<'a> {
-    pub(crate) fn update(&mut self, candidates: &Candidates<'a>, input: &Input) {
+    pub fn update(&mut self, candidates: &Candidates<'a>, input: &Input) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in candidates.iter() {
@@ -43,13 +55,5 @@ impl<'a> Recommends<'a> {
 
         self.0.retain(Recommend::is_useful);
         self.0.sort_unstable_by(|x, y| y.cmp(x));
-    }
-
-    pub(crate) fn print(&self) {
-        if self.0.is_empty() {
-            println!("Recommend: -");
-        } else {
-            println!("Recommend: [{}]", self.0.iter().take(5).join(","));
-        }
     }
 }

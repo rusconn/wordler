@@ -1,12 +1,8 @@
 mod guess;
 mod hints;
 mod letter_info;
-mod util;
 
-use std::{
-    io::{Stdin, Stdout},
-    iter,
-};
+use std::iter;
 
 use itertools::Itertools;
 use regex::Regex;
@@ -14,12 +10,12 @@ use rustc_hash::FxHashSet;
 
 use crate::{letter::Letter, word::Word};
 
-use self::guess::Guess;
-use self::hints::{Hint, Hints};
-use self::letter_info::LetterInfo;
+use self::{hints::Hint, letter_info::LetterInfo};
+
+pub use self::{guess::Guess, hints::Hints};
 
 #[derive(Debug, Clone)]
-pub(crate) struct Input {
+pub struct Input {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
@@ -27,9 +23,9 @@ pub(crate) struct Input {
     regex: Regex,
 }
 
-impl Input {
-    pub(crate) fn default() -> Self {
-        let infos: Vec<_> = iter::repeat_n(LetterInfo::default(), 5).collect();
+impl Default for Input {
+    fn default() -> Self {
+        let infos = iter::repeat_n(LetterInfo::default(), 5).collect::<Vec<_>>();
         let regex = Self::regex(&infos);
 
         Self {
@@ -40,23 +36,10 @@ impl Input {
             regex,
         }
     }
+}
 
-    fn regex(infos: &[LetterInfo]) -> Regex {
-        Regex::new(Self::regex_string(infos).as_str())
-            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"))
-    }
-
-    fn regex_string(infos: &[LetterInfo]) -> String {
-        infos.iter().map(LetterInfo::regex_string).join("")
-    }
-
-    pub(crate) fn read(&mut self, stdin: &Stdin, stdout: &mut Stdout) {
-        let guess = Guess::read(stdin, stdout);
-        let hints = Hints::read(stdin, stdout);
-        self.update(guess, hints);
-    }
-
-    fn update(&mut self, guess: Guess, hints: Hints) {
+impl Input {
+    pub fn update(&mut self, guess: Guess, hints: Hints) {
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
             match hint {
                 Hint::NotExists => {
@@ -87,6 +70,15 @@ impl Input {
         self.regex.is_match(str)
             && self.includes.is_subset(letters)
             && self.excludes.is_disjoint(letters)
+    }
+
+    fn regex(infos: &[LetterInfo]) -> Regex {
+        Regex::new(Self::regex_string(infos).as_str())
+            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"))
+    }
+
+    fn regex_string(infos: &[LetterInfo]) -> String {
+        infos.iter().map(LetterInfo::regex_string).join("")
     }
 }
 

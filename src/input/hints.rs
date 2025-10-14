@@ -1,15 +1,11 @@
 mod hint;
 
-use std::io::{Stdin, Stdout, Write};
-
 use anyhow::{Result, ensure};
-
-use super::util::get_line;
 
 pub(super) use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) struct Hints(Vec<Hint>);
+pub struct Hints(Vec<Hint>);
 
 impl TryFrom<&str> for Hints {
     type Error = anyhow::Error;
@@ -26,20 +22,6 @@ impl TryFrom<&str> for Hints {
 }
 
 impl Hints {
-    pub(super) fn read(stdin: &Stdin, stdout: &mut Stdout) -> Self {
-        loop {
-            print!("Hints: ");
-            stdout.flush().unwrap();
-
-            let hints = get_line(stdin);
-
-            match Hints::try_from(hints.as_ref()) {
-                Ok(hints) => return hints,
-                Err(e) => eprintln!("Failed to read the hints: {e}"),
-            }
-        }
-    }
-
     pub(super) fn iter(&self) -> impl Iterator<Item = Hint> + '_ {
         self.0.iter().copied()
     }

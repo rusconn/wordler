@@ -1,6 +1,6 @@
 use anyhow::{Result, ensure};
 
-use crate::letter::Letter;
+use crate::{dict::WORDS, letter::Letter};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Guess(Vec<Letter>);
@@ -10,6 +10,10 @@ impl TryFrom<&str> for Guess {
 
     fn try_from(guess: &str) -> Result<Self> {
         ensure!(guess.chars().count() == 5, "Guess must be 5 letters");
+        ensure!(
+            WORDS.contains(&guess.to_ascii_uppercase().as_str()),
+            "Unknown word"
+        );
 
         guess
             .chars()
@@ -31,9 +35,17 @@ mod tests {
 
     use super::*;
 
-    #[rstest(input, case("audio"), case("STERN"), case("cHuMp"), case("aaaaa"))]
+    #[rstest(input, case("audio"), case("STERN"), case("cHuMp"))]
     fn try_from_success(input: &str) {
         assert!(Guess::try_from(input).is_ok());
+    }
+
+    #[rstest(input, case("aaaaa"))]
+    fn try_from_failure_word(input: &str) {
+        assert_eq!(
+            Guess::try_from(input).unwrap_err().to_string(),
+            "Unknown word"
+        );
     }
 
     #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]

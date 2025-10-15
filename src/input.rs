@@ -1,44 +1,49 @@
+mod candidates;
 mod guess;
 mod hints;
 mod letter_info;
+mod recommends;
 
 use std::iter;
 
-use itertools::Itertools;
-use regex::Regex;
 use rustc_hash::FxHashSet;
 
-use crate::{letter::Letter, word::Word};
+use crate::letter::Letter;
 
-use self::{hints::Hint, letter_info::LetterInfo};
+use self::{candidates::Candidates, hints::Hint, letter_info::LetterInfo, recommends::Recommends};
 
 pub use self::{guess::Guess, hints::Hints};
 
 #[derive(Debug, Clone)]
-pub struct Input {
+pub struct Input<'a> {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
     veileds: FxHashSet<Letter>,
-    regex: Regex,
+    candidates: Candidates<'a>,
+    recommends: Recommends<'a>,
 }
 
-impl Default for Input {
+impl Default for Input<'_> {
     fn default() -> Self {
-        let infos = iter::repeat_n(LetterInfo::default(), 5).collect::<Vec<_>>();
-        let regex = Self::regex(&infos);
+        let veileds = (b'A'..=b'Z').map(Letter::from_unchecked).collect();
+        let candidates = Candidates::default();
+        let mut recommends = Recommends::default();
+
+        recommends.update(&candidates, &veileds);
 
         Self {
-            infos,
+            infos: iter::repeat_n(LetterInfo::default(), 5).collect::<Vec<_>>(),
             includes: Default::default(),
             excludes: Default::default(),
-            veileds: (b'A'..=b'Z').map(Letter::from_unchecked).collect(),
-            regex,
+            veileds,
+            candidates,
+            recommends,
         }
     }
 }
 
-impl Input {
+impl Input<'_> {
     pub fn update(&mut self, guess: Guess, hints: Hints) {
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
             match hint {
@@ -59,26 +64,17 @@ impl Input {
             self.veileds.remove(&letter);
         }
 
-        self.regex = Self::regex(&self.infos);
+        self.recommends.update(&self.candidates, &self.veileds);
+        self.candidates
+            .retain(&self.infos, &self.includes, &self.excludes);
     }
 
-    pub(crate) fn is_veiled(&self, letter: Letter) -> bool {
-        self.veileds.contains(&letter)
+    pub fn candidates(&self) -> &Candidates {
+        &self.candidates
     }
 
-    pub(crate) fn is_match(&self, Word { str, letters }: &Word) -> bool {
-        self.regex.is_match(str)
-            && self.includes.is_subset(letters)
-            && self.excludes.is_disjoint(letters)
-    }
-
-    fn regex(infos: &[LetterInfo]) -> Regex {
-        Regex::new(Self::regex_string(infos).as_str())
-            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"))
-    }
-
-    fn regex_string(infos: &[LetterInfo]) -> String {
-        infos.iter().map(LetterInfo::regex_string).join("")
+    pub fn recommends(&self) -> &Recommends {
+        &self.recommends
     }
 }
 
@@ -105,7 +101,6 @@ mod tests {
         assert_eq!(input.includes, letters(b""));
         assert_eq!(input.excludes, letters(b""));
         assert_eq!(input.veileds, complement(&letters(b"")));
-        assert_eq!(Input::regex_string(&input.infos), ".....");
 
         let guess = Guess::try_from("SERIA").unwrap();
         let hints = Hints::try_from("10100").unwrap();
@@ -113,7 +108,6 @@ mod tests {
         assert_eq!(input.includes, letters(b"SR"));
         assert_eq!(input.excludes, letters(b"EIA"));
         assert_eq!(input.veileds, complement(&letters(b"SERIA")));
-        assert_eq!(Input::regex_string(&input.infos), "[^S][^E][^R][^I][^A]");
 
         let guess = Guess::try_from("HYSON").unwrap();
         let hints = Hints::try_from("01200").unwrap();
@@ -121,6 +115,5 @@ mod tests {
         assert_eq!(input.includes, letters(b"SRYS"));
         assert_eq!(input.excludes, letters(b"EIAHON"));
         assert_eq!(input.veileds, complement(&letters(b"SERIAHYSON")));
-        assert_eq!(Input::regex_string(&input.infos), "[^HS][^EY]S[^IO][^AN]");
     }
 }

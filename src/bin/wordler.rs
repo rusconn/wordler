@@ -3,32 +3,29 @@ use std::{
     io::{self, Stdin, Stdout, Write},
 };
 
-use wordler::{Candidates, Guess, Hints, Input, Recommends};
+use wordler::{Guess, Hints, Input};
 
 fn main() {
-    let mut candidates = Candidates::default();
-    let mut recommends = Recommends::default();
     let mut input = Input::default();
 
     let stdin = io::stdin();
     let mut stdout = io::stdout();
 
     loop {
+        let candidates = input.candidates();
+        let recommends = input.recommends();
+
         println!("{candidates}");
 
         if candidates.len() <= 1 {
             break;
         }
 
-        recommends.update(&candidates, &input);
-
         println!("{recommends}");
 
         let guess = read_guess(&stdin, &mut stdout);
         let hints = read_hints(&stdin, &mut stdout);
         input.update(guess, hints);
-
-        candidates.retain(&input);
 
         println!();
     }

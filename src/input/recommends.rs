@@ -3,9 +3,11 @@ mod recommend;
 use std::fmt;
 
 use itertools::Itertools;
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxHashSet};
 
-use crate::{candidates::Candidates, dict::WORDS, input::Input, letter::Letter};
+use crate::{dict::WORDS, letter::Letter};
+
+use super::candidates::Candidates;
 
 use self::recommend::Recommend;
 
@@ -31,12 +33,12 @@ impl fmt::Display for Recommends<'_> {
 }
 
 impl<'a> Recommends<'a> {
-    pub fn update(&mut self, candidates: &Candidates<'a>, input: &Input) {
+    pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &FxHashSet<Letter>) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in candidates.iter() {
             for &letter in word.letters.iter() {
-                if input.is_veiled(letter) {
+                if veileds.contains(&letter) {
                     *histogram.entry(letter).or_insert(0) += 1;
                 }
             }

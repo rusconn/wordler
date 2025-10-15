@@ -3,7 +3,7 @@ use std::fmt;
 use anyhow::{Result, ensure};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) struct Letter(u8);
+pub struct Letter(u8);
 
 impl TryFrom<char> for Letter {
     type Error = anyhow::Error;

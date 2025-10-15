@@ -1,6 +1,6 @@
 mod candidates;
-mod guess;
-mod hints;
+pub mod guess;
+pub mod hints;
 mod letter_info;
 mod recommends;
 
@@ -10,9 +10,9 @@ use rustc_hash::FxHashSet;
 
 use crate::letter::Letter;
 
-use self::{candidates::Candidates, hints::Hint, letter_info::LetterInfo, recommends::Recommends};
+use self::{guess::Guess, hints::Hint, hints::Hints, letter_info::LetterInfo};
 
-pub use self::{guess::Guess, hints::Hints};
+pub use self::{candidates::Candidates, recommends::Recommends};
 
 #[derive(Debug, Clone)]
 pub struct Input<'a> {

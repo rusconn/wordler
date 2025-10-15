@@ -1,6 +1,4 @@
-mod hint;
-
-use anyhow::{Result, ensure};
+pub mod hint;
 
 pub(super) use self::hint::Hint;
 
@@ -8,16 +6,19 @@ pub(super) use self::hint::Hint;
 pub struct Hints(Vec<Hint>);
 
 impl TryFrom<&str> for Hints {
-    type Error = anyhow::Error;
+    type Error = ParseError;
 
-    fn try_from(hints: &str) -> Result<Self> {
-        ensure!(hints.chars().count() == 5, "Hints must be 5 letters");
+    fn try_from(hints: &str) -> Result<Self, Self::Error> {
+        if hints.chars().count() != 5 {
+            return Err(ParseError::InvalidLength);
+        }
 
         hints
             .chars()
             .map(Hint::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
+            .map_err(ParseError::InvalidHint)
     }
 }
 
@@ -25,6 +26,12 @@ impl Hints {
     pub(super) fn iter(&self) -> impl Iterator<Item = Hint> + '_ {
         self.0.iter().copied()
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ParseError {
+    InvalidLength,
+    InvalidHint(hint::ParseError),
 }
 
 #[cfg(test)]
@@ -48,8 +55,8 @@ mod tests {
     #[rstest(input, case(""), case("@"), case("1021"), case("120021"))]
     fn try_from_failure_len(input: &str) {
         assert_eq!(
-            Hints::try_from(input).unwrap_err().to_string(),
-            "Hints must be 5 letters"
+            Hints::try_from(input).unwrap_err(),
+            ParseError::InvalidLength,
         );
     }
 

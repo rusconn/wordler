@@ -1,8 +1,5 @@
 mod recommend;
 
-use std::fmt;
-
-use itertools::Itertools;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 use crate::{dict::WORDS, letter::Letter};
@@ -22,17 +19,19 @@ impl Default for Recommends<'_> {
     }
 }
 
-impl fmt::Display for Recommends<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.0.is_empty() {
-            write!(f, "Recommend: -")
-        } else {
-            write!(f, "Recommend: [{}]", self.0.iter().take(5).join(","))
-        }
-    }
-}
-
 impl<'a> Recommends<'a> {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Recommend<'a>> {
+        self.0.iter()
+    }
+
     pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &FxHashSet<Letter>) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 

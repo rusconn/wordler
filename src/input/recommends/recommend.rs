@@ -5,7 +5,7 @@ use crate::word::Word;
 use super::VeiledLetterHistogram;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) struct Recommend<'a> {
+pub struct Recommend<'a> {
     word: Word<'a>,
     score: i32,
 }

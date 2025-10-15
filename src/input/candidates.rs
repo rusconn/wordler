@@ -1,5 +1,3 @@
-use std::fmt;
-
 use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::FxHashSet;
@@ -15,20 +13,21 @@ impl Default for Candidates<'_> {
     }
 }
 
-impl fmt::Display for Candidates<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self.0.len() {
-            0 => write!(f, "Woops, there are no more words"),
-            1 => write!(f, "Found: {}", self.0[0]),
-            n if n <= 50 => write!(f, "Remaining: [{}]", self.0.iter().join(",")),
-            n => write!(f, "Remaining: Too many, didn't print: {n}"),
-        }
-    }
-}
-
 impl<'a> Candidates<'a> {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     pub fn len(&self) -> usize {
         self.0.len()
+    }
+
+    pub fn first(&self) -> Option<&Word<'a>> {
+        self.0.first()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Word<'a>> {
+        self.0.iter()
     }
 
     pub(crate) fn retain(
@@ -43,10 +42,6 @@ impl<'a> Candidates<'a> {
                 && includes.is_subset(&word.letters)
                 && excludes.is_disjoint(&word.letters)
         });
-    }
-
-    pub(crate) fn iter(&self) -> impl Iterator<Item = &Word<'a>> {
-        self.0.iter()
     }
 
     fn regex(infos: &[LetterInfo]) -> Regex {

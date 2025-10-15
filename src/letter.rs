@@ -1,15 +1,15 @@
 use std::fmt;
 
-use anyhow::{Result, ensure};
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Letter(u8);
 
 impl TryFrom<char> for Letter {
-    type Error = anyhow::Error;
+    type Error = ParseError;
 
-    fn try_from(ch: char) -> Result<Self> {
-        ensure!(ch.is_ascii_alphabetic(), "Non alphabetical letter: `{ch}`");
+    fn try_from(ch: char) -> Result<Self, Self::Error> {
+        if !ch.is_ascii_alphabetic() {
+            return Err(ParseError::NonAlphabeticalLetter(ch));
+        }
 
         Ok(Self(ch.to_ascii_uppercase() as u8))
     }
@@ -19,6 +19,11 @@ impl fmt::Display for Letter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", char::from(self.0))
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ParseError {
+    NonAlphabeticalLetter(char),
 }
 
 impl Letter {
@@ -48,8 +53,8 @@ mod tests {
     #[rstest(ch, case('@'), case('1'), case('あ'), case(' '))]
     fn try_from_failure(ch: char) {
         assert_eq!(
-            Letter::try_from(ch).unwrap_err().to_string(),
-            format!("Non alphabetical letter: `{ch}`"),
+            Letter::try_from(ch).unwrap_err(),
+            ParseError::NonAlphabeticalLetter(ch)
         );
     }
 

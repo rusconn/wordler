@@ -5,7 +5,7 @@ use rustc_hash::FxHashSet;
 use crate::letter::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct Word<'a> {
+pub struct Word<'a> {
     pub(crate) str: &'a str,
     pub(crate) letters: FxHashSet<Letter>,
 }

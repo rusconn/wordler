@@ -1,25 +1,28 @@
-use anyhow::{Result, ensure};
-
-use crate::{dict::WORDS, letter::Letter};
+use crate::{
+    dict::WORDS,
+    letter::{self, Letter},
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Guess(Vec<Letter>);
 
 impl TryFrom<&str> for Guess {
-    type Error = anyhow::Error;
+    type Error = ParseError;
 
-    fn try_from(guess: &str) -> Result<Self> {
-        ensure!(guess.chars().count() == 5, "Guess must be 5 letters");
-        ensure!(
-            WORDS.contains(&guess.to_ascii_uppercase().as_str()),
-            "Unknown word"
-        );
+    fn try_from(guess: &str) -> Result<Self, Self::Error> {
+        if guess.chars().count() != 5 {
+            return Err(ParseError::InvalidLength);
+        }
+        if !WORDS.contains(&guess.to_ascii_uppercase().as_str()) {
+            return Err(ParseError::UnknownWord);
+        }
 
         guess
             .chars()
             .map(Letter::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
+            .map_err(ParseError::InvalidLetter)
     }
 }
 
@@ -27,6 +30,13 @@ impl Guess {
     pub(super) fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
         self.0.iter().copied()
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ParseError {
+    InvalidLength,
+    UnknownWord,
+    InvalidLetter(letter::ParseError),
 }
 
 #[cfg(test)]
@@ -42,17 +52,14 @@ mod tests {
 
     #[rstest(input, case("aaaaa"))]
     fn try_from_failure_word(input: &str) {
-        assert_eq!(
-            Guess::try_from(input).unwrap_err().to_string(),
-            "Unknown word"
-        );
+        assert_eq!(Guess::try_from(input).unwrap_err(), ParseError::UnknownWord);
     }
 
     #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]
     fn try_from_failure_len(input: &str) {
         assert_eq!(
-            Guess::try_from(input).unwrap_err().to_string(),
-            "Guess must be 5 letters"
+            Guess::try_from(input).unwrap_err(),
+            ParseError::InvalidLength
         );
     }
 

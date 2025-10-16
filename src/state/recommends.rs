@@ -8,7 +8,7 @@ use super::candidates::Candidates;
 
 use self::recommend::Recommend;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
 type VeiledLetterHistogram = FxHashMap<Letter, i32>;

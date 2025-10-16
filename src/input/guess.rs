@@ -5,7 +5,7 @@ use crate::{
     letter::{self, Letter},
 };
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Guess(Vec<Letter>);
 
 impl FromStr for Guess {

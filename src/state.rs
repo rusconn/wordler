@@ -19,7 +19,7 @@ use self::letter_info::LetterInfo;
 
 pub use self::{candidates::Candidates, recommends::Recommends};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct State<'a> {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,

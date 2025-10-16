@@ -2,7 +2,7 @@ use std::{cmp::Ordering, fmt};
 
 use super::{super::word::Word, VeiledLetterHistogram};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Recommend<'a> {
     word: Word<'a>,
     score: i32,

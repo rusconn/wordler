@@ -6,7 +6,7 @@ use crate::{dict::WORDS, letter::Letter, state::letter_info::LetterInfo};
 
 use super::word::Word;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);
 
 impl Default for Candidates<'_> {

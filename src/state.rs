@@ -1,6 +1,7 @@
 mod candidates;
 mod letter_info;
 mod recommends;
+mod word;
 
 use std::iter;
 

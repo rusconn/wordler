@@ -2,7 +2,7 @@ use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::FxHashSet;
 
-use crate::{dict::WORDS, input::letter_info::LetterInfo, letter::Letter, word::Word};
+use crate::{dict::WORDS, letter::Letter, state::letter_info::LetterInfo, word::Word};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates<'a>(Vec<Word<'a>>);

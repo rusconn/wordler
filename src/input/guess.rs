@@ -29,7 +29,7 @@ impl FromStr for Guess {
 }
 
 impl Guess {
-    pub(super) fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
         self.0.iter().copied()
     }
 }

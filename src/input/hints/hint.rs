@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(in super::super) enum Hint {
+pub(crate) enum Hint {
     NotExists,
     WrongSpot,
     CorrectSpot,

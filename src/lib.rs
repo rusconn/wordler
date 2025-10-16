@@ -1,6 +1,8 @@
 mod dict;
 mod input;
-pub mod letter;
+mod state;
 mod word;
 
-pub use self::input::{Candidates, Input, Recommends, guess, hints, hints::hint};
+pub mod letter;
+
+pub use self::{input::*, state::*};

@@ -6,22 +6,21 @@ use std::{
 use itertools::Itertools;
 
 use wordler::{
-    Candidates, Input, Recommends,
+    Candidates, Recommends, State,
     guess::{self, Guess},
-    hint,
-    hints::{self, Hints},
+    hints::{self, Hints, hint},
     letter,
 };
 
 fn main() {
-    let mut input = Input::default();
+    let mut state = State::default();
 
     let stdin = io::stdin();
     let mut stdout = io::stdout();
 
     loop {
-        let candidates = input.candidates();
-        let recommends = input.recommends();
+        let candidates = state.candidates();
+        let recommends = state.recommends();
 
         println!("{}", show_candidates(candidates));
 
@@ -33,7 +32,7 @@ fn main() {
 
         let guess = read_guess(&stdin, &mut stdout);
         let hints = read_hints(&stdin, &mut stdout);
-        input.update(guess, hints);
+        state.update(guess, hints);
 
         println!();
     }

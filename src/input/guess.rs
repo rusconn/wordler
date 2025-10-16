@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::{
     dict::WORDS,
     letter::{self, Letter},
@@ -6,10 +8,10 @@ use crate::{
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Guess(Vec<Letter>);
 
-impl TryFrom<&str> for Guess {
-    type Error = ParseError;
+impl FromStr for Guess {
+    type Err = ParseError;
 
-    fn try_from(guess: &str) -> Result<Self, Self::Error> {
+    fn from_str(guess: &str) -> Result<Self, Self::Err> {
         if guess.chars().count() != 5 {
             return Err(ParseError::InvalidLength);
         }
@@ -47,24 +49,24 @@ mod tests {
 
     #[rstest(input, case("audio"), case("STERN"), case("cHuMp"))]
     fn try_from_success(input: &str) {
-        assert!(Guess::try_from(input).is_ok());
+        assert!(input.parse::<Guess>().is_ok());
     }
 
     #[rstest(input, case("aaaaa"))]
     fn try_from_failure_word(input: &str) {
-        assert_eq!(Guess::try_from(input).unwrap_err(), ParseError::UnknownWord);
+        assert_eq!(input.parse::<Guess>().unwrap_err(), ParseError::UnknownWord);
     }
 
     #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]
     fn try_from_failure_len(input: &str) {
         assert_eq!(
-            Guess::try_from(input).unwrap_err(),
+            input.parse::<Guess>().unwrap_err(),
             ParseError::InvalidLength
         );
     }
 
     #[rstest(input, case("will@"), case("1will"), case("wiあll"), case("wi ll"))]
     fn try_from_failure_letter(input: &str) {
-        assert!(Guess::try_from(input).is_err());
+        assert!(input.parse::<Guess>().is_err());
     }
 }

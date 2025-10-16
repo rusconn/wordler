@@ -102,15 +102,15 @@ mod tests {
         assert_eq!(input.excludes, letters(b""));
         assert_eq!(input.veileds, complement(&letters(b"")));
 
-        let guess = Guess::try_from("SERIA").unwrap();
-        let hints = Hints::try_from("10100").unwrap();
+        let guess = "SERIA".parse().unwrap();
+        let hints = "10100".parse().unwrap();
         input.update(guess, hints);
         assert_eq!(input.includes, letters(b"SR"));
         assert_eq!(input.excludes, letters(b"EIA"));
         assert_eq!(input.veileds, complement(&letters(b"SERIA")));
 
-        let guess = Guess::try_from("HYSON").unwrap();
-        let hints = Hints::try_from("01200").unwrap();
+        let guess = "HYSON".parse().unwrap();
+        let hints = "01200".parse().unwrap();
         input.update(guess, hints);
         assert_eq!(input.includes, letters(b"SRYS"));
         assert_eq!(input.excludes, letters(b"EIAHON"));

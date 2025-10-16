@@ -1,14 +1,16 @@
 pub mod hint;
 
+use std::str::FromStr;
+
 pub(super) use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hints(Vec<Hint>);
 
-impl TryFrom<&str> for Hints {
-    type Error = ParseError;
+impl FromStr for Hints {
+    type Err = ParseError;
 
-    fn try_from(hints: &str) -> Result<Self, Self::Error> {
+    fn from_str(hints: &str) -> Result<Self, Self::Err> {
         if hints.chars().count() != 5 {
             return Err(ParseError::InvalidLength);
         }
@@ -49,13 +51,13 @@ mod tests {
         case("01201")
     )]
     fn try_from_success(input: &str) {
-        assert!(Hints::try_from(input).is_ok());
+        assert!(input.parse::<Hints>().is_ok());
     }
 
     #[rstest(input, case(""), case("@"), case("1021"), case("120021"))]
     fn try_from_failure_len(input: &str) {
         assert_eq!(
-            Hints::try_from(input).unwrap_err(),
+            input.parse::<Hints>().unwrap_err(),
             ParseError::InvalidLength,
         );
     }
@@ -69,6 +71,6 @@ mod tests {
         case("10 20")
     )]
     fn try_from_failure_hint(input: &str) {
-        assert!(Hints::try_from(input).is_err());
+        assert!(input.parse::<Hints>().is_err());
     }
 }

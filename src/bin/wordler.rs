@@ -1,4 +1,7 @@
-use std::io::{self, Stdin, Stdout, Write};
+use std::{
+    io::{self, Stdin, Stdout, Write},
+    str::FromStr,
+};
 
 use itertools::Itertools;
 
@@ -54,32 +57,29 @@ fn show_recommends(recommends: &Recommends) -> String {
 }
 
 fn read_guess(stdin: &Stdin, stdout: &mut Stdout) -> Guess {
-    read_line(stdin, stdout, "Guess", "guess", show_guess_conversion_error)
+    read_line(stdin, stdout, "Guess", "guess", show_guess_parse_error)
 }
 
 fn read_hints(stdin: &Stdin, stdout: &mut Stdout) -> Hints {
-    read_line(stdin, stdout, "Hints", "hints", show_hints_conversion_error)
+    read_line(stdin, stdout, "Hints", "hints", show_hints_parse_error)
 }
 
-fn read_line<T>(
+fn read_line<T: FromStr>(
     stdin: &Stdin,
     stdout: &mut Stdout,
     label: &str,
     kind: &str,
-    show_conversion_error: impl Fn(<T as TryFrom<&str>>::Error) -> String,
-) -> T
-where
-    T: for<'a> TryFrom<&'a str>,
-{
+    show_parse_error: impl Fn(<T as FromStr>::Err) -> String,
+) -> T {
     loop {
         print!("{label}: ");
         stdout.flush().unwrap();
 
         let input = get_line(stdin);
 
-        match T::try_from(&input) {
+        match input.parse::<T>() {
             Ok(t) => return t,
-            Err(e) => eprintln!("Failed to read the {kind}: {}", show_conversion_error(e)),
+            Err(e) => eprintln!("Failed to read the {kind}: {}", show_parse_error(e)),
         }
     }
 }
@@ -90,15 +90,15 @@ fn get_line(stdin: &Stdin) -> String {
     buf.trim().into()
 }
 
-fn show_guess_conversion_error(e: guess::ParseError) -> String {
+fn show_guess_parse_error(e: guess::ParseError) -> String {
     match e {
         guess::ParseError::InvalidLength => "Guess must be 5 letters".into(),
         guess::ParseError::UnknownWord => "Unknown word".into(),
-        guess::ParseError::InvalidLetter(e) => show_letter_conversion_error(e),
+        guess::ParseError::InvalidLetter(e) => show_letter_parse_error(e),
     }
 }
 
-fn show_letter_conversion_error(e: letter::ParseError) -> String {
+fn show_letter_parse_error(e: letter::ParseError) -> String {
     match e {
         letter::ParseError::NonAlphabeticalLetter(c) => {
             format!("Non alphabetical letter: `{c}`")
@@ -106,14 +106,14 @@ fn show_letter_conversion_error(e: letter::ParseError) -> String {
     }
 }
 
-fn show_hints_conversion_error(e: hints::ParseError) -> String {
+fn show_hints_parse_error(e: hints::ParseError) -> String {
     match e {
         hints::ParseError::InvalidLength => "Hints must be 5 letters".into(),
-        hints::ParseError::InvalidHint(e) => show_hint_conversion_error(e),
+        hints::ParseError::InvalidHint(e) => show_hint_parse_error(e),
     }
 }
 
-fn show_hint_conversion_error(e: hint::ParseError) -> String {
+fn show_hint_parse_error(e: hint::ParseError) -> String {
     match e {
         hint::ParseError::InvalidHint(c) => format!("Invalid hint: `{c}`"),
     }

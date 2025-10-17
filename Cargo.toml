@@ -1,25 +1,8 @@
-[package]
-name = "wordler"
-version = "0.1.0"
-edition = "2024"
-license = "MIT"
+[workspace]
+members = ["cli", "lib"]
+resolver = "3"
 
-[[bin]]
-name = "wordler"
-path = "src/bin/cli/main.rs"
-
-[dependencies]
-itertools = "0.14.0"
-regex = { version = "1.11.1", default-features = false, features = [
-  "std",
-  "perf",
-] }
-rustc-hash = "2.1.1"
-thiserror = "2.0.17"
-
-[dev-dependencies]
-rstest = "0.25.0"
-
-[profile.release]
+[profile.release-min]
+inherits = "release"
 strip = "symbols"
 panic = "abort"

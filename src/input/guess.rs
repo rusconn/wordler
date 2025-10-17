@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use thiserror::Error;
+
 use crate::{
     dict::WORDS,
     letter::{self, Letter},
@@ -34,10 +36,15 @@ impl Guess {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Error)]
 pub enum ParseError {
+    #[error("invalid length")]
     InvalidLength,
+
+    #[error("unknown word")]
     UnknownWord,
+
+    #[error("invalid letter")]
     InvalidLetter(letter::ParseError),
 }
 

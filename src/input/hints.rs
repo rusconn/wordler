@@ -2,6 +2,8 @@ pub mod hint;
 
 use std::str::FromStr;
 
+use thiserror::Error;
+
 pub(crate) use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -30,9 +32,12 @@ impl Hints {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Error)]
 pub enum ParseError {
+    #[error("invalid length")]
     InvalidLength,
+
+    #[error("invalid hint: {0:?}")]
     InvalidHint(hint::ParseError),
 }
 

@@ -66,9 +66,9 @@ impl State<'_> {
             self.veileds.remove(&letter);
         }
 
-        self.recommends.update(&self.candidates, &self.veileds);
         self.candidates
             .retain(&self.infos, &self.includes, &self.excludes);
+        self.recommends.update(&self.candidates, &self.veileds);
     }
 
     pub fn candidates(&self) -> &Candidates {

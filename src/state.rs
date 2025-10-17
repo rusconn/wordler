@@ -8,10 +8,7 @@ use std::iter;
 use rustc_hash::FxHashSet;
 
 use crate::{
-    input::{
-        guess::Guess,
-        hints::{Hints, hint::Hint},
-    },
+    input::{Guess, Hint, Hints},
     letter::Letter,
 };
 

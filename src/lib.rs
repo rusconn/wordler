@@ -1,7 +1,10 @@
 mod dict;
 mod input;
+mod letter;
 mod state;
 
-pub mod letter;
-
-pub use self::{input::*, state::*};
+pub use self::{
+    input::*,
+    letter::{Letter, ParseError as ParseLetterError},
+    state::*,
+};

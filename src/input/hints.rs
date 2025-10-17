@@ -2,7 +2,7 @@ pub mod hint;
 
 use std::str::FromStr;
 
-pub(super) use self::hint::Hint;
+pub(crate) use self::hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hints(Vec<Hint>);

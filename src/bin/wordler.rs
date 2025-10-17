@@ -6,10 +6,8 @@ use std::{
 use itertools::Itertools;
 
 use wordler::{
-    Candidates, Recommends, State,
-    guess::{self, Guess},
-    hints::{self, Hints, hint},
-    letter,
+    Candidates, Guess, Hints, ParseGuessError, ParseHintError, ParseHintsError, ParseLetterError,
+    Recommends, State,
 };
 
 fn main() {
@@ -56,11 +54,11 @@ fn show_recommends(recommends: &Recommends) -> String {
 }
 
 fn read_guess(stdin: &Stdin, stdout: &mut Stdout) -> Guess {
-    read_line(stdin, stdout, "Guess", "guess", show_guess_parse_error)
+    read_line(stdin, stdout, "Guess", "guess", show_parse_guess_error)
 }
 
 fn read_hints(stdin: &Stdin, stdout: &mut Stdout) -> Hints {
-    read_line(stdin, stdout, "Hints", "hints", show_hints_parse_error)
+    read_line(stdin, stdout, "Hints", "hints", show_parse_hints_error)
 }
 
 fn read_line<T: FromStr>(
@@ -89,31 +87,31 @@ fn get_line(stdin: &Stdin) -> String {
     buf.trim().into()
 }
 
-fn show_guess_parse_error(e: guess::ParseError) -> String {
+fn show_parse_guess_error(e: ParseGuessError) -> String {
     match e {
-        guess::ParseError::InvalidLength => "Guess must be 5 letters".into(),
-        guess::ParseError::UnknownWord => "Unknown word".into(),
-        guess::ParseError::InvalidLetter(e) => show_letter_parse_error(e),
+        ParseGuessError::InvalidLength => "Guess must be 5 letters".into(),
+        ParseGuessError::UnknownWord => "Unknown word".into(),
+        ParseGuessError::InvalidLetter(e) => show_parse_letter_error(e),
     }
 }
 
-fn show_letter_parse_error(e: letter::ParseError) -> String {
+fn show_parse_letter_error(e: ParseLetterError) -> String {
     match e {
-        letter::ParseError::NonAlphabeticalLetter(c) => {
+        ParseLetterError::NonAlphabeticalLetter(c) => {
             format!("Non alphabetical letter: `{c}`")
         }
     }
 }
 
-fn show_hints_parse_error(e: hints::ParseError) -> String {
+fn show_parse_hints_error(e: ParseHintsError) -> String {
     match e {
-        hints::ParseError::InvalidLength => "Hints must be 5 letters".into(),
-        hints::ParseError::InvalidHint(e) => show_hint_parse_error(e),
+        ParseHintsError::InvalidLength => "Hints must be 5 letters".into(),
+        ParseHintsError::InvalidHint(e) => show_parse_hint_error(e),
     }
 }
 
-fn show_hint_parse_error(e: hint::ParseError) -> String {
+fn show_parse_hint_error(e: ParseHintError) -> String {
     match e {
-        hint::ParseError::InvalidHint(c) => format!("Invalid hint: `{c}`"),
+        ParseHintError::InvalidHint(c) => format!("Invalid hint: `{c}`"),
     }
 }

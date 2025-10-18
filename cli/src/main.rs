@@ -1,21 +1,18 @@
 mod error;
 
 use std::{
-    io::{self, Stdin, Stdout, Write},
+    io::{self, Write},
     str::FromStr,
 };
 
 use itertools::Itertools;
 
-use wordler::{Candidates, Guess, Hints, Recommends, State};
+use wordler::{Candidates, Recommends, State};
 
 use self::error::ParseError;
 
 fn main() {
     let mut state = State::default();
-
-    let stdin = io::stdin();
-    let mut stdout = io::stdout();
 
     loop {
         let candidates = state.candidates();
@@ -29,8 +26,8 @@ fn main() {
 
         println!("{}", show_recommends(recommends));
 
-        let guess = read_guess(&stdin, &mut stdout);
-        let hints = read_hints(&stdin, &mut stdout);
+        let guess = read_line("Guess", "guess");
+        let hints = read_line("Hints", "hints");
         state.update(guess, hints);
 
         println!();
@@ -54,24 +51,16 @@ fn show_recommends(recommends: &Recommends) -> String {
     }
 }
 
-fn read_guess(stdin: &Stdin, stdout: &mut Stdout) -> Guess {
-    read_line(stdin, stdout, "Guess", "guess")
-}
-
-fn read_hints(stdin: &Stdin, stdout: &mut Stdout) -> Hints {
-    read_line(stdin, stdout, "Hints", "hints")
-}
-
-fn read_line<T>(stdin: &Stdin, stdout: &mut Stdout, label: &str, kind: &str) -> T
+fn read_line<T>(label: &str, kind: &str) -> T
 where
     T: FromStr,
     ParseError: From<<T>::Err>,
 {
     loop {
         print!("{label}: ");
-        stdout.flush().unwrap();
+        io::stdout().flush().unwrap();
 
-        let input = get_line(stdin);
+        let input = get_line();
 
         match input.parse::<T>() {
             Ok(t) => return t,
@@ -80,8 +69,8 @@ where
     }
 }
 
-fn get_line(stdin: &Stdin) -> String {
+fn get_line() -> String {
     let mut buf = String::new();
-    stdin.read_line(&mut buf).unwrap();
+    io::stdin().read_line(&mut buf).unwrap();
     buf.trim().into()
 }

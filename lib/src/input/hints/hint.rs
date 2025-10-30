@@ -1,5 +1,3 @@
-use thiserror::Error;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Hint {
     NotExists,
@@ -8,22 +6,16 @@ pub(crate) enum Hint {
 }
 
 impl TryFrom<char> for Hint {
-    type Error = ParseError;
+    type Error = char;
 
     fn try_from(hint: char) -> Result<Self, Self::Error> {
         match hint {
             '0' => Ok(Self::NotExists),
             '1' => Ok(Self::WrongSpot),
             '2' => Ok(Self::CorrectSpot),
-            _ => Err(ParseError::InvalidHint(hint)),
+            _ => Err(hint),
         }
     }
-}
-
-#[derive(Debug, PartialEq, Error)]
-pub(crate) enum ParseError {
-    #[error("invalid hint: {0:?}")]
-    InvalidHint(char),
 }
 
 #[cfg(test)]
@@ -45,9 +37,6 @@ mod tests {
 
     #[rstest(input, case('@'), case('3'), case('あ'), case(' '))]
     fn try_from_failure(input: char) {
-        assert_eq!(
-            Hint::try_from(input).unwrap_err(),
-            ParseError::InvalidHint(input)
-        );
+        assert_eq!(Hint::try_from(input).unwrap_err(), input);
     }
 }

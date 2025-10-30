@@ -1,16 +1,14 @@
 use std::fmt;
 
-use thiserror::Error;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Letter(u8);
 
 impl TryFrom<char> for Letter {
-    type Error = ParseError;
+    type Error = char;
 
     fn try_from(ch: char) -> Result<Self, Self::Error> {
         if !ch.is_ascii_alphabetic() {
-            return Err(ParseError::NonAlphabeticalLetter(ch));
+            return Err(ch);
         }
 
         Ok(Self(ch.to_ascii_uppercase() as u8))
@@ -21,12 +19,6 @@ impl fmt::Display for Letter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", char::from(self.0))
     }
-}
-
-#[derive(Debug, PartialEq, Error)]
-pub(crate) enum ParseError {
-    #[error("non alphabetical letter: {0:?}")]
-    NonAlphabeticalLetter(char),
 }
 
 impl Letter {
@@ -55,10 +47,7 @@ mod tests {
 
     #[rstest(ch, case('@'), case('1'), case('あ'), case(' '))]
     fn try_from_failure(ch: char) {
-        assert_eq!(
-            Letter::try_from(ch).unwrap_err(),
-            ParseError::NonAlphabeticalLetter(ch)
-        );
+        assert_eq!(Letter::try_from(ch).unwrap_err(), ch);
     }
 
     #[rstest(byte, s, case(b'A', "A"), case(b'Z', "Z"))]

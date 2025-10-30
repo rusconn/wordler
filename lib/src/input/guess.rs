@@ -2,10 +2,7 @@ use std::str::FromStr;
 
 use thiserror::Error;
 
-use crate::{
-    dict::WORDS,
-    letter::{self, Letter},
-};
+use crate::{dict::WORDS, letter::Letter};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Guess(Vec<Letter>);
@@ -26,13 +23,7 @@ impl FromStr for Guess {
             .map(Letter::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
-            .map_err(to_this_parse_error)
-    }
-}
-
-fn to_this_parse_error(e: letter::ParseError) -> ParseError {
-    match e {
-        letter::ParseError::NonAlphabeticalLetter(c) => ParseError::InvalidLetter(c),
+            .map_err(ParseError::InvalidLetter)
     }
 }
 

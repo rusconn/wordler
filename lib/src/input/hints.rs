@@ -61,10 +61,7 @@ mod tests {
 
     #[rstest(input, case(""), case("@"), case("1021"), case("120021"))]
     fn try_from_failure_len(input: &str) {
-        assert_eq!(
-            input.parse::<Hints>().unwrap_err(),
-            ParseError::InvalidLength,
-        );
+        assert_eq!(input.parse::<Hints>(), Err(ParseError::InvalidLength),);
     }
 
     #[rstest(

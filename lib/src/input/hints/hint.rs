@@ -32,11 +32,11 @@ mod tests {
         case('2', Hint::CorrectSpot)
     )]
     fn try_from_success(input: char, hint: Hint) {
-        assert_eq!(Hint::try_from(input).unwrap(), hint);
+        assert_eq!(Hint::try_from(input), Ok(hint));
     }
 
     #[rstest(input, case('@'), case('3'), case('あ'), case(' '))]
     fn try_from_failure(input: char) {
-        assert_eq!(Hint::try_from(input).unwrap_err(), input);
+        assert_eq!(Hint::try_from(input), Err(input));
     }
 }

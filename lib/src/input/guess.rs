@@ -58,15 +58,12 @@ mod tests {
 
     #[rstest(input, case("aaaaa"))]
     fn try_from_failure_word(input: &str) {
-        assert_eq!(input.parse::<Guess>().unwrap_err(), ParseError::UnknownWord);
+        assert_eq!(input.parse::<Guess>(), Err(ParseError::UnknownWord));
     }
 
     #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]
     fn try_from_failure_len(input: &str) {
-        assert_eq!(
-            input.parse::<Guess>().unwrap_err(),
-            ParseError::InvalidLength
-        );
+        assert_eq!(input.parse::<Guess>(), Err(ParseError::InvalidLength));
     }
 
     #[rstest(input, case("will@"), case("1will"), case("wiあll"), case("wi ll"))]

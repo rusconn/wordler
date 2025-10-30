@@ -42,12 +42,12 @@ mod tests {
         case('Z', b'Z')
     )]
     fn try_from_success(input: char, byte: u8) {
-        assert_eq!(Letter::try_from(input).unwrap(), Letter(byte));
+        assert_eq!(Letter::try_from(input), Ok(Letter(byte)));
     }
 
     #[rstest(ch, case('@'), case('1'), case('あ'), case(' '))]
     fn try_from_failure(ch: char) {
-        assert_eq!(Letter::try_from(ch).unwrap_err(), ch);
+        assert_eq!(Letter::try_from(ch), Err(ch));
     }
 
     #[rstest(byte, s, case(b'A', "A"), case(b'Z', "Z"))]

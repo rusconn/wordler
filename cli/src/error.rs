@@ -2,12 +2,12 @@ use std::fmt;
 
 use thiserror::Error;
 
-use wordler::{ParseGuessError, ParseHintsError};
+use wordler::{guess, hints};
 
 #[derive(Debug, Error)]
 pub(crate) enum ParseError {
-    Guess(#[from] ParseGuessError),
-    Hints(#[from] ParseHintsError),
+    Guess(#[from] guess::ParseError),
+    Hints(#[from] hints::ParseError),
 }
 
 impl fmt::Display for ParseError {
@@ -21,17 +21,17 @@ impl fmt::Display for ParseError {
     }
 }
 
-fn show_parse_guess_error(e: &ParseGuessError) -> String {
+fn show_parse_guess_error(e: &guess::ParseError) -> String {
     match e {
-        ParseGuessError::InvalidLength => "Guess must be 5 letters".into(),
-        ParseGuessError::UnknownWord => "Unknown word".into(),
-        ParseGuessError::InvalidLetter(c) => format!("Non alphabetical letter: `{c}`"),
+        guess::ParseError::InvalidLength => "Guess must be 5 letters".into(),
+        guess::ParseError::UnknownWord => "Unknown word".into(),
+        guess::ParseError::InvalidLetter(c) => format!("Non alphabetical letter: `{c}`"),
     }
 }
 
-fn show_parse_hints_error(e: &ParseHintsError) -> String {
+fn show_parse_hints_error(e: &hints::ParseError) -> String {
     match e {
-        ParseHintsError::InvalidLength => "Hints must be 5 letters".into(),
-        ParseHintsError::InvalidHint(c) => format!("Invalid hint: `{c}`"),
+        hints::ParseError::InvalidLength => "Hints must be 5 letters".into(),
+        hints::ParseError::InvalidHint(c) => format!("Invalid hint: `{c}`"),
     }
 }

@@ -22,7 +22,13 @@ impl FromStr for Hints {
             .map(Hint::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
-            .map_err(ParseError::InvalidHint)
+            .map_err(to_this_parse_error)
+    }
+}
+
+fn to_this_parse_error(e: hint::ParseError) -> ParseError {
+    match e {
+        hint::ParseError::InvalidHint(c) => ParseError::InvalidHint(c),
     }
 }
 
@@ -38,7 +44,7 @@ pub enum ParseError {
     InvalidLength,
 
     #[error("invalid hint: {0:?}")]
-    InvalidHint(hint::ParseError),
+    InvalidHint(char),
 }
 
 #[cfg(test)]

@@ -32,7 +32,7 @@ impl<'a> Recommends<'a> {
         self.0.iter()
     }
 
-    pub fn update(&mut self, candidates: &Candidates<'a>, veileds: &FxHashSet<Letter>) {
+    pub(crate) fn update(&mut self, candidates: &Candidates<'a>, veileds: &FxHashSet<Letter>) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in candidates.iter() {

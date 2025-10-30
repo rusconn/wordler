@@ -1,7 +1,9 @@
 use std::fmt;
 
+use thiserror::Error;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Letter(u8);
+pub(crate) struct Letter(u8);
 
 impl TryFrom<char> for Letter {
     type Error = ParseError;
@@ -21,8 +23,9 @@ impl fmt::Display for Letter {
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub enum ParseError {
+#[derive(Debug, PartialEq, Error)]
+pub(crate) enum ParseError {
+    #[error("non alphabetical letter: {0:?}")]
     NonAlphabeticalLetter(char),
 }
 

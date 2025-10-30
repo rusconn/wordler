@@ -1,3 +1,5 @@
+use thiserror::Error;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Hint {
     NotExists,
@@ -18,8 +20,9 @@ impl TryFrom<char> for Hint {
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub enum ParseError {
+#[derive(Debug, PartialEq, Error)]
+pub(crate) enum ParseError {
+    #[error("invalid hint: {0:?}")]
     InvalidHint(char),
 }
 

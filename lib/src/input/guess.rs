@@ -26,7 +26,13 @@ impl FromStr for Guess {
             .map(Letter::try_from)
             .collect::<Result<_, _>>()
             .map(Self)
-            .map_err(ParseError::InvalidLetter)
+            .map_err(to_this_parse_error)
+    }
+}
+
+fn to_this_parse_error(e: letter::ParseError) -> ParseError {
+    match e {
+        letter::ParseError::NonAlphabeticalLetter(c) => ParseError::InvalidLetter(c),
     }
 }
 
@@ -45,7 +51,7 @@ pub enum ParseError {
     UnknownWord,
 
     #[error("invalid letter")]
-    InvalidLetter(letter::ParseError),
+    InvalidLetter(char),
 }
 
 #[cfg(test)]

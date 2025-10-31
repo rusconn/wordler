@@ -5,45 +5,32 @@ use itertools::Itertools;
 use crate::letter::Letter;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub(crate) struct LetterInfo(Variant);
-
-impl LetterInfo {
-    pub(super) fn not(&mut self, letter: Letter) {
-        if let Variant::Not(set) = &mut self.0 {
-            set.insert(letter);
-        } else {
-            self.0 = Variant::not(letter);
-        }
-    }
-
-    pub(super) fn correct(&mut self, letter: Letter) {
-        self.0 = Variant::correct(letter);
-    }
-
-    pub(super) fn regex_string(&self) -> String {
-        match &self.0 {
-            Variant::Any => ".".into(),
-            Variant::Not(set) => format!("[^{}]", set.iter().join("")),
-            Variant::Correct(c) => c.to_string(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-enum Variant {
+pub(crate) enum LetterInfo {
     #[default]
     Any,
     Not(BTreeSet<Letter>),
     Correct(Letter),
 }
 
-impl Variant {
-    fn not(letter: Letter) -> Self {
-        Self::Not([letter].into())
+impl LetterInfo {
+    pub(super) fn not(&mut self, letter: Letter) {
+        if let Self::Not(set) = self {
+            set.insert(letter);
+        } else {
+            *self = Self::Not([letter].into());
+        }
     }
 
-    fn correct(letter: Letter) -> Self {
-        Self::Correct(letter)
+    pub(super) fn correct(&mut self, letter: Letter) {
+        *self = Self::Correct(letter);
+    }
+
+    pub(super) fn regex_string(&self) -> String {
+        match self {
+            Self::Any => ".".into(),
+            Self::Not(set) => format!("[^{}]", set.iter().join("")),
+            Self::Correct(c) => c.to_string(),
+        }
     }
 }
 

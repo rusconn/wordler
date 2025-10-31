@@ -39,7 +39,7 @@ enum Variant {
 
 impl Variant {
     fn not(letter: Letter) -> Self {
-        Self::Not(BTreeSet::from([letter]))
+        Self::Not([letter].into())
     }
 
     fn correct(letter: Letter) -> Self {

@@ -52,22 +52,22 @@ mod tests {
     use super::*;
 
     #[rstest(input, case("audio"), case("STERN"), case("cHuMp"))]
-    fn try_from_success(input: &str) {
+    fn parse_success(input: &str) {
         assert!(input.parse::<Guess>().is_ok());
     }
 
     #[rstest(input, case("aaaaa"))]
-    fn try_from_failure_word(input: &str) {
+    fn parse_failure_word(input: &str) {
         assert_eq!(input.parse::<Guess>(), Err(ParseError::UnknownWord));
     }
 
     #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]
-    fn try_from_failure_len(input: &str) {
+    fn parse_failure_len(input: &str) {
         assert_eq!(input.parse::<Guess>(), Err(ParseError::InvalidLength));
     }
 
     #[rstest(input, case("will@"), case("1will"), case("wiあll"), case("wi ll"))]
-    fn try_from_failure_letter(input: &str) {
+    fn parse_failure_letter(input: &str) {
         assert!(input.parse::<Guess>().is_err());
     }
 }

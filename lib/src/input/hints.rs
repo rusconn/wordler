@@ -55,12 +55,12 @@ mod tests {
         case("01010"),
         case("01201")
     )]
-    fn try_from_success(input: &str) {
+    fn parse_success(input: &str) {
         assert!(input.parse::<Hints>().is_ok());
     }
 
     #[rstest(input, case(""), case("@"), case("1021"), case("120021"))]
-    fn try_from_failure_len(input: &str) {
+    fn parse_failure_len(input: &str) {
         assert_eq!(input.parse::<Hints>(), Err(ParseError::InvalidLength),);
     }
 
@@ -72,7 +72,7 @@ mod tests {
         case("00あ12"),
         case("10 20")
     )]
-    fn try_from_failure_hint(input: &str) {
+    fn parse_failure_hint(input: &str) {
         assert!(input.parse::<Hints>().is_err());
     }
 }

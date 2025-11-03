@@ -54,15 +54,13 @@ fn show_recommends(recommends: &Recommends) -> String {
 fn read_line<T>(label: &str, kind: &str) -> T
 where
     T: FromStr,
-    ParseError: From<<T>::Err>,
+    ParseError: From<T::Err>,
 {
     loop {
         print!("{label}: ");
         io::stdout().flush().unwrap();
 
-        let input = get_line();
-
-        match input.parse::<T>() {
+        match get_line().parse() {
             Ok(t) => return t,
             Err(e) => eprintln!("Failed to read the {kind}: {}", ParseError::from(e)),
         }

@@ -1,24 +1,14 @@
-use std::fmt;
-
 use thiserror::Error;
 
 use wordler::{guess, hints};
 
 #[derive(Debug, Error)]
 pub(crate) enum ParseError {
+    #[error("{}", show_parse_guess_error(.0))]
     Guess(#[from] guess::ParseError),
+
+    #[error("{}", show_parse_hints_error(.0))]
     Hints(#[from] hints::ParseError),
-}
-
-impl fmt::Display for ParseError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = match self {
-            ParseError::Guess(e) => show_parse_guess_error(e),
-            ParseError::Hints(e) => show_parse_hints_error(e),
-        };
-
-        write!(f, "{s}")
-    }
 }
 
 fn show_parse_guess_error(e: &guess::ParseError) -> String {

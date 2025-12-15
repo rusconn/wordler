@@ -74,11 +74,11 @@ impl State<'_> {
         self.recommends.update(&self.candidates, &self.veileds);
     }
 
-    pub fn candidates(&self) -> &Candidates {
+    pub fn candidates(&self) -> &Candidates<'_> {
         &self.candidates
     }
 
-    pub fn recommends(&self) -> &Recommends {
+    pub fn recommends(&self) -> &Recommends<'_> {
         &self.recommends
     }
 }

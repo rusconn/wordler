@@ -1,5 +1,5 @@
+mod displays;
 mod error;
 mod reader;
-mod renderers;
 
-pub use {error::*, reader::*, renderers::*};
+pub use {displays::*, error::*, reader::*};

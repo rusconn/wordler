@@ -6,7 +6,7 @@ use crate::{dict::WORDS, letter::Letter};
 
 use super::candidates::Candidates;
 
-use self::recommend::Recommend;
+use recommend::Recommend;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Recommends<'a>(Vec<Recommend<'a>>);

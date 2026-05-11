@@ -9,7 +9,7 @@ use itertools::Itertools;
 
 use wordler::{Candidates, Recommends, State};
 
-use self::error::ParseError;
+use error::ParseError;
 
 fn main() {
     let mut state = State::default();

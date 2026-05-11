@@ -15,9 +15,9 @@ use crate::{
     letter::Letter,
 };
 
-use self::letter_info::LetterInfo;
+use letter_info::LetterInfo;
 
-pub use self::{candidates::Candidates, recommends::Recommends};
+pub use {candidates::Candidates, recommends::Recommends};
 
 #[derive(Debug)]
 pub struct State<'a> {

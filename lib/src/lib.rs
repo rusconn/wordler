@@ -3,4 +3,4 @@ mod input;
 mod letter;
 mod state;
 
-pub use self::{input::*, state::*};
+pub use {input::*, state::*};

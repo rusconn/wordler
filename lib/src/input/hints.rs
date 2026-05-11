@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 use thiserror::Error;
 
-pub(crate) use self::hint::Hint;
+pub(crate) use hint::Hint;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hints(Vec<Hint>);

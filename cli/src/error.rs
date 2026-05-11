@@ -3,7 +3,7 @@ use thiserror::Error;
 use wordler::{guess, hints};
 
 #[derive(Debug, Error)]
-pub(crate) enum ParseError {
+pub enum ParseError {
     #[error("{}", show_parse_guess_error(.0))]
     Guess(#[from] guess::ParseError),
 

@@ -7,12 +7,11 @@ use std::iter;
 
 use rustc_hash::FxHashSet;
 
-use crate::{
-    input::{
-        guess::Guess,
-        hints::{Hint, Hints},
-    },
-    letter::Letter,
+use crate::letter::Letter;
+
+use super::input::{
+    guess::Guess,
+    hints::{Hint, Hints},
 };
 
 use letter_info::LetterInfo;

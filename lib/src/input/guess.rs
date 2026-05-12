@@ -14,16 +14,18 @@ impl FromStr for Guess {
         if guess.chars().count() != 5 {
             return Err(ParseError::InvalidLength);
         }
+
+        let letters = guess
+            .chars()
+            .map(Letter::try_from)
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(ParseError::InvalidLetter)?;
+
         if !WORDS.contains(&guess.to_ascii_uppercase().as_str()) {
             return Err(ParseError::UnknownWord);
         }
 
-        guess
-            .chars()
-            .map(Letter::try_from)
-            .collect::<Result<_, _>>()
-            .map(Self)
-            .map_err(ParseError::InvalidLetter)
+        Ok(Self(letters))
     }
 }
 
@@ -56,18 +58,24 @@ mod tests {
         assert!(input.parse::<Guess>().is_ok());
     }
 
-    #[rstest(input, case("aaaaa"))]
-    fn parse_failure_word(input: &str) {
-        assert_eq!(input.parse::<Guess>(), Err(ParseError::UnknownWord));
-    }
-
-    #[rstest(input, case(""), case("@"), case("will"), case("clippy"))]
+    #[rstest(input, case(""), case("is"), case("will"), case("clippy"))]
     fn parse_failure_len(input: &str) {
         assert_eq!(input.parse::<Guess>(), Err(ParseError::InvalidLength));
     }
 
-    #[rstest(input, case("will@"), case("1will"), case("wiあll"), case("wi ll"))]
-    fn parse_failure_letter(input: &str) {
-        assert!(input.parse::<Guess>().is_err());
+    #[rstest(
+        case("will@", '@'),
+        case("1will", '1'),
+        case("wiあll", 'あ'),
+        case("wi ll", ' ')
+    )]
+    fn parse_failure_letter(#[case] input: &str, #[case] letter: char) {
+        let parsed = input.parse::<Guess>();
+        assert_eq!(parsed, Err(ParseError::InvalidLetter(letter)));
+    }
+
+    #[rstest(input, case("aaaaa"))]
+    fn parse_failure_word(input: &str) {
+        assert_eq!(input.parse::<Guess>(), Err(ParseError::UnknownWord));
     }
 }

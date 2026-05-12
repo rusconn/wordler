@@ -1,4 +1,7 @@
 pub(crate) mod guess;
 pub(crate) mod hints;
 
-pub use {guess::ParseError as ParseGuessError, hints::ParseError as ParseHintsError};
+pub use {
+    guess::{Guess, ParseError as ParseGuessError},
+    hints::{Hints, ParseError as ParseHintsError},
+};

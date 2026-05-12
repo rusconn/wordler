@@ -21,11 +21,10 @@ impl FromStr for Guess {
             .collect::<Result<Vec<_>, _>>()
             .map_err(ParseError::InvalidLetter)?;
 
-        if !WORDS.contains(&guess.to_ascii_uppercase().as_str()) {
-            return Err(ParseError::UnknownWord);
-        }
-
-        Ok(Self(letters))
+        WORDS
+            .binary_search(&guess.to_ascii_uppercase().as_str())
+            .map(|_| Self(letters))
+            .map_err(|_| ParseError::UnknownWord)
     }
 }
 

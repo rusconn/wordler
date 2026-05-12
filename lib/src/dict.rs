@@ -1503,4 +1503,9 @@ mod tests {
     fn is_valid_char(ch: char) -> bool {
         ch.is_ascii_alphabetic() && ch.is_ascii_uppercase()
     }
+
+    #[test]
+    fn order() {
+        assert!(WORDS.iter().is_sorted())
+    }
 }

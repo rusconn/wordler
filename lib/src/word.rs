@@ -1,13 +1,20 @@
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
+use rustc_hash::FxHashSet;
 use thiserror::Error;
 
-use crate::{dict::WORDS, letter::Letter};
+use crate::{dict, letter::Letter};
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct Guess(Vec<Letter>);
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Word(usize);
 
-impl FromStr for Guess {
+impl fmt::Display for Word {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+impl FromStr for Word {
     type Err = ParseError;
 
     fn from_str(guess: &str) -> Result<Self, Self::Err> {
@@ -15,22 +22,35 @@ impl FromStr for Guess {
             return Err(ParseError::InvalidLength);
         }
 
-        let letters = guess
-            .chars()
-            .map(Letter::try_from)
-            .collect::<Result<Vec<_>, _>>()
-            .map_err(ParseError::InvalidLetter)?;
+        for c in guess.chars() {
+            Letter::try_from(c).map_err(ParseError::InvalidLetter)?;
+        }
 
-        WORDS
+        dict::WORD_STRINGS
             .binary_search(&guess.to_ascii_uppercase().as_str())
-            .map(|_| Self(letters))
+            .map(Self)
             .map_err(|_| ParseError::UnknownWord)
     }
 }
 
-impl Guess {
-    pub(crate) fn iter(&self) -> impl Iterator<Item = Letter> + '_ {
-        self.0.iter().copied()
+impl Word {
+    pub(crate) fn from_unchecked(index: usize) -> Self {
+        Self(index)
+    }
+
+    pub(crate) fn as_str(&self) -> &'static str {
+        dict::WORD_STRINGS[self.0]
+    }
+
+    pub(crate) fn as_letter_set(&self) -> &'static FxHashSet<Letter> {
+        &dict::WORD_LETTER_SETS[self.0]
+    }
+
+    pub(crate) fn iter(&self) -> impl Iterator<Item = Letter> {
+        self.as_str()
+            .as_bytes()
+            .iter()
+            .map(|&b| Letter::from_unchecked(b))
     }
 }
 
@@ -54,12 +74,12 @@ mod tests {
 
     #[rstest(input, case("audio"), case("STERN"), case("cHuMp"))]
     fn parse_success(input: &str) {
-        assert!(input.parse::<Guess>().is_ok());
+        assert!(input.parse::<Word>().is_ok());
     }
 
     #[rstest(input, case(""), case("is"), case("will"), case("clippy"))]
     fn parse_failure_len(input: &str) {
-        assert_eq!(input.parse::<Guess>(), Err(ParseError::InvalidLength));
+        assert_eq!(input.parse::<Word>(), Err(ParseError::InvalidLength));
     }
 
     #[rstest(
@@ -69,12 +89,12 @@ mod tests {
         case("wi ll", ' ')
     )]
     fn parse_failure_letter(#[case] input: &str, #[case] letter: char) {
-        let parsed = input.parse::<Guess>();
+        let parsed = input.parse::<Word>();
         assert_eq!(parsed, Err(ParseError::InvalidLetter(letter)));
     }
 
     #[rstest(input, case("aaaaa"))]
     fn parse_failure_word(input: &str) {
-        assert_eq!(input.parse::<Guess>(), Err(ParseError::UnknownWord));
+        assert_eq!(input.parse::<Word>(), Err(ParseError::UnknownWord));
     }
 }

@@ -1,18 +1,14 @@
 mod candidates;
 mod letter_info;
 mod to_regex_string;
-pub(crate) mod word;
 
 use std::iter;
 
 use rustc_hash::FxHashSet;
 
-use crate::letter::Letter;
+use crate::{letter::Letter, word::Word};
 
-use super::input::{
-    guess::Guess,
-    hints::{Hint, Hints},
-};
+use super::hints::{Hint, Hints};
 
 use letter_info::LetterInfo;
 
@@ -43,7 +39,7 @@ impl Default for State {
 }
 
 impl State {
-    pub fn update(&mut self, guess: Guess, hints: Hints) {
+    pub fn update(&mut self, guess: Word, hints: Hints) {
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
             info.update(letter, hint);
 

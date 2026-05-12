@@ -2,7 +2,7 @@ mod recommend;
 
 use rustc_hash::FxHashMap;
 
-use crate::{State, letter::Letter, word::WORDS};
+use crate::{State, dict::WORDS, letter::Letter};
 
 use recommend::Recommend;
 
@@ -34,9 +34,9 @@ impl Recommends {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in state.candidates.iter() {
-            for &letter in word.letters.iter() {
-                if state.veileds.contains(&letter) {
-                    *histogram.entry(letter).or_insert(0) += 1;
+            for letter in word.as_letter_set() {
+                if state.veileds.contains(letter) {
+                    *histogram.entry(*letter).or_insert(0) += 1;
                 }
             }
         }

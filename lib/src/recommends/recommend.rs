@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, fmt};
 
-use crate::state::word::Word;
+use crate::word::Word;
 
 use super::VeiledLetterHistogram;
 
@@ -36,7 +36,7 @@ impl Recommend {
     pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram) {
         self.score = self
             .word
-            .letters
+            .as_letter_set()
             .iter()
             .map(|c| histogram.get(c).unwrap_or(&0))
             .sum()
@@ -51,12 +51,15 @@ impl Recommend {
 mod tests {
     use rstest::rstest;
 
-    use crate::{letter::Letter, word::WORDS};
+    use crate::{
+        dict::{WORD_STRINGS, WORDS},
+        letter::Letter,
+    };
 
     use super::*;
 
     fn find_word(str: &str) -> &'static Word {
-        let index = WORDS.binary_search_by(|w| w.str.cmp(str)).unwrap();
+        let index = WORD_STRINGS.binary_search_by(|ws| ws.cmp(&str)).unwrap();
         &WORDS[index]
     }
 

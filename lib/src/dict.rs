@@ -1,4 +1,23 @@
-pub(crate) static WORDS: [&str; 14855] = [
+use std::sync::LazyLock;
+
+use rustc_hash::FxHashSet;
+
+use crate::{letter::Letter, word::Word};
+
+pub(crate) static WORDS: LazyLock<Vec<Word>> = LazyLock::new(|| {
+    (0..WORD_STRINGS.len()) //
+        .map(Word::from_unchecked)
+        .collect()
+});
+
+pub(crate) static WORD_LETTER_SETS: LazyLock<Vec<FxHashSet<Letter>>> = LazyLock::new(|| {
+    WORD_STRINGS
+        .iter()
+        .map(|word| FxHashSet::from_iter(word.bytes().map(Letter::from_unchecked)))
+        .collect()
+});
+
+pub(crate) static WORD_STRINGS: [&str; 14855] = [
     "AAHED", "AALII", "AAPAS", "AARGH", "AARTI", "ABACA", "ABACI", "ABACK", "ABACS", "ABAFT",
     "ABAHT", "ABAKA", "ABAMP", "ABAND", "ABASE", "ABASH", "ABASK", "ABATE", "ABAYA", "ABBAS",
     "ABBED", "ABBES", "ABBEY", "ABBOT", "ABCEE", "ABEAM", "ABEAR", "ABEAT", "ABEER", "ABELE",
@@ -1493,7 +1512,7 @@ mod tests {
 
     #[test]
     fn validation() {
-        assert!(WORDS.into_iter().all(is_valid_word));
+        assert!(WORD_STRINGS.into_iter().all(is_valid_word));
     }
 
     fn is_valid_word(word: &str) -> bool {
@@ -1506,6 +1525,12 @@ mod tests {
 
     #[test]
     fn order() {
-        assert!(WORDS.iter().is_sorted())
+        assert!(WORD_STRINGS.iter().is_sorted())
+    }
+
+    #[test]
+    fn len() {
+        assert_eq!(WORDS.len(), WORD_LETTER_SETS.len());
+        assert_eq!(WORD_LETTER_SETS.len(), WORD_STRINGS.len());
     }
 }

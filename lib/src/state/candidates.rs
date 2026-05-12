@@ -2,12 +2,12 @@ use regex::Regex;
 use rustc_hash::FxHashSet;
 
 use crate::{
+    dict::WORDS,
     letter::Letter,
     state::{letter_info::LetterInfo, to_regex_string::ToRegexString},
-    word::WORDS,
 };
 
-use super::word::Word;
+use crate::word::Word;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Candidates(Vec<&'static Word>);
@@ -45,9 +45,9 @@ impl Candidates {
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
         self.0.retain(|word| {
-            regex.is_match(word.str)
-                && includes.is_subset(&word.letters)
-                && excludes.is_disjoint(&word.letters)
+            regex.is_match(word.as_str())
+                && includes.is_subset(word.as_letter_set())
+                && excludes.is_disjoint(word.as_letter_set())
         });
     }
 }

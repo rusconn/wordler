@@ -1,21 +1,21 @@
 use thiserror::Error;
 
-use wordler::{ParseGuessError, ParseHintsError};
+use wordler::{ParseHintsError, ParseWordError};
 
 #[derive(Debug, Error)]
 pub enum ParseError {
-    #[error("{}", show_parse_guess_error(.0))]
-    Guess(#[from] ParseGuessError),
+    #[error("{}", show_parse_word_error(.0))]
+    Guess(#[from] ParseWordError),
 
     #[error("{}", show_parse_hints_error(.0))]
     Hints(#[from] ParseHintsError),
 }
 
-fn show_parse_guess_error(e: &ParseGuessError) -> String {
+fn show_parse_word_error(e: &ParseWordError) -> String {
     match e {
-        ParseGuessError::InvalidLength => "Guess must be 5 letters".into(),
-        ParseGuessError::UnknownWord => "Unknown word".into(),
-        ParseGuessError::InvalidLetter(c) => format!("Non alphabetical letter: `{c}`"),
+        ParseWordError::InvalidLength => "Guess must be 5 letters".into(),
+        ParseWordError::UnknownWord => "Unknown word".into(),
+        ParseWordError::InvalidLetter(c) => format!("Non alphabetical letter: `{c}`"),
     }
 }
 

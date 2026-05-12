@@ -1,13 +1,13 @@
-use wordler::State;
+use wordler::{Recommends, State};
 
 use wordler_cli::{AsDisplay, read_line};
 
 fn main() {
     let mut state = State::default();
+    let mut recommends = Recommends::new(&state);
 
     loop {
         let candidates = state.candidates();
-        let recommends = state.recommends();
 
         println!("{}", candidates.as_display());
 
@@ -19,7 +19,9 @@ fn main() {
 
         let guess = read_line("Guess", "guess");
         let hints = read_line("Hints", "hints");
+
         state.update(guess, hints);
+        recommends.update(&state);
 
         println!();
     }

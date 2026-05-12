@@ -1,8 +1,7 @@
 mod candidates;
 mod letter_info;
-mod recommends;
 mod to_regex_string;
-mod word;
+pub(crate) mod word;
 
 use std::iter;
 
@@ -17,25 +16,21 @@ use super::input::{
 
 use letter_info::LetterInfo;
 
-pub use {candidates::Candidates, recommends::Recommends};
+pub use candidates::Candidates;
 
 #[derive(Debug)]
 pub struct State<'a> {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
-    veileds: FxHashSet<Letter>,
-    candidates: Candidates<'a>,
-    recommends: Recommends<'a>,
+    pub(crate) veileds: FxHashSet<Letter>,
+    pub(crate) candidates: Candidates<'a>,
 }
 
 impl Default for State<'_> {
     fn default() -> Self {
         let veileds = (b'A'..=b'Z').map(Letter::from_unchecked).collect();
         let candidates = Candidates::default();
-        let mut recommends = Recommends::default();
-
-        recommends.update(&candidates, &veileds);
 
         Self {
             infos: iter::repeat_n(LetterInfo::default(), 5).collect::<Vec<_>>(),
@@ -43,7 +38,6 @@ impl Default for State<'_> {
             excludes: Default::default(),
             veileds,
             candidates,
-            recommends,
         }
     }
 }
@@ -65,15 +59,10 @@ impl State<'_> {
 
         self.candidates
             .retain(&self.infos, &self.includes, &self.excludes);
-        self.recommends.update(&self.candidates, &self.veileds);
     }
 
     pub fn candidates(&self) -> &Candidates<'_> {
         &self.candidates
-    }
-
-    pub fn recommends(&self) -> &Recommends<'_> {
-        &self.recommends
     }
 }
 

@@ -1,6 +1,8 @@
 use std::{cmp::Ordering, fmt};
 
-use super::{super::word::Word, VeiledLetterHistogram};
+use crate::state::word::Word;
+
+use super::VeiledLetterHistogram;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Recommend<'a> {

@@ -1,10 +1,8 @@
 mod recommend;
 
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashMap;
 
-use crate::{dict::WORDS, letter::Letter};
-
-use super::candidates::Candidates;
+use crate::{State, dict::WORDS, letter::Letter};
 
 use recommend::Recommend;
 
@@ -13,13 +11,13 @@ pub struct Recommends<'a>(Vec<Recommend<'a>>);
 
 type VeiledLetterHistogram = FxHashMap<Letter, i32>;
 
-impl Default for Recommends<'_> {
-    fn default() -> Self {
-        Self(WORDS.into_iter().map(Recommend::from_unchecked).collect())
+impl Recommends<'_> {
+    pub fn new(state: &State<'_>) -> Self {
+        let mut recommends = Self(WORDS.into_iter().map(Recommend::from_unchecked).collect());
+        recommends.update(state);
+        recommends
     }
-}
 
-impl<'a> Recommends<'a> {
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -28,16 +26,16 @@ impl<'a> Recommends<'a> {
         self.0.len()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Recommend<'a>> {
+    pub fn iter(&self) -> impl Iterator<Item = &Recommend<'_>> {
         self.0.iter()
     }
 
-    pub(crate) fn update(&mut self, candidates: &Candidates<'a>, veileds: &FxHashSet<Letter>) {
+    pub fn update(&mut self, state: &State<'_>) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
-        for word in candidates.iter() {
+        for word in state.candidates.iter() {
             for &letter in word.letters.iter() {
-                if veileds.contains(&letter) {
+                if state.veileds.contains(&letter) {
                     *histogram.entry(letter).or_insert(0) += 1;
                 }
             }
@@ -45,7 +43,7 @@ impl<'a> Recommends<'a> {
 
         // common letters must not be scored
         for (_, n) in histogram.iter_mut() {
-            if *n as usize == candidates.len() {
+            if *n as usize == state.candidates.len() {
                 *n = 0;
             }
         }

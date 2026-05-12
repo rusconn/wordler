@@ -2,7 +2,7 @@ mod recommend;
 
 use rustc_hash::FxHashMap;
 
-use crate::{State, dict::WORDS, letter::Letter};
+use crate::{State, letter::Letter, word::WORDS};
 
 use recommend::Recommend;
 
@@ -13,7 +13,7 @@ type VeiledLetterHistogram = FxHashMap<Letter, i32>;
 
 impl Recommends {
     pub fn new(state: &State) -> Self {
-        let mut recommends = Self(WORDS.into_iter().map(Recommend::from_unchecked).collect());
+        let mut recommends = Self(WORDS.iter().map(Recommend::new).collect());
         recommends.update(state);
         recommends
     }

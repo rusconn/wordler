@@ -2,19 +2,19 @@ use regex::Regex;
 use rustc_hash::FxHashSet;
 
 use crate::{
-    dict::WORDS,
     letter::Letter,
     state::{letter_info::LetterInfo, to_regex_string::ToRegexString},
+    word::WORDS,
 };
 
 use super::word::Word;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Candidates(Vec<Word>);
+pub struct Candidates(Vec<&'static Word>);
 
 impl Default for Candidates {
     fn default() -> Self {
-        Self(WORDS.into_iter().map(Word::from_unchecked).collect())
+        Self(WORDS.iter().collect())
     }
 }
 
@@ -27,12 +27,12 @@ impl Candidates {
         self.0.len()
     }
 
-    pub fn first(&self) -> Option<&Word> {
-        self.0.first()
+    pub fn first(&self) -> Option<&'static Word> {
+        self.0.first().copied()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Word> {
-        self.0.iter()
+    pub fn iter(&self) -> impl Iterator<Item = &'static Word> {
+        self.0.iter().copied()
     }
 
     pub(crate) fn retain(

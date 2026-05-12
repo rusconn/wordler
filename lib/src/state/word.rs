@@ -1,13 +1,32 @@
-use std::fmt;
+use std::{cmp::Ordering, fmt, sync::LazyLock};
 
 use rustc_hash::FxHashSet;
 
-use crate::letter::Letter;
+use crate::{dict, letter::Letter};
+
+pub(crate) static WORDS: LazyLock<Vec<Word>> = LazyLock::new(|| {
+    dict::WORDS
+        .iter()
+        .map(|&s| Word::from_unchecked(s))
+        .collect()
+});
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Word {
     pub(crate) str: &'static str,
     pub(crate) letters: FxHashSet<Letter>,
+}
+
+impl PartialOrd for Word {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Word {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.str.cmp(other.str)
+    }
 }
 
 impl fmt::Display for Word {

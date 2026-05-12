@@ -6,7 +6,7 @@ use super::VeiledLetterHistogram;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Recommend {
-    word: Word,
+    word: &'static Word,
     score: i32,
 }
 
@@ -29,11 +29,8 @@ impl Ord for Recommend {
 }
 
 impl Recommend {
-    pub(super) fn from_unchecked(str: &'static str) -> Self {
-        Self {
-            word: Word::from_unchecked(str),
-            score: 0,
-        }
+    pub(super) fn new(word: &'static Word) -> Self {
+        Self { word, score: 0 }
     }
 
     pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram) {
@@ -54,25 +51,27 @@ impl Recommend {
 mod tests {
     use rstest::rstest;
 
-    use crate::letter::Letter;
+    use crate::{letter::Letter, word::WORDS};
 
     use super::*;
 
-    #[rstest(
-        input,
-        output,
-        case("AUDIO", "AUDIO"),
-        case("HIPPO", "HIPPO"),
-        case("AAAAA", "AAAAA")
-    )]
-    fn fmt(input: &'static str, output: &str) {
-        assert_eq!(Recommend::from_unchecked(input).to_string(), output);
+    fn find_word(str: &str) -> &'static Word {
+        let index = WORDS.binary_search_by(|w| w.str.cmp(str)).unwrap();
+        &WORDS[index]
+    }
+
+    #[rstest(input, output, case("AUDIO", "AUDIO"), case("HIPPO", "HIPPO"))]
+    fn fmt(input: &str, output: &str) {
+        let word = find_word(input);
+        assert_eq!(Recommend::new(word).to_string(), output);
     }
 
     #[test]
     fn cmp() {
-        let mut recommend1 = Recommend::from_unchecked("AAAAA");
-        let mut recommend2 = Recommend::from_unchecked("BBBBB");
+        let a = find_word("AUDIO");
+        let b = find_word("HIPPO");
+        let mut recommend1 = Recommend::new(a);
+        let mut recommend2 = Recommend::new(b);
         assert_eq!(recommend1.cmp(&recommend2), Ordering::Equal);
 
         recommend1.score = 1;
@@ -86,7 +85,8 @@ mod tests {
     fn update() {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
-        let mut recommend = Recommend::from_unchecked("HIPPO");
+        let hippo = find_word("HIPPO");
+        let mut recommend = Recommend::new(hippo);
         assert_eq!(recommend.score, 0);
 
         *histogram.entry(Letter::from_unchecked(b'A')).or_insert(0) += 1;
@@ -108,7 +108,8 @@ mod tests {
 
     #[test]
     fn is_useful() {
-        let mut recommend = Recommend::from_unchecked("HIPPO");
+        let hippo = find_word("HIPPO");
+        let mut recommend = Recommend::new(hippo);
         assert!(!recommend.is_useful());
 
         recommend.score = 1;

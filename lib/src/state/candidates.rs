@@ -10,15 +10,15 @@ use crate::{
 use super::word::Word;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Candidates<'a>(Vec<Word<'a>>);
+pub struct Candidates(Vec<Word>);
 
-impl Default for Candidates<'_> {
+impl Default for Candidates {
     fn default() -> Self {
         Self(WORDS.into_iter().map(Word::from_unchecked).collect())
     }
 }
 
-impl<'a> Candidates<'a> {
+impl Candidates {
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -27,11 +27,11 @@ impl<'a> Candidates<'a> {
         self.0.len()
     }
 
-    pub fn first(&self) -> Option<&Word<'a>> {
+    pub fn first(&self) -> Option<&Word> {
         self.0.first()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Word<'a>> {
+    pub fn iter(&self) -> impl Iterator<Item = &Word> {
         self.0.iter()
     }
 

@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use wordler::Candidates;
 
-pub struct DisplayCandidates<'a>(&'a Candidates<'a>);
+pub struct DisplayCandidates<'a>(&'a Candidates);
 
 impl fmt::Display for DisplayCandidates<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -17,7 +17,7 @@ impl fmt::Display for DisplayCandidates<'_> {
     }
 }
 
-impl<'a> super::AsDisplay<'a> for Candidates<'a> {
+impl<'a> super::AsDisplay<'a> for Candidates {
     type Target = DisplayCandidates<'a>;
     fn as_display(&'a self) -> Self::Target {
         DisplayCandidates(self)

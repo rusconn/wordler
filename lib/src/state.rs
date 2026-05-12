@@ -19,15 +19,15 @@ use letter_info::LetterInfo;
 pub use candidates::Candidates;
 
 #[derive(Debug)]
-pub struct State<'a> {
+pub struct State {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
     pub(crate) veileds: FxHashSet<Letter>,
-    pub(crate) candidates: Candidates<'a>,
+    pub(crate) candidates: Candidates,
 }
 
-impl Default for State<'_> {
+impl Default for State {
     fn default() -> Self {
         let veileds = (b'A'..=b'Z').map(Letter::from_unchecked).collect();
         let candidates = Candidates::default();
@@ -42,7 +42,7 @@ impl Default for State<'_> {
     }
 }
 
-impl State<'_> {
+impl State {
     pub fn update(&mut self, guess: Guess, hints: Hints) {
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
             info.update(letter, hint);
@@ -61,7 +61,7 @@ impl State<'_> {
             .retain(&self.infos, &self.includes, &self.excludes);
     }
 
-    pub fn candidates(&self) -> &Candidates<'_> {
+    pub fn candidates(&self) -> &Candidates {
         &self.candidates
     }
 }

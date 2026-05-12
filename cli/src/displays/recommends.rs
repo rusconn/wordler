@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use wordler::Recommends;
 
-pub struct DisplayRecommends<'a>(&'a Recommends<'a>);
+pub struct DisplayRecommends<'a>(&'a Recommends);
 
 impl fmt::Display for DisplayRecommends<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -16,7 +16,7 @@ impl fmt::Display for DisplayRecommends<'_> {
     }
 }
 
-impl<'a> super::AsDisplay<'a> for Recommends<'a> {
+impl<'a> super::AsDisplay<'a> for Recommends {
     type Target = DisplayRecommends<'a>;
     fn as_display(&'a self) -> Self::Target {
         DisplayRecommends(self)

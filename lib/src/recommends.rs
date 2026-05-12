@@ -7,12 +7,12 @@ use crate::{State, dict::WORDS, letter::Letter};
 use recommend::Recommend;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Recommends<'a>(Vec<Recommend<'a>>);
+pub struct Recommends(Vec<Recommend>);
 
 type VeiledLetterHistogram = FxHashMap<Letter, i32>;
 
-impl Recommends<'_> {
-    pub fn new(state: &State<'_>) -> Self {
+impl Recommends {
+    pub fn new(state: &State) -> Self {
         let mut recommends = Self(WORDS.into_iter().map(Recommend::from_unchecked).collect());
         recommends.update(state);
         recommends
@@ -26,11 +26,11 @@ impl Recommends<'_> {
         self.0.len()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Recommend<'_>> {
+    pub fn iter(&self) -> impl Iterator<Item = &Recommend> {
         self.0.iter()
     }
 
-    pub fn update(&mut self, state: &State<'_>) {
+    pub fn update(&mut self, state: &State) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in state.candidates.iter() {

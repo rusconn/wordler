@@ -5,31 +5,31 @@ use crate::state::word::Word;
 use super::VeiledLetterHistogram;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Recommend<'a> {
-    word: Word<'a>,
+pub struct Recommend {
+    word: Word,
     score: i32,
 }
 
-impl fmt::Display for Recommend<'_> {
+impl fmt::Display for Recommend {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.word)
     }
 }
 
-impl PartialOrd for Recommend<'_> {
+impl PartialOrd for Recommend {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for Recommend<'_> {
+impl Ord for Recommend {
     fn cmp(&self, other: &Self) -> Ordering {
         self.score.cmp(&other.score)
     }
 }
 
-impl<'a> Recommend<'a> {
-    pub(super) fn from_unchecked(str: &'a str) -> Self {
+impl Recommend {
+    pub(super) fn from_unchecked(str: &'static str) -> Self {
         Self {
             word: Word::from_unchecked(str),
             score: 0,
@@ -65,7 +65,7 @@ mod tests {
         case("HIPPO", "HIPPO"),
         case("AAAAA", "AAAAA")
     )]
-    fn fmt(input: &str, output: &str) {
+    fn fmt(input: &'static str, output: &str) {
         assert_eq!(Recommend::from_unchecked(input).to_string(), output);
     }
 

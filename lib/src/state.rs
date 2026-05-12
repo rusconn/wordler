@@ -1,6 +1,7 @@
 mod candidates;
 mod letter_info;
 mod recommends;
+mod to_regex_string;
 mod word;
 
 use std::iter;
@@ -50,20 +51,14 @@ impl Default for State<'_> {
 impl State<'_> {
     pub fn update(&mut self, guess: Guess, hints: Hints) {
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
-            match hint {
-                Hint::NotExists => {
-                    info.not(letter);
-                    self.excludes.insert(letter);
-                }
-                Hint::WrongSpot => {
-                    info.not(letter);
-                    self.includes.insert(letter);
-                }
-                Hint::CorrectSpot => {
-                    info.correct(letter);
-                    self.includes.insert(letter);
-                }
+            info.update(letter, hint);
+
+            if hint == Hint::NotExists {
+                &mut self.excludes
+            } else {
+                &mut self.includes
             }
+            .insert(letter);
 
             self.veileds.remove(&letter);
         }

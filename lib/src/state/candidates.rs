@@ -1,8 +1,11 @@
-use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::FxHashSet;
 
-use crate::{dict::WORDS, letter::Letter, state::letter_info::LetterInfo};
+use crate::{
+    dict::WORDS,
+    letter::Letter,
+    state::{letter_info::LetterInfo, to_regex_string::ToRegexString},
+};
 
 use super::word::Word;
 
@@ -38,20 +41,13 @@ impl<'a> Candidates<'a> {
         includes: &FxHashSet<Letter>,
         excludes: &FxHashSet<Letter>,
     ) {
-        let regex = Self::regex(infos);
+        let regex = Regex::new(&infos.to_regex_string()) //
+            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
+
         self.0.retain(|word| {
             regex.is_match(word.str)
                 && includes.is_subset(&word.letters)
                 && excludes.is_disjoint(&word.letters)
         });
-    }
-
-    fn regex(infos: &[LetterInfo]) -> Regex {
-        Regex::new(Self::regex_string(infos).as_str())
-            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"))
-    }
-
-    fn regex_string(infos: &[LetterInfo]) -> String {
-        infos.iter().map(LetterInfo::regex_string).join("")
     }
 }

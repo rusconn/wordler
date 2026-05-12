@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 
+[features]
+recommend = []
+
 [dependencies]
 itertools = "0.14.0"
 regex = { version = "1.11.1", default-features = false, features = [

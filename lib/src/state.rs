@@ -1,5 +1,5 @@
 mod candidates;
-mod letter_info;
+mod position_constraint;
 mod to_regex_string;
 
 use std::iter;
@@ -11,13 +11,13 @@ use crate::{letter::Letter, word::Word};
 
 use super::hints::{Hint, Hints};
 
-use letter_info::LetterInfo;
+use position_constraint::PositionConstraint;
 
-pub use {candidates::Candidates, letter_info::CheckHintError as InvalidHintError};
+pub use {candidates::Candidates, position_constraint::CheckHintError as InvalidHintError};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct State {
-    infos: Vec<LetterInfo>,
+    constraints: Vec<PositionConstraint>,
     includes: FxHashSet<Letter>,
     excludes: FxHashSet<Letter>,
     pub(crate) veileds: FxHashSet<Letter>,
@@ -30,7 +30,7 @@ impl Default for State {
         let candidates = Candidates::default();
 
         Self {
-            infos: iter::repeat_n(LetterInfo::default(), 5).collect::<Vec<_>>(),
+            constraints: iter::repeat_n(PositionConstraint::default(), 5).collect::<Vec<_>>(),
             includes: Default::default(),
             excludes: Default::default(),
             veileds,
@@ -41,12 +41,20 @@ impl Default for State {
 
 impl State {
     pub fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
-        for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter()) {
-            info.check_hint(letter, hint)?;
+        for ((letter, hint), constraint) in guess
+            .iter() //
+            .zip(hints.iter())
+            .zip(self.constraints.iter())
+        {
+            constraint.check_hint(letter, hint)?;
         }
 
-        for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
-            info.update_unchecked(letter, hint);
+        for ((letter, hint), constraint) in guess
+            .iter()
+            .zip(hints.iter())
+            .zip(self.constraints.iter_mut())
+        {
+            constraint.update_unchecked(letter, hint);
 
             if hint == Hint::NotExists {
                 &mut self.excludes
@@ -59,7 +67,7 @@ impl State {
         }
 
         self.candidates
-            .retain(&self.infos, &self.includes, &self.excludes);
+            .retain(&self.constraints, &self.includes, &self.excludes);
 
         Ok(())
     }
@@ -72,7 +80,7 @@ impl State {
 #[derive(Debug, PartialEq, Error)]
 pub enum UpdateError {
     #[error("contradictory hints: {0}")]
-    ContradictoryHints(#[from] letter_info::CheckHintError),
+    ContradictoryHints(#[from] position_constraint::CheckHintError),
 }
 
 #[cfg(test)]

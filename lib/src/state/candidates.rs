@@ -4,7 +4,7 @@ use rustc_hash::FxHashSet;
 use crate::{
     dict::WORDS,
     letter::Letter,
-    state::{letter_info::LetterInfo, to_regex_string::ToRegexString},
+    state::{position_constraint::PositionConstraint, to_regex_string::ToRegexString},
 };
 
 use crate::word::Word;
@@ -37,11 +37,11 @@ impl Candidates {
 
     pub(crate) fn retain(
         &mut self,
-        infos: &[LetterInfo],
+        constraints: &[PositionConstraint],
         includes: &FxHashSet<Letter>,
         excludes: &FxHashSet<Letter>,
     ) {
-        let regex = Regex::new(&infos.to_regex_string()) //
+        let regex = Regex::new(&constraints.to_regex_string()) //
             .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
 
         self.0.retain(|word| {

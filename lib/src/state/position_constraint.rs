@@ -8,12 +8,12 @@ use crate::{hints::Hint, letter::Letter};
 use super::to_regex_string::ToRegexString;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub(crate) struct LetterInfo {
+pub(crate) struct PositionConstraint {
     correct: Option<Letter>,
     not: BTreeSet<Letter>,
 }
 
-impl ToRegexString for LetterInfo {
+impl ToRegexString for PositionConstraint {
     fn to_regex_string(&self) -> String {
         if let Some(letter) = self.correct {
             return letter.to_string();
@@ -26,13 +26,15 @@ impl ToRegexString for LetterInfo {
     }
 }
 
-impl ToRegexString for [LetterInfo] {
+impl ToRegexString for [PositionConstraint] {
     fn to_regex_string(&self) -> String {
-        self.iter().map(LetterInfo::to_regex_string).join("")
+        self.iter()
+            .map(PositionConstraint::to_regex_string)
+            .join("")
     }
 }
 
-impl LetterInfo {
+impl PositionConstraint {
     pub(super) fn check_hint(&self, letter: Letter, hint: Hint) -> Result<(), CheckHintError> {
         if hint == Hint::CorrectSpot {
             self.check_hint_for_correct(letter)
@@ -94,24 +96,24 @@ mod tests {
 
     #[test]
     fn operations() {
-        let mut letter_info = LetterInfo::default();
-        assert_eq!(letter_info.to_regex_string(), ".");
+        let mut constraint = PositionConstraint::default();
+        assert_eq!(constraint.to_regex_string(), ".");
 
-        letter_info.not_unchecked(Letter::from_unchecked(b'A'));
-        assert_eq!(letter_info.to_regex_string(), "[^A]");
+        constraint.not_unchecked(Letter::from_unchecked(b'A'));
+        assert_eq!(constraint.to_regex_string(), "[^A]");
 
-        letter_info.correct_unchecked(Letter::from_unchecked(b'B'));
-        assert_eq!(letter_info.to_regex_string(), "B");
+        constraint.correct_unchecked(Letter::from_unchecked(b'B'));
+        assert_eq!(constraint.to_regex_string(), "B");
 
-        let mut letter_info = LetterInfo::default();
-        letter_info.not_unchecked(Letter::from_unchecked(b'B'));
-        assert_eq!(letter_info.to_regex_string(), "[^B]");
+        let mut constraint = PositionConstraint::default();
+        constraint.not_unchecked(Letter::from_unchecked(b'B'));
+        assert_eq!(constraint.to_regex_string(), "[^B]");
 
-        letter_info.not_unchecked(Letter::from_unchecked(b'A'));
-        assert_eq!(letter_info.to_regex_string(), "[^AB]");
+        constraint.not_unchecked(Letter::from_unchecked(b'A'));
+        assert_eq!(constraint.to_regex_string(), "[^AB]");
 
-        letter_info.correct_unchecked(Letter::from_unchecked(b'C'));
-        assert_eq!(letter_info.to_regex_string(), "C");
+        constraint.correct_unchecked(Letter::from_unchecked(b'C'));
+        assert_eq!(constraint.to_regex_string(), "C");
     }
 
     #[test]
@@ -119,11 +121,11 @@ mod tests {
         let a = Letter::from_unchecked(b'A');
         let b = Letter::from_unchecked(b'B');
 
-        let mut letter_info = LetterInfo::default();
-        letter_info.update_unchecked(a, Hint::NotExists);
-        let result = letter_info.check_hint(a, Hint::NotExists);
+        let mut constraint = PositionConstraint::default();
+        constraint.update_unchecked(a, Hint::NotExists);
+        let result = constraint.check_hint(a, Hint::NotExists);
         assert_eq!(result, Ok(()));
-        let result = letter_info.check_hint(a, Hint::CorrectSpot);
+        let result = constraint.check_hint(a, Hint::CorrectSpot);
         assert_eq!(
             result,
             Err(CheckHintError::Contradictory {
@@ -132,11 +134,11 @@ mod tests {
             })
         );
 
-        let mut letter_info = LetterInfo::default();
-        letter_info.update_unchecked(a, Hint::CorrectSpot);
-        let result = letter_info.check_hint(a, Hint::CorrectSpot);
+        let mut constraint = PositionConstraint::default();
+        constraint.update_unchecked(a, Hint::CorrectSpot);
+        let result = constraint.check_hint(a, Hint::CorrectSpot);
         assert_eq!(result, Ok(()));
-        let result = letter_info.check_hint(b, Hint::CorrectSpot);
+        let result = constraint.check_hint(b, Hint::CorrectSpot);
         assert_eq!(
             result,
             Err(CheckHintError::Contradictory {
@@ -145,11 +147,11 @@ mod tests {
             })
         );
 
-        let mut letter_info = LetterInfo::default();
-        letter_info.update_unchecked(a, Hint::CorrectSpot);
-        let result = letter_info.check_hint(a, Hint::CorrectSpot);
+        let mut constraint = PositionConstraint::default();
+        constraint.update_unchecked(a, Hint::CorrectSpot);
+        let result = constraint.check_hint(a, Hint::CorrectSpot);
         assert_eq!(result, Ok(()));
-        let result = letter_info.check_hint(a, Hint::WrongSpot);
+        let result = constraint.check_hint(a, Hint::WrongSpot);
         assert_eq!(
             result,
             Err(CheckHintError::Contradictory {

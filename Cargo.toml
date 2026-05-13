@@ -2,7 +2,6 @@
 members = ["cli", "lib"]
 resolver = "3"
 
-[profile.release-min]
-inherits = "release"
+[profile.release]
 strip = "symbols"
 panic = "abort"

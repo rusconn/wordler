@@ -5,7 +5,7 @@ use thiserror::Error;
 
 use crate::{dict, letter::Letter};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Word(usize);
 
 impl fmt::Display for Word {

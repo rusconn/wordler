@@ -9,7 +9,7 @@ use crate::{
 
 use crate::word::Word;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates(Vec<&'static Word>);
 
 impl Default for Candidates {

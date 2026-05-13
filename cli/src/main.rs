@@ -1,6 +1,6 @@
 use wordler::{Recommends, State};
 
-use wordler_cli::{AsDisplay, read_line};
+use wordler_cli::{AsDisplay, CliError, read_line};
 
 fn main() {
     let mut state = State::default();
@@ -17,16 +17,31 @@ fn main() {
 
         println!("{}", recommends.as_display());
 
-        let Some(guess) = read_line("Guess", "guess") else {
+        if !interact_and_update(&mut state) {
             break;
-        };
-        let Some(hints) = read_line("Hints", "hints") else {
-            break;
-        };
+        }
 
-        state.update(guess, hints);
         recommends.update(&state);
 
         println!();
+    }
+}
+
+fn interact_and_update(state: &mut State) -> bool {
+    let Some(guess) = read_line("Guess") else {
+        return false;
+    };
+
+    loop {
+        let Some(hints) = read_line("Hints") else {
+            return false;
+        };
+
+        match state.update(&guess, &hints) {
+            Ok(_) => return true,
+            Err(e) => {
+                println!("{}", CliError::from(e));
+            }
+        }
     }
 }

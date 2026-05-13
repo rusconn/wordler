@@ -3,12 +3,12 @@ use std::{
     str::FromStr,
 };
 
-use crate::ParseError;
+use crate::CliError;
 
-pub fn read_line<T>(label: &str, kind: &str) -> Option<T>
+pub fn read_line<T>(label: &str) -> Option<T>
 where
     T: FromStr,
-    ParseError: From<T::Err>,
+    CliError: From<T::Err>,
 {
     loop {
         print!("{label}: ");
@@ -16,7 +16,7 @@ where
 
         match get_line()?.parse() {
             Ok(t) => return Some(t),
-            Err(e) => eprintln!("Failed to read the {kind}: {}", ParseError::from(e)),
+            Err(e) => eprintln!("{}", CliError::from(e)),
         }
     }
 }

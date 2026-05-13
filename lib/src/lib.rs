@@ -6,8 +6,8 @@ mod word;
 
 pub use {
     hints::{Hints, ParseError as ParseHintsError},
-    state::*,
-    word::ParseError as ParseWordError,
+    state::{Candidates, InvalidHintError, State, UpdateError as UpdateStateError},
+    word::{ParseError as ParseWordError, Word},
 };
 
 #[cfg(feature = "recommend")]

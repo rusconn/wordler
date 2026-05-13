@@ -1,8 +1,20 @@
+use std::fmt;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum Hint {
+pub enum Hint {
     NotExists,
     WrongSpot,
     CorrectSpot,
+}
+
+impl fmt::Display for Hint {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Hint::NotExists => write!(f, "0"),
+            Hint::WrongSpot => write!(f, "1"),
+            Hint::CorrectSpot => write!(f, "2"),
+        }
+    }
 }
 
 impl TryFrom<char> for Hint {

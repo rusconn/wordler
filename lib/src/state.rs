@@ -5,6 +5,7 @@ mod to_regex_string;
 use std::iter;
 
 use rustc_hash::FxHashSet;
+use thiserror::Error;
 
 use crate::{letter::Letter, word::Word};
 
@@ -12,9 +13,9 @@ use super::hints::{Hint, Hints};
 
 use letter_info::LetterInfo;
 
-pub use candidates::Candidates;
+pub use {candidates::Candidates, letter_info::CheckHintError as InvalidHintError};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct State {
     infos: Vec<LetterInfo>,
     includes: FxHashSet<Letter>,
@@ -39,9 +40,13 @@ impl Default for State {
 }
 
 impl State {
-    pub fn update(&mut self, guess: Word, hints: Hints) {
+    pub fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
+        for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter()) {
+            info.check_hint(letter, hint)?;
+        }
+
         for ((letter, hint), info) in guess.iter().zip(hints.iter()).zip(self.infos.iter_mut()) {
-            info.update(letter, hint);
+            info.update_unchecked(letter, hint);
 
             if hint == Hint::NotExists {
                 &mut self.excludes
@@ -55,11 +60,19 @@ impl State {
 
         self.candidates
             .retain(&self.infos, &self.includes, &self.excludes);
+
+        Ok(())
     }
 
     pub fn candidates(&self) -> &Candidates {
         &self.candidates
     }
+}
+
+#[derive(Debug, PartialEq, Error)]
+pub enum UpdateError {
+    #[error("contradictory hints: {0}")]
+    ContradictoryHints(#[from] letter_info::CheckHintError),
 }
 
 #[cfg(test)]
@@ -88,16 +101,46 @@ mod tests {
 
         let guess = "SERIA".parse().unwrap();
         let hints = "10100".parse().unwrap();
-        state.update(guess, hints);
+        state.update(&guess, &hints).unwrap();
         assert_eq!(state.includes, letters(b"SR"));
         assert_eq!(state.excludes, letters(b"EIA"));
         assert_eq!(state.veileds, complement(&letters(b"SERIA")));
 
         let guess = "HYSON".parse().unwrap();
         let hints = "01200".parse().unwrap();
-        state.update(guess, hints);
+        state.update(&guess, &hints).unwrap();
         assert_eq!(state.includes, letters(b"SRYS"));
         assert_eq!(state.excludes, letters(b"EIAHON"));
         assert_eq!(state.veileds, complement(&letters(b"SERIAHYSON")));
+    }
+
+    #[test]
+    fn update_contradiction() {
+        let mut state = State::default();
+
+        let guess = Word::from_unchecked(0);
+        let hints = "20000".parse::<Hints>().unwrap();
+        state.update(&guess, &hints).unwrap();
+
+        let hints = "00000".parse::<Hints>().unwrap(); // 0th: 2?0?
+        assert!(matches!(
+            state.update(&guess, &hints),
+            Err(UpdateError::ContradictoryHints(_))
+        ));
+    }
+
+    #[test]
+    fn update_atomicity() {
+        let mut state = State::default();
+
+        let guess = Word::from_unchecked(69); // "ABUSE"
+        let hints = "00002".parse::<Hints>().unwrap();
+        state.update(&guess, &hints).unwrap();
+
+        let guess = Word::from_unchecked(122); // "ACUTE"
+        let hints = "01021".parse::<Hints>().unwrap(); // E: 2?1?
+        let backup = state.clone();
+        let _ = state.update(&guess, &hints).unwrap_err();
+        assert_eq!(backup, state);
     }
 }

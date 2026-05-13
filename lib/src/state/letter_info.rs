@@ -8,19 +8,20 @@ use crate::{hints::Hint, letter::Letter};
 use super::to_regex_string::ToRegexString;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub(crate) enum LetterInfo {
-    #[default]
-    Any,
-    Not(BTreeSet<Letter>),
-    Correct(Letter),
+pub(crate) struct LetterInfo {
+    correct: Option<Letter>,
+    not: BTreeSet<Letter>,
 }
 
 impl ToRegexString for LetterInfo {
     fn to_regex_string(&self) -> String {
-        match self {
-            Self::Any => ".".into(),
-            Self::Not(set) => format!("[^{}]", set.iter().join("")),
-            Self::Correct(c) => c.to_string(),
+        if let Some(letter) = self.correct {
+            return letter.to_string();
+        }
+        if self.not.is_empty() {
+            ".".into()
+        } else {
+            format!("[^{}]", self.not.iter().join(""))
         }
     }
 }
@@ -42,23 +43,23 @@ impl LetterInfo {
     }
 
     fn check_hint_for_correct(&self, letter: Letter) -> Result<(), Letter> {
-        if let LetterInfo::Not(set) = self
-            && set.contains(&letter)
-        {
-            return Err(letter);
-        };
-        if let LetterInfo::Correct(l) = self
-            && *l != letter
+        if let Some(correct) = self.correct
+            && correct != letter
         {
             return Err(letter);
         }
+        if self.not.contains(&letter) {
+            return Err(letter);
+        };
 
         Ok(())
     }
 
     fn check_hint_for_not(&self, letter: Letter) -> Result<(), Letter> {
-        if let Self::Correct(l) = self {
-            if *l == letter { Err(letter) } else { Ok(()) }
+        if let Some(correct) = self.correct
+            && correct == letter
+        {
+            Err(correct)
         } else {
             Ok(())
         }
@@ -73,15 +74,11 @@ impl LetterInfo {
     }
 
     fn correct_unchecked(&mut self, letter: Letter) {
-        *self = Self::Correct(letter);
+        self.correct = Some(letter);
     }
 
     fn not_unchecked(&mut self, letter: Letter) {
-        if let Self::Not(set) = self {
-            set.insert(letter);
-        } else {
-            *self = Self::Not([letter].into());
-        }
+        self.not.insert(letter);
     }
 }
 

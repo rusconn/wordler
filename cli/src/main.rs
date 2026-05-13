@@ -17,8 +17,12 @@ fn main() {
 
         println!("{}", recommends.as_display());
 
-        let guess = read_line("Guess", "guess");
-        let hints = read_line("Hints", "hints");
+        let Some(guess) = read_line("Guess", "guess") else {
+            break;
+        };
+        let Some(hints) = read_line("Hints", "hints") else {
+            break;
+        };
 
         state.update(guess, hints);
         recommends.update(&state);

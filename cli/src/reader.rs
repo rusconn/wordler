@@ -5,7 +5,7 @@ use std::{
 
 use crate::ParseError;
 
-pub fn read_line<T>(label: &str, kind: &str) -> T
+pub fn read_line<T>(label: &str, kind: &str) -> Option<T>
 where
     T: FromStr,
     ParseError: From<T::Err>,
@@ -14,15 +14,17 @@ where
         print!("{label}: ");
         io::stdout().flush().unwrap();
 
-        match get_line().parse() {
-            Ok(t) => return t,
+        match get_line()?.parse() {
+            Ok(t) => return Some(t),
             Err(e) => eprintln!("Failed to read the {kind}: {}", ParseError::from(e)),
         }
     }
 }
 
-fn get_line() -> String {
+fn get_line() -> Option<String> {
     let mut buf = String::new();
-    io::stdin().read_line(&mut buf).unwrap();
-    buf.trim().into()
+    if io::stdin().read_line(&mut buf).unwrap() == 0 {
+        return None;
+    }
+    Some(buf.trim().into())
 }

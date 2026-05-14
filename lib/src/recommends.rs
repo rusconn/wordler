@@ -33,9 +33,9 @@ impl Recommends {
     pub fn update(&mut self, state: &State) {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
-        for word in state.candidates.iter() {
+        for word in state.candidates().iter() {
             for letter in word.as_letter_set() {
-                if state.veileds.contains(letter) {
+                if state.veileds().contains(letter) {
                     *histogram.entry(*letter).or_insert(0) += 1;
                 }
             }
@@ -43,7 +43,7 @@ impl Recommends {
 
         // common letters must not be scored
         for (_, n) in histogram.iter_mut() {
-            if *n as usize == state.candidates.len() {
+            if *n as usize == state.candidates().len() {
                 *n = 0;
             }
         }

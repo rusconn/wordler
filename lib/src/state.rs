@@ -1,126 +1,48 @@
 mod candidates;
-mod position_constraint;
-mod to_regex_string;
+mod constraints;
+mod veilds;
 
-use std::iter;
+use crate::word::Word;
 
-use rustc_hash::FxHashSet;
-use thiserror::Error;
+use super::hints::Hints;
 
-use crate::{letter::Letter, word::Word};
+use {constraints::Constraints, veilds::Veilds};
 
-use super::hints::{Hint, Hints};
+pub use {
+    candidates::Candidates,
+    constraints::{CheckPositionHintError as InvalidHintError, UpdateError},
+};
 
-use position_constraint::PositionConstraint;
-
-pub use {candidates::Candidates, position_constraint::CheckHintError as InvalidHintError};
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(test, derive(Clone, PartialEq, Eq))]
+#[derive(Debug, Default)]
 pub struct State {
-    constraints: Vec<PositionConstraint>,
-    includes: FxHashSet<Letter>,
-    excludes: FxHashSet<Letter>,
-    pub(crate) veileds: FxHashSet<Letter>,
-    pub(crate) candidates: Candidates,
-}
-
-impl Default for State {
-    fn default() -> Self {
-        let veileds = (b'A'..=b'Z').map(Letter::from_unchecked).collect();
-        let candidates = Candidates::default();
-
-        Self {
-            constraints: iter::repeat_n(PositionConstraint::default(), 5).collect::<Vec<_>>(),
-            includes: Default::default(),
-            excludes: Default::default(),
-            veileds,
-            candidates,
-        }
-    }
+    constraints: Constraints,
+    candidates: Candidates,
+    #[cfg(feature = "recommend")]
+    veileds: Veilds,
 }
 
 impl State {
     pub fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
-        for ((letter, hint), constraint) in guess
-            .iter() //
-            .zip(hints.iter())
-            .zip(self.constraints.iter())
-        {
-            constraint.check_hint(letter, hint)?;
-        }
-
-        for ((letter, hint), constraint) in guess
-            .iter()
-            .zip(hints.iter())
-            .zip(self.constraints.iter_mut())
-        {
-            constraint.update_unchecked(letter, hint);
-
-            if hint == Hint::NotExists {
-                &mut self.excludes
-            } else {
-                &mut self.includes
-            }
-            .insert(letter);
-
-            self.veileds.remove(&letter);
-        }
-
-        self.candidates
-            .retain(&self.constraints, &self.includes, &self.excludes);
-
+        self.constraints.update(guess, hints)?;
+        self.candidates.retain(&self.constraints);
+        self.veileds.unveil(guess);
         Ok(())
     }
 
     pub fn candidates(&self) -> &Candidates {
         &self.candidates
     }
-}
 
-#[derive(Debug, PartialEq, Error)]
-pub enum UpdateError {
-    #[error("contradictory hints: {0}")]
-    ContradictoryHints(#[from] position_constraint::CheckHintError),
+    #[cfg(feature = "recommend")]
+    pub(crate) fn veileds(&self) -> &Veilds {
+        &self.veileds
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::sync::LazyLock;
-
     use super::*;
-
-    static U: LazyLock<FxHashSet<Letter>> =
-        LazyLock::new(|| letters(&(b'A'..=b'Z').collect::<Vec<_>>()));
-
-    fn letters(bytes: &[u8]) -> FxHashSet<Letter> {
-        bytes.iter().copied().map(Letter::from_unchecked).collect()
-    }
-
-    fn complement(l: &FxHashSet<Letter>) -> FxHashSet<Letter> {
-        U.difference(l).copied().collect()
-    }
-
-    #[test]
-    fn update() {
-        let mut state = State::default();
-        assert_eq!(state.includes, letters(b""));
-        assert_eq!(state.excludes, letters(b""));
-        assert_eq!(state.veileds, complement(&letters(b"")));
-
-        let guess = "SERIA".parse().unwrap();
-        let hints = "10100".parse().unwrap();
-        state.update(&guess, &hints).unwrap();
-        assert_eq!(state.includes, letters(b"SR"));
-        assert_eq!(state.excludes, letters(b"EIA"));
-        assert_eq!(state.veileds, complement(&letters(b"SERIA")));
-
-        let guess = "HYSON".parse().unwrap();
-        let hints = "01200".parse().unwrap();
-        state.update(&guess, &hints).unwrap();
-        assert_eq!(state.includes, letters(b"SRYS"));
-        assert_eq!(state.excludes, letters(b"EIAHON"));
-        assert_eq!(state.veileds, complement(&letters(b"SERIAHYSON")));
-    }
 
     #[test]
     fn update_contradiction() {

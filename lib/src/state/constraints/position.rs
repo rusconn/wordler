@@ -5,33 +5,10 @@ use thiserror::Error;
 
 use crate::{hints::Hint, letter::Letter};
 
-use super::to_regex_string::ToRegexString;
-
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub(crate) struct PositionConstraint {
+pub struct PositionConstraint {
     correct: Option<Letter>,
     not: BTreeSet<Letter>,
-}
-
-impl ToRegexString for PositionConstraint {
-    fn to_regex_string(&self) -> String {
-        if let Some(letter) = self.correct {
-            return letter.to_string();
-        }
-        if self.not.is_empty() {
-            ".".into()
-        } else {
-            format!("[^{}]", self.not.iter().join(""))
-        }
-    }
-}
-
-impl ToRegexString for [PositionConstraint] {
-    fn to_regex_string(&self) -> String {
-        self.iter()
-            .map(PositionConstraint::to_regex_string)
-            .join("")
-    }
 }
 
 impl PositionConstraint {
@@ -82,9 +59,21 @@ impl PositionConstraint {
     fn not_unchecked(&mut self, letter: Letter) {
         self.not.insert(letter);
     }
+
+    pub(super) fn to_regex_string(&self) -> String {
+        if let Some(letter) = self.correct {
+            return letter.to_string();
+        }
+        if self.not.is_empty() {
+            ".".into()
+        } else {
+            format!("[^{}]", self.not.iter().join(""))
+        }
+    }
 }
 
-#[derive(Debug, PartialEq, Error)]
+#[cfg_attr(test, derive(PartialEq))]
+#[derive(Debug, Error)]
 pub enum CheckHintError {
     #[error("contradictory hint: (letter: {letter}, hint: {hint})")]
     Contradictory { letter: Letter, hint: Hint },

@@ -1,15 +1,10 @@
-use regex::Regex;
-use rustc_hash::FxHashSet;
-
-use crate::{
-    dict::WORDS,
-    letter::Letter,
-    state::{position_constraint::PositionConstraint, to_regex_string::ToRegexString},
-};
+use crate::dict::WORDS;
+use crate::state::constraints::Constraints;
 
 use crate::word::Word;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(test, derive(Clone, PartialEq, Eq))]
+#[derive(Debug)]
 pub struct Candidates(Vec<&'static Word>);
 
 impl Default for Candidates {
@@ -35,19 +30,7 @@ impl Candidates {
         self.0.iter().copied()
     }
 
-    pub(crate) fn retain(
-        &mut self,
-        constraints: &[PositionConstraint],
-        includes: &FxHashSet<Letter>,
-        excludes: &FxHashSet<Letter>,
-    ) {
-        let regex = Regex::new(&constraints.to_regex_string()) //
-            .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
-
-        self.0.retain(|word| {
-            regex.is_match(word.as_str())
-                && includes.is_subset(word.as_letter_set())
-                && excludes.is_disjoint(word.as_letter_set())
-        });
+    pub(crate) fn retain(&mut self, constraints: &Constraints) {
+        self.0.retain(|word| constraints.is_match(word));
     }
 }

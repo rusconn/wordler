@@ -32,7 +32,7 @@ impl Recommends {
     }
 
     pub fn update(&mut self, state: &State) {
-        let mut histogram: VeiledLetterHistogram = Default::default();
+        let mut histogram = VeiledLetterHistogram::default();
 
         for word in state.candidates().iter() {
             for &letter in word.as_letter_set() {
@@ -42,15 +42,8 @@ impl Recommends {
             }
         }
 
-        // common letters must not be scored
-        for (_, n) in histogram.iter_mut() {
-            if *n as usize == state.candidates().len() {
-                *n = 0;
-            }
-        }
-
         for recommend in self.0.iter_mut() {
-            recommend.update(&histogram);
+            recommend.update(&histogram, state.candidates().len() as i32);
         }
 
         self.0.retain(Recommend::is_useful);

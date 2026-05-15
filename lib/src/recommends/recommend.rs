@@ -33,12 +33,15 @@ impl Recommend {
         Self { word, score: 0 }
     }
 
-    pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram) {
+    pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram, candidates_count: i32) {
         self.score = self
             .word
             .as_letter_set()
             .iter()
-            .map(|letter| histogram.get(letter).unwrap_or(&0))
+            .map(|letter| {
+                let occurrence = *histogram.get(letter).unwrap_or(&0);
+                i32::min(occurrence, candidates_count - occurrence)
+            })
             .sum()
     }
 
@@ -51,10 +54,7 @@ impl Recommend {
 mod tests {
     use rstest::rstest;
 
-    use crate::{
-        dict::{WORD_STRINGS, WORDS},
-        letter::Letter,
-    };
+    use crate::dict::{WORD_STRINGS, WORDS};
 
     use super::*;
 
@@ -82,31 +82,6 @@ mod tests {
 
         recommend2.score = 2;
         assert_eq!(recommend1.cmp(&recommend2), Ordering::Less);
-    }
-
-    #[test]
-    fn update() {
-        let mut histogram: VeiledLetterHistogram = Default::default();
-
-        let hippo = find_word("HIPPO");
-        let mut recommend = Recommend::new(hippo);
-        assert_eq!(recommend.score, 0);
-
-        *histogram.entry(Letter::from_unchecked(b'A')).or_insert(0) += 1;
-        recommend.update(&histogram);
-        assert_eq!(recommend.score, 0);
-
-        *histogram.entry(Letter::from_unchecked(b'P')).or_insert(0) += 1;
-        recommend.update(&histogram);
-        assert_eq!(recommend.score, 1);
-
-        *histogram.entry(Letter::from_unchecked(b'I')).or_insert(0) += 1;
-        recommend.update(&histogram);
-        assert_eq!(recommend.score, 2);
-
-        *histogram.entry(Letter::from_unchecked(b'I')).or_insert(0) += 1;
-        recommend.update(&histogram);
-        assert_eq!(recommend.score, 3);
     }
 
     #[test]

@@ -12,13 +12,13 @@ pub struct PositionConstraint {
 }
 
 impl PositionConstraint {
-    pub(super) fn check_hint(&self, letter: Letter, hint: Hint) -> Result<(), CheckHintError> {
+    pub(super) fn check(&self, letter: Letter, hint: Hint) -> Result<(), CheckError> {
         if hint == Hint::CorrectSpot {
             self.check_hint_for_correct(letter)
         } else {
             self.check_hint_for_not(letter)
         }
-        .map_err(|letter| CheckHintError::Contradictory { letter, hint })
+        .map_err(|letter| CheckError::Contradictory { letter, hint })
     }
 
     fn check_hint_for_correct(&self, letter: Letter) -> Result<(), Letter> {
@@ -74,7 +74,7 @@ impl PositionConstraint {
 
 #[cfg_attr(test, derive(PartialEq))]
 #[derive(Debug, Error)]
-pub enum CheckHintError {
+pub enum CheckError {
     #[error("contradictory hint: (letter: {letter}, hint: {hint})")]
     Contradictory { letter: Letter, hint: Hint },
 }
@@ -112,12 +112,12 @@ mod tests {
 
         let mut constraint = PositionConstraint::default();
         constraint.update_unchecked(a, Hint::NotExists);
-        let result = constraint.check_hint(a, Hint::NotExists);
+        let result = constraint.check(a, Hint::NotExists);
         assert_eq!(result, Ok(()));
-        let result = constraint.check_hint(a, Hint::CorrectSpot);
+        let result = constraint.check(a, Hint::CorrectSpot);
         assert_eq!(
             result,
-            Err(CheckHintError::Contradictory {
+            Err(CheckError::Contradictory {
                 letter: a,
                 hint: Hint::CorrectSpot
             })
@@ -125,12 +125,12 @@ mod tests {
 
         let mut constraint = PositionConstraint::default();
         constraint.update_unchecked(a, Hint::CorrectSpot);
-        let result = constraint.check_hint(a, Hint::CorrectSpot);
+        let result = constraint.check(a, Hint::CorrectSpot);
         assert_eq!(result, Ok(()));
-        let result = constraint.check_hint(b, Hint::CorrectSpot);
+        let result = constraint.check(b, Hint::CorrectSpot);
         assert_eq!(
             result,
-            Err(CheckHintError::Contradictory {
+            Err(CheckError::Contradictory {
                 letter: b,
                 hint: Hint::CorrectSpot
             })
@@ -138,12 +138,12 @@ mod tests {
 
         let mut constraint = PositionConstraint::default();
         constraint.update_unchecked(a, Hint::CorrectSpot);
-        let result = constraint.check_hint(a, Hint::CorrectSpot);
+        let result = constraint.check(a, Hint::CorrectSpot);
         assert_eq!(result, Ok(()));
-        let result = constraint.check_hint(a, Hint::WrongSpot);
+        let result = constraint.check(a, Hint::WrongSpot);
         assert_eq!(
             result,
-            Err(CheckHintError::Contradictory {
+            Err(CheckError::Contradictory {
                 letter: a,
                 hint: Hint::WrongSpot
             })

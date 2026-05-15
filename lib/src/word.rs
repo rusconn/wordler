@@ -3,7 +3,10 @@ use std::{fmt, str::FromStr};
 use rustc_hash::FxHashSet;
 use thiserror::Error;
 
-use crate::{dict, letter::Letter};
+use crate::{
+    dict::{self, WORD_LEN},
+    letter::Letter,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Word(usize);
@@ -18,7 +21,7 @@ impl FromStr for Word {
     type Err = ParseError;
 
     fn from_str(guess: &str) -> Result<Self, Self::Err> {
-        if guess.chars().count() != 5 {
+        if guess.chars().count() != WORD_LEN {
             return Err(ParseError::InvalidLength);
         }
 
@@ -46,11 +49,16 @@ impl Word {
         &dict::WORD_LETTER_SETS[self.0]
     }
 
+    pub(crate) fn as_bytes(&self) -> &[u8] {
+        self.as_str().as_bytes()
+    }
+
+    pub(crate) fn as_letter_counts(&self) -> &'static Vec<(Letter, u8)> {
+        &dict::WORD_LETTER_COUNTS[self.0]
+    }
+
     pub(crate) fn iter(&self) -> impl Iterator<Item = Letter> {
-        self.as_str()
-            .as_bytes()
-            .iter()
-            .map(|&b| Letter::from_unchecked(b))
+        self.as_bytes().iter().map(|&b| Letter::from_unchecked(b))
     }
 }
 

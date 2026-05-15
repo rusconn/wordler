@@ -1,16 +1,18 @@
 mod candidates;
 mod constraints;
-mod veilds;
+mod veileds;
 
 use crate::word::Word;
 
 use super::hints::Hints;
 
-use {constraints::Constraints, veilds::Veilds};
+use constraints::Constraints;
+
+use veileds::Veileds;
 
 pub use {
     candidates::Candidates,
-    constraints::{CheckPositionHintError as InvalidHintError, UpdateError},
+    constraints::{CheckPositionError as InvalidHintError, UpdateError},
 };
 
 #[cfg_attr(test, derive(Clone, PartialEq, Eq))]
@@ -18,8 +20,7 @@ pub use {
 pub struct State {
     constraints: Constraints,
     candidates: Candidates,
-    #[cfg(feature = "recommend")]
-    veileds: Veilds,
+    veileds: Veileds,
 }
 
 impl State {
@@ -34,8 +35,7 @@ impl State {
         &self.candidates
     }
 
-    #[cfg(feature = "recommend")]
-    pub(crate) fn veileds(&self) -> &Veilds {
+    pub(crate) fn veileds(&self) -> &Veileds {
         &self.veileds
     }
 }
@@ -55,7 +55,7 @@ mod tests {
         let hints = "00000".parse::<Hints>().unwrap(); // 0th: 2?0?
         assert!(matches!(
             state.update(&guess, &hints),
-            Err(UpdateError::ContradictoryHints(_))
+            Err(UpdateError::ContradictoryPosition(_))
         ));
     }
 

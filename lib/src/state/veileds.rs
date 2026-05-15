@@ -4,15 +4,15 @@ use crate::{Word, letter::Letter};
 
 #[cfg_attr(test, derive(Clone, PartialEq, Eq))]
 #[derive(Debug)]
-pub(crate) struct Veilds(FxHashSet<Letter>);
+pub(crate) struct Veileds(FxHashSet<Letter>);
 
-impl Default for Veilds {
+impl Default for Veileds {
     fn default() -> Self {
         Self((b'A'..=b'Z').map(Letter::from_unchecked).collect())
     }
 }
 
-impl Veilds {
+impl Veileds {
     pub(crate) fn contains(&self, letter: &Letter) -> bool {
         self.0.contains(letter)
     }

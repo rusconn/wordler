@@ -31,7 +31,10 @@ fn show_read_hints_error(e: &ParseHintsError) -> String {
 
 fn show_update_state_error(e: &UpdateStateError) -> String {
     match e {
-        UpdateStateError::ContradictoryHints(e) => show_invalid_hint_error(e),
+        UpdateStateError::ContradictoryPosition(e) => show_invalid_hint_error(e),
+        UpdateStateError::ContradictoryCount { letter, min, max } => {
+            format!("Contradictory count: letter={letter}, min={min}, max={max}")
+        }
     }
 }
 

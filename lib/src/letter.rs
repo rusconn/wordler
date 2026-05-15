@@ -25,6 +25,10 @@ impl Letter {
     pub(crate) fn from_unchecked(byte: u8) -> Self {
         Self(byte)
     }
+
+    pub(crate) fn as_index(&self) -> usize {
+        (self.0 - b'A') as usize
+    }
 }
 
 #[cfg(test)]

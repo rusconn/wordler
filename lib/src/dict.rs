@@ -1,12 +1,37 @@
 use std::sync::LazyLock;
 
+use itertools::Itertools;
 use rustc_hash::FxHashSet;
 
 use crate::{letter::Letter, word::Word};
 
+pub(crate) const WORD_LEN: usize = 5;
+pub(crate) const LETTER_KINDS: usize = 26;
+
 pub(crate) static WORDS: LazyLock<Vec<Word>> = LazyLock::new(|| {
     (0..WORD_STRINGS.len()) //
         .map(Word::from_unchecked)
+        .collect()
+});
+
+pub(crate) static LETTERS: LazyLock<Vec<Letter>> = LazyLock::new(|| {
+    (b'A'..=b'Z') //
+        .map(Letter::from_unchecked)
+        .collect()
+});
+
+pub(crate) static WORD_LETTER_COUNTS: LazyLock<Vec<Vec<(Letter, u8)>>> = LazyLock::new(|| {
+    WORD_STRINGS
+        .iter()
+        .map(|word| {
+            word.as_bytes()
+                .iter()
+                .sorted()
+                .chunk_by(|&&byte| byte)
+                .into_iter()
+                .map(|(byte, chunk)| (Letter::from_unchecked(byte), chunk.count() as u8))
+                .collect()
+        })
         .collect()
 });
 
@@ -1516,7 +1541,7 @@ mod tests {
     }
 
     fn is_valid_word(word: &str) -> bool {
-        word.chars().count() == 5 && word.chars().all(is_valid_char)
+        word.chars().count() == WORD_LEN && word.chars().all(is_valid_char)
     }
 
     fn is_valid_char(ch: char) -> bool {
@@ -1530,7 +1555,18 @@ mod tests {
 
     #[test]
     fn len() {
-        assert_eq!(WORDS.len(), WORD_LETTER_SETS.len());
+        assert_eq!(WORDS.len(), WORD_LETTER_COUNTS.len());
+        assert_eq!(WORD_LETTER_COUNTS.len(), WORD_LETTER_SETS.len());
         assert_eq!(WORD_LETTER_SETS.len(), WORD_STRINGS.len());
+    }
+
+    #[test]
+    fn word_letter_counts() {
+        for letter_counts in WORD_LETTER_COUNTS.iter() {
+            assert_eq!(
+                WORD_LEN as u8,
+                letter_counts.iter().fold(0, |acc, (_, count)| acc + count)
+            )
+        }
     }
 }

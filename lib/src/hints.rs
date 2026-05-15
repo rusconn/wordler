@@ -6,6 +6,8 @@ use thiserror::Error;
 
 pub(crate) use hint::Hint;
 
+use crate::dict::WORD_LEN;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hints(Vec<Hint>);
 
@@ -13,7 +15,7 @@ impl FromStr for Hints {
     type Err = ParseError;
 
     fn from_str(hints: &str) -> Result<Self, Self::Err> {
-        if hints.chars().count() != 5 {
+        if hints.chars().count() != WORD_LEN {
             return Err(ParseError::InvalidLength);
         }
 

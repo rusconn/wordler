@@ -1,3 +1,4 @@
+mod delta;
 mod letter;
 mod position;
 
@@ -5,13 +6,11 @@ use std::iter;
 
 use itertools::Itertools;
 use regex::Regex;
-use rustc_hash::FxHashMap;
 use thiserror::Error;
 
 use crate::{
     Hints, Word,
     dict::{LETTER_KINDS, LETTERS, WORD_LEN},
-    hints::Hint,
     letter::Letter,
 };
 
@@ -19,6 +18,8 @@ pub use {
     letter::LetterConstraint,
     position::{CheckError as CheckPositionError, PositionConstraint},
 };
+
+use delta::ConstraintDelta;
 
 #[cfg_attr(test, derive(Clone))]
 #[derive(Debug)]
@@ -58,65 +59,45 @@ impl Default for Constraints {
 
 impl Constraints {
     pub(crate) fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
-        self.check(guess, hints)?;
-        self.update_unchecked(guess, hints);
+        let delta = ConstraintDelta::from_feedback(guess, hints);
+        self.check(&delta)?;
+        self.merge_unchecked(delta);
         Ok(())
     }
 
-    fn check(&self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
-        for ((letter, hint), position_constraint) in guess
-            .iter() //
-            .zip(hints.iter())
-            .zip(self.positions.iter())
+    fn check(&self, delta: &ConstraintDelta) -> Result<(), UpdateError> {
+        for (position_constraint, position_delta) in
+            self.positions.iter().zip(delta.positions.iter())
         {
-            position_constraint.check(letter, hint)?;
-        }
-
-        for (letter, (min, max)) in Self::feedback_letter_counts(guess, hints) {
-            let letter_constraint = &self.letters[letter.as_index()];
-            letter_constraint
-                .check(min, max)
-                .map_err(|(min, max)| UpdateError::ContradictoryCount { letter, min, max })?;
-        }
-
-        Ok(())
-    }
-
-    fn feedback_letter_counts(guess: &Word, hints: &Hints) -> Vec<(Letter, (u8, Option<u8>))> {
-        let mut map = FxHashMap::<Letter, (u8, u8)>::default();
-
-        for (letter, hint) in guess.iter().zip(hints.iter()) {
-            let (green_or_yellow, gray) = map.entry(letter).or_insert((0, 0));
-            if hint == Hint::NotExists {
-                *gray += 1;
-            } else {
-                *green_or_yellow += 1;
+            if let Some(position_delta) = position_delta {
+                position_constraint.check(position_delta.letter, position_delta.hint)?;
             }
         }
 
-        map.into_iter()
-            .map(|(letter, (green_or_yellow, gray))| {
-                if gray == 0 {
-                    (letter, (green_or_yellow, None))
-                } else {
-                    (letter, (green_or_yellow, Some(green_or_yellow)))
-                }
-            })
-            .collect()
-    }
-
-    fn update_unchecked(&mut self, guess: &Word, hints: &Hints) {
-        for ((letter, hint), position_constraint) in guess
-            .iter()
-            .zip(hints.iter())
-            .zip(self.positions.iter_mut())
-        {
-            position_constraint.update_unchecked(letter, hint);
+        for (&letter, letter_constraint) in LETTERS.iter().zip(self.letters.iter()) {
+            if let Some(letter_delta) = &delta.letters[letter.as_index()] {
+                letter_constraint
+                    .check(letter_delta.min_count, letter_delta.max_count)
+                    .map_err(|(min, max)| UpdateError::ContradictoryCount { letter, min, max })?;
+            }
         }
 
-        for (letter, (min, max)) in Self::feedback_letter_counts(guess, hints) {
-            let letter_constraint = &mut self.letters[letter.as_index()];
-            letter_constraint.update_unchecked(min, max);
+        Ok(())
+    }
+
+    fn merge_unchecked(&mut self, delta: ConstraintDelta) {
+        for (position_constraint, position_delta) in self.positions.iter_mut().zip(delta.positions)
+        {
+            if let Some(position_delta) = position_delta {
+                position_constraint.update_unchecked(position_delta.letter, position_delta.hint);
+            }
+        }
+
+        for (letter, letter_delta) in LETTERS.iter().zip(delta.letters) {
+            if let Some(letter_delta) = letter_delta {
+                let letter_constraint = &mut self.letters[letter.as_index()];
+                letter_constraint.update_unchecked(letter_delta.min_count, letter_delta.max_count);
+            }
         }
 
         self.regex_cache = Regex::new(

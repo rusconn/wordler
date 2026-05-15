@@ -4,7 +4,7 @@ use rustc_hash::FxHashSet;
 use thiserror::Error;
 
 use crate::{
-    dict::{self, WORD_LEN},
+    dict::{self, LETTER_KINDS, WORD_LEN},
     letter::Letter,
 };
 
@@ -53,7 +53,7 @@ impl Word {
         self.as_str().as_bytes()
     }
 
-    pub(crate) fn as_letter_counts(&self) -> &'static Vec<(Letter, u8)> {
+    pub(crate) fn as_letter_counts(&self) -> &'static [u8; LETTER_KINDS] {
         &dict::WORD_LETTER_COUNTS[self.0]
     }
 

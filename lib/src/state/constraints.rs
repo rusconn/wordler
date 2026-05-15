@@ -136,16 +136,13 @@ impl Constraints {
     }
 
     fn is_match_counts(&self, word: &Word) -> bool {
-        self.active_letters.iter().all(|active_letter| {
-            let count = word
-                .as_letter_counts()
-                .iter()
-                .find(|(letter, _)| letter == active_letter)
-                .map(|(_, count)| *count)
-                .unwrap_or(0);
-
-            self.letters[active_letter.as_index()].is_match(count)
-        })
+        self.active_letters
+            .iter()
+            .map(Letter::as_index)
+            .all(|index| {
+                let count = word.as_letter_counts()[index];
+                self.letters[index].is_match(count)
+            })
     }
 }
 

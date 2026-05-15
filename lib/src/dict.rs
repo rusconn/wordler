@@ -1,6 +1,5 @@
 use std::sync::LazyLock;
 
-use itertools::Itertools;
 use rustc_hash::FxHashSet;
 
 use crate::{letter::Letter, word::Word};
@@ -20,17 +19,15 @@ pub(crate) static LETTERS: LazyLock<Vec<Letter>> = LazyLock::new(|| {
         .collect()
 });
 
-pub(crate) static WORD_LETTER_COUNTS: LazyLock<Vec<Vec<(Letter, u8)>>> = LazyLock::new(|| {
+pub(crate) static WORD_LETTER_COUNTS: LazyLock<Vec<[u8; LETTER_KINDS]>> = LazyLock::new(|| {
     WORD_STRINGS
         .iter()
         .map(|word| {
-            word.as_bytes()
-                .iter()
-                .sorted()
-                .chunk_by(|&&byte| byte)
-                .into_iter()
-                .map(|(byte, chunk)| (Letter::from_unchecked(byte), chunk.count() as u8))
-                .collect()
+            let mut counts = [0; LETTER_KINDS];
+            for byte in word.as_bytes() {
+                counts[(byte - b'A') as usize] += 1;
+            }
+            counts
         })
         .collect()
 });
@@ -1563,10 +1560,7 @@ mod tests {
     #[test]
     fn word_letter_counts() {
         for letter_counts in WORD_LETTER_COUNTS.iter() {
-            assert_eq!(
-                WORD_LEN as u8,
-                letter_counts.iter().fold(0, |acc, (_, count)| acc + count)
-            )
+            assert_eq!(WORD_LEN as u8, letter_counts.iter().sum())
         }
     }
 }

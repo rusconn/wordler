@@ -1,14 +1,11 @@
 mod candidates;
 mod constraints;
-mod veileds;
 
 use crate::word::Word;
 
 use super::hints::Hints;
 
 use constraints::Constraints;
-
-use veileds::Veileds;
 
 pub use {
     candidates::Candidates,
@@ -20,23 +17,21 @@ pub use {
 pub struct State {
     constraints: Constraints,
     candidates: Candidates,
-    veileds: Veileds,
 }
 
 impl State {
     pub fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
         self.constraints.update(*guess, hints)?;
         self.candidates.retain(&self.constraints);
-        self.veileds.unveil(guess);
         Ok(())
+    }
+
+    pub(crate) fn constraints(&self) -> &Constraints {
+        &self.constraints
     }
 
     pub fn candidates(&self) -> &Candidates {
         &self.candidates
-    }
-
-    pub(crate) fn veileds(&self) -> &Veileds {
-        &self.veileds
     }
 }
 

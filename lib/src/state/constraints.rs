@@ -100,6 +100,12 @@ impl Constraints {
                 self.letters[index].is_match(count)
             })
     }
+
+    pub(crate) fn is_veiled(&self, letter: Letter) -> bool {
+        let index = letter.as_index();
+        let constraint = &self.letters[index];
+        !constraint.is_active()
+    }
 }
 
 #[cfg_attr(test, derive(PartialEq))]

@@ -34,9 +34,9 @@ impl Recommends {
         let mut histogram: VeiledLetterHistogram = Default::default();
 
         for word in state.candidates().iter() {
-            for letter in word.as_letter_set() {
-                if state.veileds().contains(letter) {
-                    *histogram.entry(*letter).or_insert(0) += 1;
+            for &letter in word.as_letter_set() {
+                if state.constraints().is_veiled(letter) {
+                    *histogram.entry(letter).or_insert(0) += 1;
                 }
             }
         }

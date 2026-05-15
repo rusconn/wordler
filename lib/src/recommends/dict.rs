@@ -1,12 +1,18 @@
 use std::sync::LazyLock;
 
-use rustc_hash::FxHashSet;
-
 use crate::{dict::WORD_STRINGS, letter::Letter};
 
-pub(super) static WORD_LETTER_SETS: LazyLock<Vec<FxHashSet<Letter>>> = LazyLock::new(|| {
+use super::letter_set::LetterSet;
+
+pub(super) static WORD_LETTER_SETS: LazyLock<Vec<LetterSet>> = LazyLock::new(|| {
     WORD_STRINGS
         .iter()
-        .map(|word| FxHashSet::from_iter(word.bytes().map(Letter::from_unchecked)))
+        .map(|word| {
+            let mut set = LetterSet::default();
+            for byte in word.bytes() {
+                set.insert(Letter::from_unchecked(byte));
+            }
+            set
+        })
         .collect()
 });

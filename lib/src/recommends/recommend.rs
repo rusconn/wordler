@@ -37,9 +37,9 @@ impl Recommend {
         self.score = self
             .word
             .as_letter_set()
-            .iter()
+            .letters()
             .map(|letter| {
-                let occurrence = *histogram.get(letter).unwrap_or(&0);
+                let occurrence = *histogram.get(&letter).unwrap_or(&0);
                 i32::min(occurrence, candidates_count - occurrence)
             })
             .sum()

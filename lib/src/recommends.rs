@@ -1,11 +1,12 @@
 mod dict;
+mod letter_set;
 mod recommend;
 
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashMap;
 
 use crate::{State, Word, dict::WORDS, letter::Letter};
 
-use recommend::Recommend;
+use {letter_set::LetterSet, recommend::Recommend};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Recommends(Vec<Recommend>);
@@ -35,7 +36,7 @@ impl Recommends {
         let mut histogram = VeiledLetterHistogram::default();
 
         for word in state.candidates().iter() {
-            for &letter in word.as_letter_set() {
+            for letter in word.as_letter_set().letters() {
                 if state.constraints().is_veiled(letter) {
                     *histogram.entry(letter).or_insert(0) += 1;
                 }
@@ -52,7 +53,7 @@ impl Recommends {
 }
 
 impl Word {
-    fn as_letter_set(&self) -> &'static FxHashSet<Letter> {
-        &dict::WORD_LETTER_SETS[self.as_index()]
+    fn as_letter_set(&self) -> LetterSet {
+        dict::WORD_LETTER_SETS[self.as_index()]
     }
 }

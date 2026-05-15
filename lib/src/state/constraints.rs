@@ -2,10 +2,6 @@ mod delta;
 mod letter;
 mod position;
 
-use std::iter;
-
-use itertools::Itertools;
-use regex::Regex;
 use thiserror::Error;
 
 use crate::{
@@ -21,43 +17,12 @@ pub use {
 
 use delta::ConstraintDelta;
 
-#[cfg_attr(test, derive(Clone))]
-#[derive(Debug)]
+#[cfg_attr(test, derive(Clone, PartialEq, Eq))]
+#[derive(Debug, Default)]
 pub(crate) struct Constraints {
     positions: [PositionConstraint; WORD_LEN],
     letters: [LetterConstraint; LETTER_KINDS],
     active_letters: Vec<Letter>,
-    regex_cache: Regex,
-}
-
-#[cfg(test)]
-impl PartialEq for Constraints {
-    fn eq(&self, other: &Self) -> bool {
-        self.positions == other.positions
-            && self.letters == other.letters
-            && self.active_letters == self.active_letters
-            && self.regex_cache.as_str() == other.regex_cache.as_str()
-    }
-}
-
-#[cfg(test)]
-impl Eq for Constraints {}
-
-impl Default for Constraints {
-    fn default() -> Self {
-        Self {
-            positions: iter::repeat_n(Default::default(), WORD_LEN)
-                .collect::<Vec<_>>()
-                .try_into()
-                .unwrap(),
-            letters: iter::repeat_n(Default::default(), LETTER_KINDS)
-                .collect::<Vec<_>>()
-                .try_into()
-                .unwrap(),
-            active_letters: Vec::new(),
-            regex_cache: Regex::new("").unwrap(),
-        }
-    }
 }
 
 impl Constraints {
@@ -104,7 +69,6 @@ impl Constraints {
         }
 
         self.rebuild_active_letters();
-        self.rebuild_regex_cache();
     }
 
     fn rebuild_active_letters(&mut self) {
@@ -116,23 +80,15 @@ impl Constraints {
         }
     }
 
-    fn rebuild_regex_cache(&mut self) {
-        self.regex_cache = Regex::new(
-            &self
-                .positions
-                .iter()
-                .map(PositionConstraint::to_regex_string)
-                .join(""),
-        )
-        .unwrap_or_else(|e| panic!("Failed to create Regex: {e}"));
-    }
-
     pub(crate) fn is_match(&self, word: &Word) -> bool {
         self.is_match_positions(word) && self.is_match_counts(word)
     }
 
     fn is_match_positions(&self, word: &Word) -> bool {
-        self.regex_cache.is_match(word.as_str())
+        self.positions
+            .iter()
+            .zip(word.iter())
+            .all(|(position, letter)| position.is_match(letter))
     }
 
     fn is_match_counts(&self, word: &Word) -> bool {

@@ -341,7 +341,6 @@ name = "wordler"
 version = "0.1.0"
 dependencies = [
  "itertools",
- "regex",
  "rstest",
  "rustc-hash",
  "thiserror",

@@ -1,6 +1,5 @@
 use std::collections::BTreeSet;
 
-use itertools::Itertools;
 use thiserror::Error;
 
 use crate::{hints::Hint, letter::Letter};
@@ -60,14 +59,11 @@ impl PositionConstraint {
         self.not.insert(letter);
     }
 
-    pub(super) fn to_regex_string(&self) -> String {
-        if let Some(letter) = self.correct {
-            return letter.to_string();
-        }
-        if self.not.is_empty() {
-            ".".into()
+    pub(super) fn is_match(&self, letter: Letter) -> bool {
+        if let Some(correct) = self.correct {
+            correct == letter
         } else {
-            format!("[^{}]", self.not.iter().join(""))
+            !self.not.contains(&letter)
         }
     }
 }
@@ -82,28 +78,6 @@ pub enum CheckError {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn operations() {
-        let mut constraint = PositionConstraint::default();
-        assert_eq!(constraint.to_regex_string(), ".");
-
-        constraint.not_unchecked(Letter::from_unchecked(b'A'));
-        assert_eq!(constraint.to_regex_string(), "[^A]");
-
-        constraint.correct_unchecked(Letter::from_unchecked(b'B'));
-        assert_eq!(constraint.to_regex_string(), "B");
-
-        let mut constraint = PositionConstraint::default();
-        constraint.not_unchecked(Letter::from_unchecked(b'B'));
-        assert_eq!(constraint.to_regex_string(), "[^B]");
-
-        constraint.not_unchecked(Letter::from_unchecked(b'A'));
-        assert_eq!(constraint.to_regex_string(), "[^AB]");
-
-        constraint.correct_unchecked(Letter::from_unchecked(b'C'));
-        assert_eq!(constraint.to_regex_string(), "C");
-    }
 
     #[test]
     fn ckeck_hint() {

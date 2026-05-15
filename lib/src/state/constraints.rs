@@ -26,7 +26,7 @@ pub(crate) struct Constraints {
 }
 
 impl Constraints {
-    pub(crate) fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
+    pub(crate) fn update(&mut self, guess: Word, hints: &Hints) -> Result<(), UpdateError> {
         let delta = ConstraintDelta::from_feedback(guess, hints);
         self.check(&delta)?;
         self.merge_unchecked(delta);
@@ -43,7 +43,7 @@ impl Constraints {
         }
 
         for (&letter, letter_constraint) in LETTERS.iter().zip(self.letters.iter()) {
-            if let Some(letter_delta) = &delta.letters[letter.as_index()] {
+            if let Some(letter_delta) = delta.letters[letter.as_index()] {
                 letter_constraint
                     .check(letter_delta.min_count, letter_delta.max_count)
                     .map_err(|(min, max)| UpdateError::ContradictoryCount { letter, min, max })?;
@@ -80,18 +80,18 @@ impl Constraints {
         }
     }
 
-    pub(crate) fn is_match(&self, word: &Word) -> bool {
+    pub(crate) fn is_match(&self, word: Word) -> bool {
         self.is_match_positions(word) && self.is_match_counts(word)
     }
 
-    fn is_match_positions(&self, word: &Word) -> bool {
+    fn is_match_positions(&self, word: Word) -> bool {
         self.positions
             .iter()
-            .zip(word.iter())
+            .zip(word.as_letters())
             .all(|(position, letter)| position.is_match(letter))
     }
 
-    fn is_match_counts(&self, word: &Word) -> bool {
+    fn is_match_counts(&self, word: Word) -> bool {
         self.active_letters
             .iter()
             .map(Letter::as_index)

@@ -25,7 +25,7 @@ pub struct State {
 
 impl State {
     pub fn update(&mut self, guess: &Word, hints: &Hints) -> Result<(), UpdateError> {
-        self.constraints.update(guess, hints)?;
+        self.constraints.update(*guess, hints)?;
         self.candidates.retain(&self.constraints);
         self.veileds.unveil(guess);
         Ok(())

@@ -14,13 +14,13 @@ pub(super) struct ConstraintDelta {
 }
 
 impl ConstraintDelta {
-    pub(super) fn from_feedback(guess: &Word, hints: &Hints) -> Self {
+    pub(super) fn from_feedback(guess: Word, hints: &Hints) -> Self {
         let mut positions = [None; WORD_LEN];
         let mut letters = [None; LETTER_KINDS];
 
         let mut map = FxHashMap::<Letter, (u8, u8)>::default();
 
-        for (index, (letter, hint)) in guess.iter().zip(hints.iter()).enumerate() {
+        for (index, (letter, hint)) in guess.as_letters().zip(hints.iter()).enumerate() {
             positions[index] = Some(PositionDelta { letter, hint });
 
             let (green_or_yellow, gray) = map.entry(letter).or_insert((0, 0));

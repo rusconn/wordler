@@ -7,15 +7,15 @@ use crate::{letter::Letter, word::Word};
 pub(crate) const WORD_LEN: usize = 5;
 pub(crate) const LETTER_KINDS: usize = 26;
 
-pub(crate) static WORDS: LazyLock<Vec<Word>> = LazyLock::new(|| {
-    (0..WORD_STRINGS.len()) //
-        .map(Word::from_unchecked)
-        .collect()
-});
-
 pub(crate) static LETTERS: LazyLock<Vec<Letter>> = LazyLock::new(|| {
     (b'A'..=b'Z') //
         .map(Letter::from_unchecked)
+        .collect()
+});
+
+pub(crate) static WORDS: LazyLock<Vec<Word>> = LazyLock::new(|| {
+    (0..WORD_STRINGS.len()) //
+        .map(Word::from_unchecked)
         .collect()
 });
 

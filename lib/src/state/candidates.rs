@@ -31,6 +31,6 @@ impl Candidates {
     }
 
     pub(crate) fn retain(&mut self, constraints: &Constraints) {
-        self.0.retain(|word| constraints.is_match(word));
+        self.0.retain(|&&word| constraints.is_match(word));
     }
 }

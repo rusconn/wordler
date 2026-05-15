@@ -26,6 +26,7 @@ use delta::ConstraintDelta;
 pub(crate) struct Constraints {
     positions: [PositionConstraint; WORD_LEN],
     letters: [LetterConstraint; LETTER_KINDS],
+    active_letters: Vec<Letter>,
     regex_cache: Regex,
 }
 
@@ -34,6 +35,7 @@ impl PartialEq for Constraints {
     fn eq(&self, other: &Self) -> bool {
         self.positions == other.positions
             && self.letters == other.letters
+            && self.active_letters == self.active_letters
             && self.regex_cache.as_str() == other.regex_cache.as_str()
     }
 }
@@ -52,6 +54,7 @@ impl Default for Constraints {
                 .collect::<Vec<_>>()
                 .try_into()
                 .unwrap(),
+            active_letters: Vec::new(),
             regex_cache: Regex::new("").unwrap(),
         }
     }
@@ -100,6 +103,20 @@ impl Constraints {
             }
         }
 
+        self.rebuild_active_letters();
+        self.rebuild_regex_cache();
+    }
+
+    fn rebuild_active_letters(&mut self) {
+        self.active_letters.clear();
+        for &letter in LETTERS.iter() {
+            if self.letters[letter.as_index()].is_active() {
+                self.active_letters.push(letter);
+            }
+        }
+    }
+
+    fn rebuild_regex_cache(&mut self) {
         self.regex_cache = Regex::new(
             &self
                 .positions
@@ -119,18 +136,16 @@ impl Constraints {
     }
 
     fn is_match_counts(&self, word: &Word) -> bool {
-        LETTERS
-            .iter()
-            .zip(&self.letters)
-            .all(|(letter, letter_constraint)| {
-                let count = word
-                    .as_letter_counts()
-                    .iter()
-                    .find(|(l, _)| l == letter)
-                    .map(|&(_, count)| count)
-                    .unwrap_or(0);
-                letter_constraint.is_match(count)
-            })
+        self.active_letters.iter().all(|active_letter| {
+            let count = word
+                .as_letter_counts()
+                .iter()
+                .find(|(letter, _)| letter == active_letter)
+                .map(|(_, count)| *count)
+                .unwrap_or(0);
+
+            self.letters[active_letter.as_index()].is_match(count)
+        })
     }
 }
 

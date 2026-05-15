@@ -1,8 +1,9 @@
+mod dict;
 mod recommend;
 
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxHashSet};
 
-use crate::{State, dict::WORDS, letter::Letter};
+use crate::{State, Word, dict::WORDS, letter::Letter};
 
 use recommend::Recommend;
 
@@ -54,5 +55,11 @@ impl Recommends {
 
         self.0.retain(Recommend::is_useful);
         self.0.sort_unstable_by(|x, y| y.cmp(x));
+    }
+}
+
+impl Word {
+    fn as_letter_set(&self) -> &'static FxHashSet<Letter> {
+        &dict::WORD_LETTER_SETS[self.as_index()]
     }
 }

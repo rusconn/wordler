@@ -1,7 +1,5 @@
 use std::sync::LazyLock;
 
-use rustc_hash::FxHashSet;
-
 use crate::{letter::Letter, word::Word};
 
 pub(crate) const WORD_LEN: usize = 5;
@@ -29,13 +27,6 @@ pub(crate) static WORD_LETTER_COUNTS: LazyLock<Vec<[u8; LETTER_KINDS]>> = LazyLo
             }
             counts
         })
-        .collect()
-});
-
-pub(crate) static WORD_LETTER_SETS: LazyLock<Vec<FxHashSet<Letter>>> = LazyLock::new(|| {
-    WORD_STRINGS
-        .iter()
-        .map(|word| FxHashSet::from_iter(word.bytes().map(Letter::from_unchecked)))
         .collect()
 });
 
@@ -1553,8 +1544,7 @@ mod tests {
     #[test]
     fn len() {
         assert_eq!(WORDS.len(), WORD_LETTER_COUNTS.len());
-        assert_eq!(WORD_LETTER_COUNTS.len(), WORD_LETTER_SETS.len());
-        assert_eq!(WORD_LETTER_SETS.len(), WORD_STRINGS.len());
+        assert_eq!(WORD_LETTER_COUNTS.len(), WORD_STRINGS.len());
     }
 
     #[test]

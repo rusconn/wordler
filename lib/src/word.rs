@@ -1,6 +1,5 @@
 use std::{fmt, str::FromStr};
 
-use rustc_hash::FxHashSet;
 use thiserror::Error;
 
 use crate::{
@@ -41,8 +40,12 @@ impl Word {
         Self(index)
     }
 
+    pub(crate) fn as_index(&self) -> usize {
+        self.0
+    }
+
     pub(crate) fn as_str(&self) -> &'static str {
-        dict::WORD_STRINGS[self.0]
+        dict::WORD_STRINGS[self.as_index()]
     }
 
     pub(crate) fn as_bytes(&self) -> &[u8] {
@@ -53,12 +56,8 @@ impl Word {
         self.as_bytes().iter().copied().map(Letter::from_unchecked)
     }
 
-    pub(crate) fn as_letter_set(&self) -> &'static FxHashSet<Letter> {
-        &dict::WORD_LETTER_SETS[self.0]
-    }
-
     pub(crate) fn as_letter_counts(&self) -> &'static [u8; LETTER_KINDS] {
-        &dict::WORD_LETTER_COUNTS[self.0]
+        &dict::WORD_LETTER_COUNTS[self.as_index()]
     }
 }
 

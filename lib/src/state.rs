@@ -26,6 +26,7 @@ impl State {
         Ok(())
     }
 
+    #[cfg(feature = "recommend")]
     pub(crate) fn constraints(&self) -> &Constraints {
         &self.constraints
     }

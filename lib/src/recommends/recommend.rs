@@ -38,7 +38,7 @@ impl Recommend {
             .word
             .as_letter_set()
             .iter()
-            .map(|c| histogram.get(c).unwrap_or(&0))
+            .map(|letter| histogram.get(letter).unwrap_or(&0))
             .sum()
     }
 

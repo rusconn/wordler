@@ -101,6 +101,7 @@ impl Constraints {
             })
     }
 
+    #[cfg(feature = "recommend")]
     pub(crate) fn is_veiled(&self, letter: Letter) -> bool {
         let index = letter.as_index();
         let constraint = &self.letters[index];

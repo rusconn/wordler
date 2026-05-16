@@ -18,8 +18,7 @@ pub use {
 
 use delta::ConstraintDelta;
 
-#[cfg_attr(test, derive(Clone, PartialEq, Eq))]
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub(crate) struct Constraints {
     positions: [PositionConstraint; WORD_LEN],
     letters: [LetterConstraint; LETTER_KINDS],
@@ -29,48 +28,33 @@ pub(crate) struct Constraints {
 impl Constraints {
     pub(crate) fn update(&mut self, guess: Word, hints: &Hints) -> Result<(), UpdateError> {
         let delta = ConstraintDelta::from_feedback(guess, hints);
-        self.check(&delta)?;
-        self.merge_unchecked(delta);
+        let mut next = *self;
+        next.merge(delta)?;
+        *self = next;
         Ok(())
     }
 
-    fn check(&self, delta: &ConstraintDelta) -> Result<(), UpdateError> {
-        for (position_constraint, position_delta) in
-            self.positions.iter().zip(delta.positions.iter())
-        {
-            if let Some(position_delta) = position_delta {
-                position_constraint.check(position_delta.letter, position_delta.hint)?;
-            }
-        }
-
-        for (&letter, letter_constraint) in LETTERS.iter().zip(self.letters.iter()) {
-            if let Some(letter_delta) = delta.letters[letter.as_index()] {
-                letter_constraint
-                    .check(letter_delta.min_count, letter_delta.max_count)
-                    .map_err(|(min, max)| UpdateError::ContradictoryCount { letter, min, max })?;
-            }
-        }
-
-        Ok(())
-    }
-
-    fn merge_unchecked(&mut self, delta: ConstraintDelta) {
+    fn merge(&mut self, delta: ConstraintDelta) -> Result<(), UpdateError> {
         for (position_constraint, position_delta) in self.positions.iter_mut().zip(delta.positions)
         {
             if let Some(position_delta) = position_delta {
-                position_constraint.update_unchecked(position_delta.letter, position_delta.hint);
+                position_constraint.update(position_delta.letter, position_delta.hint)?;
             }
         }
 
-        for (letter, letter_delta) in LETTERS.iter().zip(delta.letters) {
+        for (&letter, letter_delta) in LETTERS.iter().zip(delta.letters) {
             if let Some(letter_delta) = letter_delta {
                 let letter_constraint = &mut self.letters[letter.as_index()];
-                letter_constraint.update_unchecked(letter_delta.min_count, letter_delta.max_count);
+                letter_constraint
+                    .update(letter_delta.min_count, letter_delta.max_count)
+                    .map_err(|(min, max)| UpdateError::ContradictoryCount { letter, min, max })?;
                 if letter_constraint.is_active() {
-                    self.active_letters.insert(*letter);
+                    self.active_letters.insert(letter);
                 }
             }
         }
+
+        Ok(())
     }
 
     pub(crate) fn is_match(&self, word: Word) -> bool {

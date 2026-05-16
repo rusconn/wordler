@@ -2,23 +2,23 @@ use thiserror::Error;
 
 use crate::{hints::Hint, letter::Letter, letter_set::LetterSet};
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct PositionConstraint {
     correct: Option<Letter>,
     not: LetterSet,
 }
 
 impl PositionConstraint {
-    pub(super) fn check(&self, letter: Letter, hint: Hint) -> Result<(), CheckError> {
+    pub(super) fn update(&mut self, letter: Letter, hint: Hint) -> Result<(), CheckError> {
         if hint == Hint::CorrectSpot {
-            self.check_hint_for_correct(letter)
+            self.correct(letter)
         } else {
-            self.check_hint_for_not(letter)
+            self.not(letter)
         }
         .map_err(|letter| CheckError::Contradictory { letter, hint })
     }
 
-    fn check_hint_for_correct(&self, letter: Letter) -> Result<(), Letter> {
+    fn correct(&mut self, letter: Letter) -> Result<(), Letter> {
         if let Some(correct) = self.correct
             && correct != letter
         {
@@ -28,33 +28,19 @@ impl PositionConstraint {
             return Err(letter);
         }
 
+        self.correct = Some(letter);
         Ok(())
     }
 
-    fn check_hint_for_not(&self, letter: Letter) -> Result<(), Letter> {
+    fn not(&mut self, letter: Letter) -> Result<(), Letter> {
         if let Some(correct) = self.correct
             && correct == letter
         {
-            Err(correct)
-        } else {
-            Ok(())
+            return Err(correct);
         }
-    }
 
-    pub(super) fn update_unchecked(&mut self, letter: Letter, hint: Hint) {
-        if hint == Hint::CorrectSpot {
-            self.correct_unchecked(letter);
-        } else {
-            self.not_unchecked(letter);
-        }
-    }
-
-    fn correct_unchecked(&mut self, letter: Letter) {
-        self.correct = Some(letter);
-    }
-
-    fn not_unchecked(&mut self, letter: Letter) {
         self.not.insert(letter);
+        Ok(())
     }
 
     pub(super) fn is_match(&self, letter: Letter) -> bool {
@@ -83,10 +69,10 @@ mod tests {
         let b = Letter::from_unchecked(b'B');
 
         let mut constraint = PositionConstraint::default();
-        constraint.update_unchecked(a, Hint::NotExists);
-        let result = constraint.check(a, Hint::NotExists);
+
+        let result = constraint.update(a, Hint::NotExists);
         assert_eq!(result, Ok(()));
-        let result = constraint.check(a, Hint::CorrectSpot);
+        let result = constraint.update(a, Hint::CorrectSpot);
         assert_eq!(
             result,
             Err(CheckError::Contradictory {
@@ -96,10 +82,9 @@ mod tests {
         );
 
         let mut constraint = PositionConstraint::default();
-        constraint.update_unchecked(a, Hint::CorrectSpot);
-        let result = constraint.check(a, Hint::CorrectSpot);
+        let result = constraint.update(a, Hint::CorrectSpot);
         assert_eq!(result, Ok(()));
-        let result = constraint.check(b, Hint::CorrectSpot);
+        let result = constraint.update(b, Hint::CorrectSpot);
         assert_eq!(
             result,
             Err(CheckError::Contradictory {
@@ -109,10 +94,9 @@ mod tests {
         );
 
         let mut constraint = PositionConstraint::default();
-        constraint.update_unchecked(a, Hint::CorrectSpot);
-        let result = constraint.check(a, Hint::CorrectSpot);
+        let result = constraint.update(a, Hint::CorrectSpot);
         assert_eq!(result, Ok(()));
-        let result = constraint.check(a, Hint::WrongSpot);
+        let result = constraint.update(a, Hint::WrongSpot);
         assert_eq!(
             result,
             Err(CheckError::Contradictory {

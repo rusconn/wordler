@@ -52,8 +52,7 @@ impl PositionConstraint {
     }
 }
 
-#[cfg_attr(test, derive(PartialEq))]
-#[derive(Debug, Error)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
 pub enum CheckError {
     #[error("contradictory hint: (letter: {letter}, hint: {hint})")]
     Contradictory { letter: Letter, hint: Hint },

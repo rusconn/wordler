@@ -3,8 +3,7 @@ use crate::state::constraints::Constraints;
 
 use crate::word::Word;
 
-#[cfg_attr(test, derive(Clone, PartialEq, Eq))]
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Candidates(Vec<&'static Word>);
 
 impl Default for Candidates {

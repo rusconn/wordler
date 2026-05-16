@@ -5,7 +5,7 @@ use crate::{State, Word, dict::WORDS, letter_map::LetterMap, letter_set::LetterS
 
 use recommend::Recommend;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recommends(Vec<Recommend>);
 
 type LetterHistogram = LetterMap<i32>;

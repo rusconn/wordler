@@ -12,8 +12,7 @@ pub use {
     constraints::{CheckPositionError as InvalidHintError, UpdateError},
 };
 
-#[cfg_attr(test, derive(Clone, PartialEq, Eq))]
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct State {
     constraints: Constraints,
     candidates: Candidates,

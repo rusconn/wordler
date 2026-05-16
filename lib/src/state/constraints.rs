@@ -84,8 +84,7 @@ impl Constraints {
     }
 }
 
-#[cfg_attr(test, derive(PartialEq))]
-#[derive(Debug, Error)]
+#[derive(Debug, PartialEq, Error)]
 pub enum UpdateError {
     #[error(transparent)]
     ContradictoryPosition(#[from] CheckPositionError),

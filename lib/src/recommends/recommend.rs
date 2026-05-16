@@ -4,7 +4,7 @@ use crate::word::Word;
 
 use super::LetterHistogram;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Recommend {
     word: &'static Word,
     score: i32,

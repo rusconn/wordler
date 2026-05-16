@@ -48,12 +48,8 @@ impl Word {
         dict::WORD_STRINGS[self.as_index()]
     }
 
-    pub(crate) fn as_bytes(&self) -> &[u8] {
-        self.as_str().as_bytes()
-    }
-
     pub(crate) fn as_letters(&self) -> impl Iterator<Item = Letter> {
-        self.as_bytes().iter().copied().map(Letter::from_unchecked)
+        self.as_str().bytes().map(Letter::from_unchecked)
     }
 
     pub(crate) fn as_letter_counts(&self) -> &'static [u8; LETTER_KINDS] {

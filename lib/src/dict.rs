@@ -22,7 +22,7 @@ pub(crate) static WORD_LETTER_COUNTS: LazyLock<Vec<[u8; LETTER_KINDS]>> = LazyLo
         .iter()
         .map(|word| {
             let mut counts = [0; LETTER_KINDS];
-            for byte in word.as_bytes() {
+            for byte in word.bytes() {
                 counts[(byte - b'A') as usize] += 1;
             }
             counts
@@ -1529,11 +1529,11 @@ mod tests {
     }
 
     fn is_valid_word(word: &str) -> bool {
-        word.chars().count() == WORD_LEN && word.chars().all(is_valid_char)
+        word.bytes().count() == WORD_LEN && word.bytes().all(is_valid_byte)
     }
 
-    fn is_valid_char(ch: char) -> bool {
-        ch.is_ascii_alphabetic() && ch.is_ascii_uppercase()
+    fn is_valid_byte(byte: u8) -> bool {
+        byte.is_ascii_alphabetic() && byte.is_ascii_uppercase()
     }
 
     #[test]

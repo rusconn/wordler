@@ -1,10 +1,9 @@
-use rustc_hash::FxHashMap;
-
 use crate::{
     Hints, Word,
     dict::{LETTER_KINDS, WORD_LEN},
     hints::Hint,
     letter::Letter,
+    letter_map::LetterMap,
 };
 
 #[derive(Debug)]
@@ -18,12 +17,12 @@ impl ConstraintDelta {
         let mut positions = [None; WORD_LEN];
         let mut letters = [None; LETTER_KINDS];
 
-        let mut map = FxHashMap::<Letter, (u8, u8)>::default();
+        let mut map = LetterMap::<(u8, u8)>::default();
 
         for (index, (letter, hint)) in guess.as_letters().zip(hints.iter()).enumerate() {
             positions[index] = Some(PositionDelta { letter, hint });
 
-            let (green_or_yellow, gray) = map.entry(letter).or_insert((0, 0));
+            let (green_or_yellow, gray) = map.get_mut(letter);
             if hint == Hint::NotExists {
                 *gray += 1;
             } else {
@@ -31,7 +30,10 @@ impl ConstraintDelta {
             }
         }
 
-        for (letter, (green_or_yellow, gray)) in map {
+        for (letter, &(green_or_yellow, gray)) in map
+            .iter()
+            .filter(|(_, (green_or_yellow, gray))| green_or_yellow + gray > 0)
+        {
             letters[letter.as_index()] = Some(LetterDelta {
                 min_count: green_or_yellow,
                 max_count: if gray == 0 {

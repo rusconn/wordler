@@ -1,11 +1,10 @@
 mod dict;
-mod letter_map;
 mod letter_set;
 mod recommend;
 
-use crate::{State, Word, dict::WORDS};
+use crate::{State, Word, dict::WORDS, letter_map::LetterMap};
 
-use {letter_map::LetterMap, letter_set::LetterSet, recommend::Recommend};
+use {letter_set::LetterSet, recommend::Recommend};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Recommends(Vec<Recommend>);

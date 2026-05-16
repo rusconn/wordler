@@ -1,8 +1,6 @@
 use std::sync::LazyLock;
 
-use crate::{dict::WORD_STRINGS, letter::Letter};
-
-use super::letter_set::LetterSet;
+use crate::{dict::WORD_STRINGS, letter::Letter, letter_set::LetterSet};
 
 pub(super) static WORD_LETTER_SETS: LazyLock<Vec<LetterSet>> = LazyLock::new(|| {
     WORD_STRINGS

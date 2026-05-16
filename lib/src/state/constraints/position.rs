@@ -1,13 +1,11 @@
-use std::collections::BTreeSet;
-
 use thiserror::Error;
 
-use crate::{hints::Hint, letter::Letter};
+use crate::{hints::Hint, letter::Letter, letter_set::LetterSet};
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct PositionConstraint {
     correct: Option<Letter>,
-    not: BTreeSet<Letter>,
+    not: LetterSet,
 }
 
 impl PositionConstraint {
@@ -26,9 +24,9 @@ impl PositionConstraint {
         {
             return Err(letter);
         }
-        if self.not.contains(&letter) {
+        if self.not.contains(letter) {
             return Err(letter);
-        };
+        }
 
         Ok(())
     }
@@ -63,7 +61,7 @@ impl PositionConstraint {
         if let Some(correct) = self.correct {
             correct == letter
         } else {
-            !self.not.contains(&letter)
+            !self.not.contains(letter)
         }
     }
 }

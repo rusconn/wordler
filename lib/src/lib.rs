@@ -2,6 +2,7 @@ mod dict;
 mod hints;
 mod letter;
 mod letter_map;
+mod letter_set;
 mod state;
 mod word;
 

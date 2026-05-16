@@ -1,20 +1,27 @@
 use crate::letter::Letter;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub(super) struct LetterSet(u32);
+pub(crate) struct LetterSet(u32);
 
 impl LetterSet {
-    pub(super) fn insert(&mut self, letter: Letter) {
+    pub(crate) fn insert(&mut self, letter: Letter) {
         self.0 |= 1 << letter.as_index();
     }
 
-    pub(super) fn letters(&self) -> Letters {
+    pub(crate) fn contains(&self, letter: Letter) -> bool {
+        (self.0 & (1 << letter.as_index())) != 0
+    }
+
+    #[cfg(feature = "recommend")]
+    pub(crate) fn letters(&self) -> Letters {
         Letters(self.0)
     }
 }
 
-pub(super) struct Letters(u32);
+#[cfg(feature = "recommend")]
+pub(crate) struct Letters(u32);
 
+#[cfg(feature = "recommend")]
 impl Iterator for Letters {
     type Item = Letter;
 

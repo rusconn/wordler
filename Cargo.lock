@@ -334,7 +334,6 @@ dependencies = [
 name = "wordler"
 version = "0.1.0"
 dependencies = [
- "itertools",
  "rstest",
  "thiserror",
 ]

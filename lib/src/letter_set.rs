@@ -12,16 +12,13 @@ impl LetterSet {
         (self.0 & (1 << letter.as_index())) != 0
     }
 
-    #[cfg(feature = "recommend")]
     pub(crate) fn letters(&self) -> Letters {
         Letters(self.0)
     }
 }
 
-#[cfg(feature = "recommend")]
 pub(crate) struct Letters(u32);
 
-#[cfg(feature = "recommend")]
 impl Iterator for Letters {
     type Item = Letter;
 

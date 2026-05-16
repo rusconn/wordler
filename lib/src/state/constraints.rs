@@ -8,6 +8,7 @@ use crate::{
     Hints, Word,
     dict::{LETTER_KINDS, LETTERS, WORD_LEN},
     letter::Letter,
+    letter_set::LetterSet,
 };
 
 pub use {
@@ -22,7 +23,7 @@ use delta::ConstraintDelta;
 pub(crate) struct Constraints {
     positions: [PositionConstraint; WORD_LEN],
     letters: [LetterConstraint; LETTER_KINDS],
-    active_letters: Vec<Letter>,
+    active_letters: LetterSet,
 }
 
 impl Constraints {
@@ -65,17 +66,9 @@ impl Constraints {
             if let Some(letter_delta) = letter_delta {
                 let letter_constraint = &mut self.letters[letter.as_index()];
                 letter_constraint.update_unchecked(letter_delta.min_count, letter_delta.max_count);
-            }
-        }
-
-        self.rebuild_active_letters();
-    }
-
-    fn rebuild_active_letters(&mut self) {
-        self.active_letters.clear();
-        for &letter in LETTERS.iter() {
-            if self.letters[letter.as_index()].is_active() {
-                self.active_letters.push(letter);
+                if letter_constraint.is_active() {
+                    self.active_letters.insert(*letter);
+                }
             }
         }
     }
@@ -93,8 +86,8 @@ impl Constraints {
 
     fn is_match_counts(&self, word: Word) -> bool {
         self.active_letters
-            .iter()
-            .map(Letter::as_index)
+            .letters()
+            .map(|letter| letter.as_index())
             .all(|index| {
                 let count = word.as_letter_counts()[index];
                 self.letters[index].is_match(count)
@@ -103,9 +96,7 @@ impl Constraints {
 
     #[cfg(feature = "recommend")]
     pub(crate) fn is_veiled(&self, letter: Letter) -> bool {
-        let index = letter.as_index();
-        let constraint = &self.letters[index];
-        !constraint.is_active()
+        !self.active_letters.contains(letter)
     }
 }
 

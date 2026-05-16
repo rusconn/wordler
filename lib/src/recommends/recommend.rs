@@ -2,7 +2,7 @@ use std::{cmp::Ordering, fmt};
 
 use crate::word::Word;
 
-use super::VeiledLetterHistogram;
+use super::LetterHistogram;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Recommend {
@@ -33,13 +33,13 @@ impl Recommend {
         Self { word, score: 0 }
     }
 
-    pub(super) fn update(&mut self, histogram: &VeiledLetterHistogram, candidates_count: i32) {
+    pub(super) fn update(&mut self, histogram: &LetterHistogram, candidates_count: i32) {
         self.score = self
             .word
             .as_letter_set()
             .letters()
             .map(|letter| {
-                let occurrence = *histogram.get(&letter).unwrap_or(&0);
+                let occurrence = *histogram.get(letter);
                 i32::min(occurrence, candidates_count - occurrence)
             })
             .sum()

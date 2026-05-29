@@ -19,17 +19,17 @@ impl fmt::Display for Word {
 impl FromStr for Word {
     type Err = ParseError;
 
-    fn from_str(guess: &str) -> Result<Self, Self::Err> {
-        if guess.chars().count() != WORD_LEN {
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        if input.chars().count() != WORD_LEN {
             return Err(ParseError::InvalidLength);
         }
 
-        for c in guess.chars() {
+        for c in input.chars() {
             Letter::try_from(c).map_err(ParseError::InvalidLetter)?;
         }
 
         dict::WORD_STRINGS
-            .binary_search(&guess.to_ascii_uppercase().as_str())
+            .binary_search(&input.to_ascii_uppercase().as_str())
             .map(Self)
             .map_err(|_| ParseError::UnknownWord)
     }

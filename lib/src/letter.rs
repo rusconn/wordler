@@ -23,6 +23,7 @@ impl fmt::Display for Letter {
 
 impl Letter {
     pub(crate) fn from_unchecked(byte: u8) -> Self {
+        debug_assert!(byte.is_ascii_uppercase());
         Self(byte)
     }
 

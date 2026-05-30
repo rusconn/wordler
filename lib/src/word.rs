@@ -37,6 +37,7 @@ impl FromStr for Word {
 
 impl Word {
     pub(crate) fn from_unchecked(index: usize) -> Self {
+        debug_assert!(index < dict::WORD_STRINGS.len());
         Self(index)
     }
 

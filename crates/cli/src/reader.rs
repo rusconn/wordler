@@ -3,12 +3,12 @@ use std::{
     str::FromStr,
 };
 
-use crate::CliError;
+use crate::AsDisplay;
 
 pub fn read_line<T>(label: &str) -> Option<T>
 where
     T: FromStr,
-    CliError: From<T::Err>,
+    for<'a> T::Err: AsDisplay<'a>,
 {
     loop {
         print!("{label}: ");
@@ -16,7 +16,7 @@ where
 
         match get_line()?.parse() {
             Ok(t) => return Some(t),
-            Err(e) => eprintln!("{}", CliError::from(e)),
+            Err(e) => eprintln!("{}", e.as_display()),
         }
     }
 }

@@ -1,6 +1,6 @@
 use wordler::{Recommends, State};
 
-use wordler_cli::{AsDisplay, CliError, read_line};
+use wordler_cli::{AsDisplay, read_line};
 
 fn main() {
     let mut state = State::default();
@@ -40,7 +40,7 @@ fn interact_and_update(state: &mut State) -> bool {
         match state.update(&guess, &hints) {
             Ok(_) => return true,
             Err(e) => {
-                println!("{}", CliError::from(e));
+                println!("{}", e.as_display());
             }
         }
     }

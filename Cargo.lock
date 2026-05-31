@@ -343,6 +343,5 @@ name = "wordler-cli"
 version = "0.1.0"
 dependencies = [
  "itertools",
- "thiserror",
  "wordler",
 ]

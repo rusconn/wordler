@@ -4,9 +4,9 @@ use wordler::UpdateStateError;
 
 use super::AsDisplay;
 
-impl<'a> AsDisplay<'a> for UpdateStateError {
-    type Target = UpdateStateErrorDisplay<'a>;
-    fn as_display(&'a self) -> Self::Target {
+impl AsDisplay for UpdateStateError {
+    type Target<'a> = UpdateStateErrorDisplay<'a>;
+    fn as_display(&self) -> Self::Target<'_> {
         UpdateStateErrorDisplay(self)
     }
 }

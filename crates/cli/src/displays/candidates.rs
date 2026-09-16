@@ -6,9 +6,9 @@ use wordler::Candidates;
 
 use crate::AsDisplay;
 
-impl<'a> AsDisplay<'a> for Candidates {
-    type Target = CandidatesDisplay<'a>;
-    fn as_display(&'a self) -> Self::Target {
+impl AsDisplay for Candidates {
+    type Target<'a> = CandidatesDisplay<'a>;
+    fn as_display(&self) -> Self::Target<'_> {
         CandidatesDisplay(self)
     }
 }

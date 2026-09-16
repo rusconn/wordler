@@ -4,9 +4,9 @@ use itertools::Itertools;
 
 use wordler::Recommends;
 
-impl<'a> super::AsDisplay<'a> for Recommends {
-    type Target = RecommendsDisplay<'a>;
-    fn as_display(&'a self) -> Self::Target {
+impl super::AsDisplay for Recommends {
+    type Target<'a> = RecommendsDisplay<'a>;
+    fn as_display(&self) -> Self::Target<'_> {
         RecommendsDisplay(self)
     }
 }

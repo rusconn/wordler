@@ -4,9 +4,9 @@ use wordler::ParseWordError;
 
 use crate::AsDisplay;
 
-impl<'a> AsDisplay<'a> for ParseWordError {
-    type Target = ParseWordErrorDisplay<'a>;
-    fn as_display(&'a self) -> Self::Target {
+impl AsDisplay for ParseWordError {
+    type Target<'a> = ParseWordErrorDisplay<'a>;
+    fn as_display(&self) -> Self::Target<'_> {
         ParseWordErrorDisplay(self)
     }
 }

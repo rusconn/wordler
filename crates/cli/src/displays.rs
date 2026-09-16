@@ -12,7 +12,9 @@ pub use {
     update_state_error::*,
 };
 
-pub trait AsDisplay<'a> {
-    type Target: fmt::Display;
-    fn as_display(&'a self) -> Self::Target;
+pub trait AsDisplay {
+    type Target<'a>: fmt::Display
+    where
+        Self: 'a;
+    fn as_display(&self) -> Self::Target<'_>;
 }

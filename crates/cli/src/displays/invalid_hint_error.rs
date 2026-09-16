@@ -4,9 +4,9 @@ use wordler::InvalidHintError;
 
 use crate::AsDisplay;
 
-impl<'a> AsDisplay<'a> for InvalidHintError {
-    type Target = InvalidHintErrorDisplay<'a>;
-    fn as_display(&'a self) -> Self::Target {
+impl AsDisplay for InvalidHintError {
+    type Target<'a> = InvalidHintErrorDisplay<'a>;
+    fn as_display(&self) -> Self::Target<'_> {
         InvalidHintErrorDisplay(self)
     }
 }

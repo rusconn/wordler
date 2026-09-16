@@ -8,7 +8,7 @@ use crate::AsDisplay;
 pub fn read_line<T>(label: &str) -> Option<T>
 where
     T: FromStr,
-    for<'a> T::Err: AsDisplay<'a>,
+    T::Err: AsDisplay,
 {
     loop {
         print!("{label}: ");

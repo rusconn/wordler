@@ -30,6 +30,7 @@ impl State {
         &self.constraints
     }
 
+    #[must_use]
     pub fn candidates(&self) -> &Candidates {
         &self.candidates
     }

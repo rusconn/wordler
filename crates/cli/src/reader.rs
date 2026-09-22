@@ -5,6 +5,7 @@ use std::{
 
 use crate::AsDisplay;
 
+#[must_use]
 pub fn read_line<T>(label: &str) -> Option<T>
 where
     T: FromStr,

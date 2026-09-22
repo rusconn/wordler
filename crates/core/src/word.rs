@@ -41,19 +41,19 @@ impl Word {
         Self(index)
     }
 
-    pub(crate) fn as_index(&self) -> usize {
+    pub(crate) fn as_index(self) -> usize {
         self.0
     }
 
-    pub(crate) fn as_str(&self) -> &'static str {
+    pub(crate) fn as_str(self) -> &'static str {
         dict::WORD_STRINGS[self.as_index()]
     }
 
-    pub(crate) fn as_letters(&self) -> impl Iterator<Item = Letter> {
+    pub(crate) fn as_letters(self) -> impl Iterator<Item = Letter> {
         self.as_str().bytes().map(Letter::from_unchecked)
     }
 
-    pub(crate) fn as_letter_counts(&self) -> &'static [u8; LETTER_KINDS] {
+    pub(crate) fn as_letter_counts(self) -> &'static [u8; LETTER_KINDS] {
         &dict::WORD_LETTER_COUNTS[self.as_index()]
     }
 }

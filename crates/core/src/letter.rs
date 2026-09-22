@@ -27,7 +27,7 @@ impl Letter {
         Self(byte)
     }
 
-    pub(crate) fn as_index(&self) -> usize {
+    pub(crate) fn as_index(self) -> usize {
         (self.0 - b'A') as usize
     }
 }

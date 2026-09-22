@@ -10,7 +10,7 @@ impl Default for LetterConstraint {
     fn default() -> Self {
         Self {
             min_count: 0,
-            max_count: WORD_LEN as u8,
+            max_count: WORD_LEN.try_into().unwrap(),
         }
     }
 }
@@ -34,11 +34,11 @@ impl LetterConstraint {
         Ok(())
     }
 
-    pub(super) fn is_match(&self, count: u8) -> bool {
+    pub(super) fn is_match(self, count: u8) -> bool {
         self.min_count <= count && count <= self.max_count
     }
 
-    pub(super) fn is_active(&self) -> bool {
-        0 < self.min_count || self.max_count < WORD_LEN as u8
+    pub(super) fn is_active(self) -> bool {
+        0 < self.min_count || self.max_count < WORD_LEN.try_into().unwrap()
     }
 }

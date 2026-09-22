@@ -38,7 +38,7 @@ fn interact_and_update(state: &mut State) -> bool {
         };
 
         match state.update(&guess, &hints) {
-            Ok(_) => return true,
+            Ok(()) => return true,
             Err(e) => {
                 println!("{}", e.as_display());
             }

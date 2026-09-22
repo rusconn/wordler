@@ -8,11 +8,11 @@ impl LetterSet {
         self.0 |= 1 << letter.as_index();
     }
 
-    pub(crate) fn contains(&self, letter: Letter) -> bool {
+    pub(crate) fn contains(self, letter: Letter) -> bool {
         (self.0 & (1 << letter.as_index())) != 0
     }
 
-    pub(crate) fn letters(&self) -> Letters {
+    pub(crate) fn letters(self) -> Letters {
         Letters(self.0)
     }
 }
@@ -27,7 +27,7 @@ impl Iterator for Letters {
             return None;
         }
 
-        let index = self.0.trailing_zeros() as u8;
+        let index = u8::try_from(self.0.trailing_zeros()).unwrap();
         self.0 &= self.0 - 1;
         Some(Letter::from_unchecked(b'A' + index))
     }

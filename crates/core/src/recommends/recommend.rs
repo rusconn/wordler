@@ -6,7 +6,7 @@ use super::LetterHistogram;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Recommend {
-    word: &'static Word,
+    word: Word,
     score: i32,
 }
 
@@ -29,7 +29,7 @@ impl Ord for Recommend {
 }
 
 impl Recommend {
-    pub(super) fn new(word: &'static Word) -> Self {
+    pub(super) fn new(word: Word) -> Self {
         Self { word, score: 0 }
     }
 
@@ -42,7 +42,7 @@ impl Recommend {
                 let occurrence = *histogram.get(letter);
                 i32::min(occurrence, candidates_count - occurrence)
             })
-            .sum()
+            .sum();
     }
 
     pub(super) fn is_useful(&self) -> bool {
@@ -58,9 +58,9 @@ mod tests {
 
     use super::*;
 
-    fn find_word(str: &str) -> &'static Word {
+    fn find_word(str: &str) -> Word {
         let index = WORD_STRINGS.binary_search_by(|ws| ws.cmp(&str)).unwrap();
-        &WORDS[index]
+        WORDS[index]
     }
 
     #[rstest(input, output, case("AUDIO", "AUDIO"), case("HIPPO", "HIPPO"))]

@@ -12,15 +12,17 @@ type LetterHistogram = LetterMap<i32>;
 
 impl Recommends {
     pub fn new(state: &State) -> Self {
-        let mut recommends = Self(WORDS.iter().map(Recommend::new).collect());
+        let mut recommends = Self(WORDS.iter().map(|word| Recommend::new(*word)).collect());
         recommends.update(state);
         recommends
     }
 
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
+    #[must_use]
     pub fn len(&self) -> usize {
         self.0.len()
     }
@@ -40,8 +42,8 @@ impl Recommends {
             }
         }
 
-        for recommend in self.0.iter_mut() {
-            recommend.update(&histogram, state.candidates().len() as i32);
+        for recommend in &mut self.0 {
+            recommend.update(&histogram, state.candidates().len().try_into().unwrap());
         }
 
         self.0.retain(Recommend::is_useful);
@@ -50,7 +52,7 @@ impl Recommends {
 }
 
 impl Word {
-    fn as_letter_set(&self) -> LetterSet {
+    fn as_letter_set(self) -> LetterSet {
         dict::WORD_LETTER_SETS[self.as_index()]
     }
 }

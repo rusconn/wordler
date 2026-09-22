@@ -29,12 +29,12 @@ impl Constraints {
     pub(crate) fn update(&mut self, guess: Word, hints: &Hints) -> Result<(), UpdateError> {
         let delta = ConstraintDelta::from_feedback(guess, hints);
         let mut next = *self;
-        next.merge(delta)?;
+        next.merge(&delta)?;
         *self = next;
         Ok(())
     }
 
-    fn merge(&mut self, delta: ConstraintDelta) -> Result<(), UpdateError> {
+    fn merge(&mut self, delta: &ConstraintDelta) -> Result<(), UpdateError> {
         for (position_constraint, position_delta) in self.positions.iter_mut().zip(delta.positions)
         {
             if let Some(position_delta) = position_delta {
@@ -71,7 +71,7 @@ impl Constraints {
     fn is_match_counts(&self, word: Word) -> bool {
         self.active_letters
             .letters()
-            .map(|letter| letter.as_index())
+            .map(Letter::as_index)
             .all(|index| {
                 let count = word.as_letter_counts()[index];
                 self.letters[index].is_match(count)

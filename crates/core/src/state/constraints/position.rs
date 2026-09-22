@@ -43,7 +43,7 @@ impl PositionConstraint {
         Ok(())
     }
 
-    pub(super) fn is_match(&self, letter: Letter) -> bool {
+    pub(super) fn is_match(self, letter: Letter) -> bool {
         if let Some(correct) = self.correct {
             correct == letter
         } else {

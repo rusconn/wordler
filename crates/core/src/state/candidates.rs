@@ -13,14 +13,17 @@ impl Default for Candidates {
 }
 
 impl Candidates {
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
+    #[must_use]
     pub fn len(&self) -> usize {
         self.0.len()
     }
 
+    #[must_use]
     pub fn first(&self) -> Option<&'static Word> {
         self.0.first().copied()
     }

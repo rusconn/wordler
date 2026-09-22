@@ -1529,7 +1529,7 @@ mod tests {
     }
 
     fn is_valid_word(word: &str) -> bool {
-        word.bytes().count() == WORD_LEN && word.bytes().all(is_valid_byte)
+        word.len() == WORD_LEN && word.bytes().all(is_valid_byte)
     }
 
     fn is_valid_byte(byte: u8) -> bool {

@@ -4,11 +4,11 @@ use crate::state::constraints::Constraints;
 use crate::word::Word;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Candidates(Vec<&'static Word>);
+pub struct Candidates(Vec<Word>);
 
 impl Default for Candidates {
     fn default() -> Self {
-        Self(WORDS.iter().collect())
+        Self(WORDS.iter().copied().collect())
     }
 }
 
@@ -24,15 +24,15 @@ impl Candidates {
     }
 
     #[must_use]
-    pub fn first(&self) -> Option<&'static Word> {
+    pub fn first(&self) -> Option<Word> {
         self.0.first().copied()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &'static Word> {
+    pub fn iter(&self) -> impl Iterator<Item = Word> {
         self.0.iter().copied()
     }
 
     pub(crate) fn retain(&mut self, constraints: &Constraints) {
-        self.0.retain(|&&word| constraints.is_match(word));
+        self.0.retain(|&word| constraints.is_match(word));
     }
 }

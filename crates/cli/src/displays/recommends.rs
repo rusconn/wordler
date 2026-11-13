@@ -18,7 +18,7 @@ impl fmt::Display for RecommendsDisplay<'_> {
         if self.0.is_empty() {
             write!(f, "Recommend: -")
         } else {
-            write!(f, "Recommend: [{}]", self.0.iter().take(5).join(","))
+            write!(f, "Recommend: [{}]", self.0.iter().take(5).format(","))
         }
     }
 }

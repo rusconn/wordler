@@ -12,3 +12,8 @@ thiserror = "2.0.17"
 
 [dev-dependencies]
 rstest = "0.25.0"
+
+[lints.clippy]
+pedantic = "warn"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"

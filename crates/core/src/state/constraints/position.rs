@@ -63,7 +63,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn ckeck_hint() {
+    fn check_hint() {
         let a = Letter::from_unchecked(b'A');
         let b = Letter::from_unchecked(b'B');
 

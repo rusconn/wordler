@@ -1538,7 +1538,7 @@ mod tests {
 
     #[test]
     fn order() {
-        assert!(WORD_STRINGS.iter().is_sorted())
+        assert!(WORD_STRINGS.iter().is_sorted());
     }
 
     #[test]
@@ -1549,8 +1549,9 @@ mod tests {
 
     #[test]
     fn word_letter_counts() {
+        let word_len = u8::try_from(WORD_LEN).unwrap();
         for letter_counts in WORD_LETTER_COUNTS.iter() {
-            assert_eq!(WORD_LEN as u8, letter_counts.iter().sum())
+            assert_eq!(word_len, letter_counts.iter().sum());
         }
     }
 }

@@ -1,9 +1,9 @@
 [package]
 name = "wordler"
 version = "0.1.0"
-edition = "2024"
-license = "MIT"
+edition.workspace = true
 rust-version.workspace = true
+license.workspace = true
 
 [features]
 recommend = []
@@ -14,7 +14,5 @@ thiserror = "2.0.17"
 [dev-dependencies]
 rstest = "0.25.0"
 
-[lints.clippy]
-pedantic = "warn"
-missing_errors_doc = "allow"
-missing_panics_doc = "allow"
+[lints]
+workspace = true

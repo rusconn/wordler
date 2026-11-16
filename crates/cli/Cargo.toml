@@ -1,9 +1,9 @@
 [package]
 name = "wordler-cli"
 version = "0.1.0"
-edition = "2024"
-license = "MIT"
+edition.workspace = true
 rust-version.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "wordler"
@@ -13,7 +13,5 @@ path = "src/main.rs"
 itertools = "0.14.0"
 wordler = { path = "../core", version = "0.1.0", features = ["recommend"] }
 
-[lints.clippy]
-pedantic = "warn"
-missing_errors_doc = "allow"
-missing_panics_doc = "allow"
+[lints]
+workspace = true

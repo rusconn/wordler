@@ -19,7 +19,7 @@ impl ConstraintDelta {
 
         let mut map = LetterMap::<(u8, u8)>::default();
 
-        for (index, (letter, hint)) in guess.as_letters().zip(hints.iter()).enumerate() {
+        for (index, (letter, &hint)) in guess.as_letters().zip(hints.iter()).enumerate() {
             positions[index] = Some(PositionDelta { letter, hint });
 
             let (green_or_yellow, gray) = map.get_mut(letter);

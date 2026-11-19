@@ -16,7 +16,7 @@ impl<T> LetterMap<T> {
         &mut self.0[letter.as_index()]
     }
 
-    pub(crate) fn iter(&self) -> impl Iterator<Item = (Letter, &T)> {
-        LETTERS.iter().copied().zip(self.0.iter())
+    pub(crate) fn iter(&self) -> impl Iterator<Item = (&Letter, &T)> {
+        LETTERS.iter().zip(self.0.iter())
     }
 }

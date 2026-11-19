@@ -29,8 +29,8 @@ impl FromStr for Hints {
 }
 
 impl Hints {
-    pub(crate) fn iter(&self) -> impl Iterator<Item = Hint> + '_ {
-        self.0.iter().copied()
+    pub(crate) fn iter(&self) -> impl Iterator<Item = &Hint> + '_ {
+        self.0.iter()
     }
 }
 

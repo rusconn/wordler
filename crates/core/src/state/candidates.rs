@@ -24,12 +24,12 @@ impl Candidates {
     }
 
     #[must_use]
-    pub fn first(&self) -> Option<Word> {
-        self.0.first().copied()
+    pub fn first(&self) -> Option<&Word> {
+        self.0.first()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Word> {
-        self.0.iter().copied()
+    pub fn iter(&self) -> impl Iterator<Item = &Word> {
+        self.0.iter()
     }
 
     pub(crate) fn retain(&mut self, constraints: &Constraints) {
